@@ -1,6 +1,22 @@
-#ifndef 
-#define MINISHELL_H
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/13 17:45:12 by ruortiz-          #+#    #+#             */
+/*   Updated: 2025/06/13 17:59:20 by ruortiz-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
+#ifndef MINISHELL_H
+# define MINISHELL_H
+
+# include <stdlib.h>
+# include <string.h>
+# include <unistd.h>
+# include <stdio.h>
 typedef enum e_token_type {
     TOKEN_WORD,        // palabras: comandos, args, nombres de archivos
     TOKEN_PIPE,        // |
