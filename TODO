@@ -1,0 +1,56 @@
+# TODO: Implementación de Shell Básico
+
+## Builtins a implementar
+- [ ] `echo`: Imprimir argumentos a stdout
+- [ ] `cd`: Cambiar directorio
+- [ ] `pwd`: Mostrar directorio actual
+- [ ] `export`: Establecer variables de entorno
+- [ ] `unset`: Eliminar variables de entorno
+- [ ] `env`: Mostrar entorno
+- [ ] `exit`: Salir del shell
+
+## Manejo de comandos externos
+- [ ] Buscar y ejecutar binarios del PATH
+- [ ] Usar `fork()` + `execve()` para lanzar procesos
+- [ ] Manejar códigos de retorno
+
+## Sistema de pipes
+- [ ] Implementar concatenación con `|`
+- [ ] Crear pipes con `pipe()`
+- [ ] Redireccionar stdin/stdout entre procesos con `dup2()`
+- [ ] Cerrar descriptores no usados
+
+## Redirecciones
+- [ ] `>` (sobrescribir salida)
+- [ ] `>>` (append salida)
+- [ ] `<` (entrada)
+- [ ] `<<` (heredoc)
+- [ ] Manejar duplicación de file descriptors
+
+## Manejo de señales
+- [ ] `SIGINT` (Ctrl+C): Interrumpir proceso actual
+- [ ] `SIGQUIT` (Ctrl+\): Terminar proceso actual
+- [ ] Configurar handlers con `signal()` o `sigaction()`
+
+## Gestión de entorno
+- [ ] Mantener variables internas
+- [ ] Permitir modificación con `export`/`unset`
+- [ ] Pasar entorno correcto a procesos hijos
+
+## Comportamiento general
+- [ ] Soporte múltiples comandos por línea
+- [ ] Propagación correcta de errores
+- [ ] Limpieza de file descriptors
+- [ ] Comportamiento idéntico a bash en casos básicos
+
+## Estructura del código
+- [ ] Parser de línea de comandos
+- [ ] Sistema de ejecución de comandos
+- [ ] Gestión de procesos
+- [ ] Limpieza de recursos
+
+## Testing
+- [ ] Comparar salidas con bash
+- [ ] Probar casos edge
+- [ ] Verificar manejo de errores
+- [ ] Chequear leaks de memoria
