@@ -1,32 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   ft_putstr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/11 20:04:24 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/11 20:17:48 by rmakende         ###   ########.fr       */
+/*   Created: 2024/04/02 14:36:22 by rmakende          #+#    #+#             */
+/*   Updated: 2024/04/02 18:57:20 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "libft.h"
 
-char	**clone_env(char **envp)
+void	ft_putstr_fd(char *s, int fd)
 {
-	int i;
-	char **copy;
+	int	i;
 
 	i = 0;
-	while (envp[i])
-		i++;
-	copy = malloc(sizeof(char *) * (i + 1));
-	i = 0;
-	while (envp[i])
+	while (s[i] != '\0')
 	{
-		copy[i] = ft_strdup(envp[i]);
+		write(fd, &s[i], 1);
 		i++;
 	}
-	copy[i] = NULL;
-	return (copy);
 }

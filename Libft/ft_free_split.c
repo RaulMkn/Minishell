@@ -1,32 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   ft_free_split.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/11 20:04:24 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/11 20:17:48 by rmakende         ###   ########.fr       */
+/*   Created: 2024/12/03 20:55:23 by root              #+#    #+#             */
+/*   Updated: 2025/01/06 13:32:19 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "libft.h"
 
-char	**clone_env(char **envp)
+void	free_split(char **array)
 {
-	int i;
-	char **copy;
+	int	i;
 
 	i = 0;
-	while (envp[i])
-		i++;
-	copy = malloc(sizeof(char *) * (i + 1));
-	i = 0;
-	while (envp[i])
+	if (!array)
+		return ;
+	while (array[i])
 	{
-		copy[i] = ft_strdup(envp[i]);
+		free(array[i]);
 		i++;
 	}
-	copy[i] = NULL;
-	return (copy);
+	free(array);
 }

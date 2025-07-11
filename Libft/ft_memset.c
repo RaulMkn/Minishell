@@ -1,32 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   ft_memset.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/11 20:04:24 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/11 20:17:48 by rmakende         ###   ########.fr       */
+/*   Created: 2024/03/27 17:18:20 by rmakende          #+#    #+#             */
+/*   Updated: 2024/03/27 20:31:58 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "libft.h"
 
-char	**clone_env(char **envp)
+void	*ft_memset(void *b, int c, size_t len)
 {
-	int i;
-	char **copy;
+	unsigned char	*ptr;
+	unsigned char	str;
+	size_t			i;
 
+	ptr = (unsigned char *)b;
+	str = (unsigned char)c;
 	i = 0;
-	while (envp[i])
-		i++;
-	copy = malloc(sizeof(char *) * (i + 1));
-	i = 0;
-	while (envp[i])
+	while (i < len)
 	{
-		copy[i] = ft_strdup(envp[i]);
+		ptr[i] = str;
 		i++;
 	}
-	copy[i] = NULL;
-	return (copy);
+	return (b);
 }

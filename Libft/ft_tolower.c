@@ -1,32 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   ft_tolower.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/11 20:04:24 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/11 20:17:48 by rmakende         ###   ########.fr       */
+/*   Created: 2024/02/15 20:43:37 by rmakende          #+#    #+#             */
+/*   Updated: 2024/04/02 20:21:23 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "libft.h"
 
-char	**clone_env(char **envp)
+int	ft_tolower(int c)
 {
-	int i;
-	char **copy;
+	char	c2;
 
-	i = 0;
-	while (envp[i])
-		i++;
-	copy = malloc(sizeof(char *) * (i + 1));
-	i = 0;
-	while (envp[i])
+	if (!(c >= 'A' && c <= 'Z'))
 	{
-		copy[i] = ft_strdup(envp[i]);
-		i++;
+		return (c);
 	}
-	copy[i] = NULL;
-	return (copy);
+	else
+	{
+		c = c + 32;
+	}
+	c2 = c;
+	return (c2);
 }

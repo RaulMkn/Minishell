@@ -1,32 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/11 20:04:24 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/11 20:17:48 by rmakende         ###   ########.fr       */
+/*   Created: 2024/03/27 17:18:16 by rmakende          #+#    #+#             */
+/*   Updated: 2024/04/18 16:33:27 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "libft.h"
 
-char	**clone_env(char **envp)
+void	*ft_memmove(void *dst, const void *src, size_t len)
 {
-	int i;
-	char **copy;
+	char		*t1;
+	const char	*t2;
+	size_t		i;
 
-	i = 0;
-	while (envp[i])
-		i++;
-	copy = malloc(sizeof(char *) * (i + 1));
-	i = 0;
-	while (envp[i])
+	t1 = (char *)dst;
+	t2 = (const char *)src;
+	if (t1 < t2)
 	{
-		copy[i] = ft_strdup(envp[i]);
-		i++;
+		i = 0;
+		while (i < len)
+		{
+			t1[i] = t2[i];
+			i++;
+		}
 	}
-	copy[i] = NULL;
-	return (copy);
+	else if (t1 > t2)
+	{
+		while (len > 0)
+		{
+			t1[len - 1] = t2[len - 1];
+			len--;
+		}
+	}
+	return (dst);
 }

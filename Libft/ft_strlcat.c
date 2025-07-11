@@ -1,32 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   ft_strlcat.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/11 20:04:24 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/11 20:17:48 by rmakende         ###   ########.fr       */
+/*   Created: 2024/02/21 11:41:51 by rmakende          #+#    #+#             */
+/*   Updated: 2024/03/27 20:30:36 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "libft.h"
 
-char	**clone_env(char **envp)
+size_t	ft_strlcat(char *dest, char *src, size_t size)
 {
-	int i;
-	char **copy;
+	unsigned int	i;
+	unsigned int	j;
+	unsigned int	l;
 
 	i = 0;
-	while (envp[i])
+	j = 0;
+	l = 0;
+	while (dest[l] != '\0' && l < size)
+		l++;
+	j = l;
+	while (src[i] != '\0')
 		i++;
-	copy = malloc(sizeof(char *) * (i + 1));
-	i = 0;
-	while (envp[i])
+	if (size == 0 || l >= size)
+		return (l + i);
+	while (j < (size - 1) && src[j - l] != '\0')
 	{
-		copy[i] = ft_strdup(envp[i]);
-		i++;
+		dest[j] = src[j - l];
+		j++;
 	}
-	copy[i] = NULL;
-	return (copy);
+	dest[j] = '\0';
+	return (l + i);
 }

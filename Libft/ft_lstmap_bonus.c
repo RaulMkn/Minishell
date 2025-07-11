@@ -1,32 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   ft_lstmap_bonus.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/11 20:04:24 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/11 20:17:48 by rmakende         ###   ########.fr       */
+/*   Created: 2024/04/10 20:35:36 by rmakende          #+#    #+#             */
+/*   Updated: 2024/04/10 20:45:27 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "libft.h"
 
-char	**clone_env(char **envp)
+t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
 {
-	int i;
-	char **copy;
+	t_list	*begin;
+	t_list	*new;
+	t_list	*temp;
 
-	i = 0;
-	while (envp[i])
-		i++;
-	copy = malloc(sizeof(char *) * (i + 1));
-	i = 0;
-	while (envp[i])
+	if (!lst)
+		return (0);
+	temp = lst;
+	begin = NULL;
+	while (temp)
 	{
-		copy[i] = ft_strdup(envp[i]);
-		i++;
+		new = ft_lstnew(temp->content);
+		if (!new)
+		{
+			ft_lstclear(&begin, del);
+			return (0);
+		}
+		new->content = f(new->content);
+		ft_lstadd_back(&begin, new);
+		temp = temp->next;
 	}
-	copy[i] = NULL;
-	return (copy);
+	return (begin);
 }

@@ -1,32 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   ft_strcpy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/11 20:04:24 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/11 20:17:48 by rmakende         ###   ########.fr       */
+/*   Created: 2024/12/03 20:58:09 by root              #+#    #+#             */
+/*   Updated: 2024/12/04 19:18:05 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "libft.h"
 
-char	**clone_env(char **envp)
+char	*ft_strcpy(char *dest, const char *src)
 {
-	int i;
-	char **copy;
+	int		i;
+	char	*print;
 
+	print = dest;
 	i = 0;
-	while (envp[i])
-		i++;
-	copy = malloc(sizeof(char *) * (i + 1));
-	i = 0;
-	while (envp[i])
+	while (src[i] != '\0')
 	{
-		copy[i] = ft_strdup(envp[i]);
+		dest[i] = src[i];
 		i++;
 	}
-	copy[i] = NULL;
-	return (copy);
+	dest[i] = '\0';
+	return (print);
 }

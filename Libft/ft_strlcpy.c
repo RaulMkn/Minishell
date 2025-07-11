@@ -1,32 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   ft_strlcpy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/11 20:04:24 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/11 20:17:48 by rmakende         ###   ########.fr       */
+/*   Created: 2024/02/14 16:38:18 by rmakende          #+#    #+#             */
+/*   Updated: 2024/04/02 19:45:43 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "libft.h"
 
-char	**clone_env(char **envp)
+size_t	ft_strlcpy(char *dest, const char *src, size_t size)
 {
-	int i;
-	char **copy;
+	unsigned int	i;
+	unsigned int	j;
+	unsigned int	k;
 
 	i = 0;
-	while (envp[i])
-		i++;
-	copy = malloc(sizeof(char *) * (i + 1));
-	i = 0;
-	while (envp[i])
+	j = 0;
+	k = 0;
+	while (src[k] != '\0')
+		k++;
+	if (size == 0)
+		return (k);
+	while (j < (size - 1) && src[i] != '\0')
 	{
-		copy[i] = ft_strdup(envp[i]);
+		dest[j] = src[i];
 		i++;
+		j++;
 	}
-	copy[i] = NULL;
-	return (copy);
+	dest[j] = '\0';
+	if (src[i] == '\0')
+		return (i);
+	else
+		return (k);
 }

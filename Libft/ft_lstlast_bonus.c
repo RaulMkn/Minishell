@@ -1,32 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   ft_lstlast.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/11 20:04:24 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/11 20:17:48 by rmakende         ###   ########.fr       */
+/*   Created: 2024/04/10 17:50:08 by rmakende          #+#    #+#             */
+/*   Updated: 2024/04/10 19:34:57 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "libft.h"
 
-char	**clone_env(char **envp)
+t_list	*ft_lstlast(t_list *lst)
 {
-	int i;
-	char **copy;
+	t_list	*temp;
 
-	i = 0;
-	while (envp[i])
-		i++;
-	copy = malloc(sizeof(char *) * (i + 1));
-	i = 0;
-	while (envp[i])
+	if (!lst)
+		return (NULL);
+	while (lst != NULL)
 	{
-		copy[i] = ft_strdup(envp[i]);
-		i++;
+		temp = lst;
+		lst = lst->next;
 	}
-	copy[i] = NULL;
-	return (copy);
+	return (temp);
 }

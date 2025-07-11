@@ -1,41 +1,40 @@
-#ifndef 
-#define MINISHELL_H
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/11 16:02:29 by rmakende          #+#    #+#             */
+/*   Updated: 2025/07/11 20:17:33 by rmakende         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-typedef enum e_token_type {
-    TOKEN_WORD,        // palabras: comandos, args, nombres de archivos
-    TOKEN_PIPE,        // |
-    TOKEN_REDIR_IN,    // <
-    TOKEN_REDIR_OUT,   // >
-    TOKEN_APPEND,      // >>
-    TOKEN_HEREDOC      // <<
-} t_token_type;
-typedef struct s_token {
-    t_token_type    type;
-    char            *value;
-    struct s_token  *next;
-} t_token;
+#ifndef MINISHELL_H
+# define MINISHELL_H
 
-typedef enum e_redir_type {
-    REDIR_IN,      // <
-    REDIR_OUT,     // >
-    REDIR_APPEND,  // >>
-    HEREDOC        // <<
-} t_redir_type;
-typedef struct s_redir {
-    t_redir_type    type;
-    char            *file;        // nombre del archivo o delimitador
-    struct s_redir  *next;
-} t_redir;
-typedef struct s_command {
-    char            **argv;       // lista de args (argv[0] = comando)
-    t_redir         *redir;       // redirecciones asociadas
-    struct s_command *next;       // para pipelines (| cmd1 | cmd2)
-} t_command;
+# include "../Libft/libft.h"
+# include <errno.h>
+# include <readline/history.h>
+# include <readline/readline.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
+# include <sys/wait.h>
+# include <unistd.h>
 
-typedef struct s_shell {
-    t_command   *cmd_list;       // comandos a ejecutar
-    char        **envp;          // entorno (export, unset)
-    int         last_status;     // $? (último código de salida)
-} t_shell;
+char				*find_command_path(char *cmd, char **envp);
+void				run_builtin(char **argv);
+int					is_builtin(char *cmd);
+char				**clone_env(char **envp);
 
+typedef struct s_cmd
+{
+	char			**argv;
+	char			*infile;
+	char			*outfile;
+	int				append;
+	int				pipe[2];
+	struct s_cmd	*next;
+}					t_cmd;
 #endif

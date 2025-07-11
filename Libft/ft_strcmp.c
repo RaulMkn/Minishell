@@ -1,32 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/11 20:04:24 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/11 20:17:48 by rmakende         ###   ########.fr       */
+/*   Created: 2025/07/11 14:22:55 by rmakende          #+#    #+#             */
+/*   Updated: 2025/07/11 14:29:21 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "libft.h"
 
-char	**clone_env(char **envp)
+int	ft_strcmp(const char *s1, const char *s2)
 {
-	int i;
-	char **copy;
+	int	i;
 
 	i = 0;
-	while (envp[i])
-		i++;
-	copy = malloc(sizeof(char *) * (i + 1));
-	i = 0;
-	while (envp[i])
+	while ((s1[i] != '\0' || s2[i] != '\0'))
 	{
-		copy[i] = ft_strdup(envp[i]);
+		if (s1[i] > s2[i] || s1[i] < s2[i])
+			return (s1[i] - s2[i]);
 		i++;
 	}
-	copy[i] = NULL;
-	return (copy);
+	return (0);
 }

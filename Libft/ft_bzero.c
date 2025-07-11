@@ -1,32 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   ft_bzero.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/11 20:04:24 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/11 20:17:48 by rmakende         ###   ########.fr       */
+/*   Created: 2024/03/27 17:17:12 by rmakende          #+#    #+#             */
+/*   Updated: 2024/04/17 19:26:32 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "libft.h"
 
-char	**clone_env(char **envp)
+void	ft_bzero(void *s, size_t n)
 {
-	int i;
-	char **copy;
+	char	*ptr;
+	size_t	j;
 
-	i = 0;
-	while (envp[i])
-		i++;
-	copy = malloc(sizeof(char *) * (i + 1));
-	i = 0;
-	while (envp[i])
-	{
-		copy[i] = ft_strdup(envp[i]);
-		i++;
-	}
-	copy[i] = NULL;
-	return (copy);
+	ptr = (char *)s;
+	j = 0;
+	while (j < n)
+		ptr[j++] = 0;
 }
+
+/*
+int main() {
+    char buffer[10] = "abcdefghi";
+
+    printf("Buffer antes de bzero: %s\n", buffer);
+
+    ft_bzero(buffer, sizeof(buffer));
+
+    printf("Buffer después de bzero: %s\n", buffer);
+
+    return 0;
+}
+*/
