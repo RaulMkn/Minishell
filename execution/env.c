@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:04:24 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/11 23:48:25 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/12 16:22:00 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ int	append_env(char ***env, const char *new_var)
 	}
 	new_env[i++] = ft_strdup(new_var);
 	new_env[i] = NULL;
-	free(*env);
+	//free(*env);
 	*env = new_env;
 	return (0);
 }
