@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:03:17 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/11 23:55:13 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/12 18:57:17 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,27 +38,43 @@ int	run_builtin(char **argv, char ***env)
 	return (1);
 }
 
+int	is_n_option(const char *str)
+{
+	int	i;
+
+	if (!str || str[0] != '-')
+		return (0);
+	i = 1;
+	while (str[i])
+	{
+		if (str[i] != 'n')
+			return (0);
+		i++;
+	}
+	return (i > 1); // al menos "-n"
+}
+
 int	builtin_echo(char **argv)
 {
 	int	i;
-	int	flag;
+	int	newline;
 
-	flag = 0;
 	i = 1;
-	if (!ft_strcmp("-n", argv[i]))
+	newline = 1;
+	while (argv[i] && is_n_option(argv[i]))
 	{
+		newline = 0;
 		i++;
-		flag = 1;
 	}
 	while (argv[i])
 	{
 		ft_printf("%s", argv[i]);
+		if (argv[i + 1])
+			ft_printf(" ");
 		i++;
 	}
-	if (flag == 0)
-	{
+	if (newline)
 		ft_printf("\n");
-	}
 	return (0);
 }
 
@@ -67,7 +83,7 @@ int	builtin_cd(char **argv, char ***env)
 	(void)env;
 	if (chdir(argv[1]) == -1)
 	{
-		perror("chdir() failed");
+		perror("error:");
 		return (1);
 	}
 	return (0);

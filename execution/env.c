@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:04:24 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/12 16:22:00 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/12 18:57:02 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 char	**clone_env(char **envp)
 {
-	int i;
-	char **copy;
+	int		i;
+	char	**copy;
 
 	i = 0;
 	while (envp[i])
@@ -33,8 +33,8 @@ char	**clone_env(char **envp)
 
 int	get_env_index(char **env, const char *key)
 {
-	int		i;
-	int		len;
+	int	i;
+	int	len;
 
 	i = 0;
 	len = ft_strlen(key);
@@ -82,14 +82,16 @@ int	append_env(char ***env, const char *new_var)
 	}
 	new_env[i++] = ft_strdup(new_var);
 	new_env[i] = NULL;
-	//free(*env);
+	// free(*env);
 	*env = new_env;
 	return (0);
 }
 
 int	replace_env(char **env, const char *key, const char *new_var)
 {
-	int index = get_env_index(env, key);
+	int	index;
+
+	index = get_env_index(env, key);
 	if (index < 0)
 		return (1);
 	free(env[index]);
@@ -99,9 +101,12 @@ int	replace_env(char **env, const char *key, const char *new_var)
 
 void	remove_env_entry(char ***env, int idx)
 {
-	int		i = 0;
-	int		j = 0;
-	char	**new_env;
+	int i;
+	int j;
+
+	i = 0;
+	j = 0;
+	char **new_env;
 
 	while ((*env)[i])
 		i++;
