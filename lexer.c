@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 17:42:17 by ruortiz-          #+#    #+#             */
-/*   Updated: 2025/06/17 20:01:59 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/06/24 23:52:01 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,8 +97,15 @@ t_token *create_operator_token(char c, int len)
         type = TOKEN_HEREDOC;
     return (create_token(type, op));
 }
-
-void handle_whitespace(t_token **tokens, char **buffer, size_t *i)
+static size_t	handle_whitespaces(const char *input, size_t i)
+{
+    while (input[i] && (input[i] == ' ' || input[i] == '\t' || 
+           input[i] == '\n' || input[i] == '\v' || 
+           input[i] == '\f' || input[i] == '\r'))
+        i++;
+    return (i);
+}
+void	handle_whitespace(t_token **tokens, char **buffer, size_t *i, char *input)
 {
     char *temp;
 
@@ -115,7 +122,7 @@ void handle_whitespace(t_token **tokens, char **buffer, size_t *i)
         free(*buffer);
         *buffer = NULL;
     }
-    (*i)++;
+    *i = handle_whitespaces(input, *i);
 }
 
 void handle_buffer_token(t_token **tokens, char **buffer)
@@ -177,7 +184,7 @@ t_token *tokenize_input(char *in)
     while (in[i])
     {
         if ((in[i] >= 9 && in[i] <= 13) || in[i] == 32)
-            handle_whitespace(&tokens, &buffer, &i);
+            handle_whitespace(&tokens, &buffer, &i, in);
         else if (in[i] == '|' || in[i] == '<' || in[i] == '>')
             handle_operator(&tokens, &buffer, &i, in);
         else if (!(buffer = ft_strjoin_char(buffer, in[i])))

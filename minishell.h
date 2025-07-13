@@ -6,13 +6,15 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 17:45:12 by ruortiz-          #+#    #+#             */
-/*   Updated: 2025/06/13 17:59:20 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/06/23 20:22:37 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# include "libft/libft.h"
+# include "libft/ft_printf.h"
 # include <stdlib.h>
 # include <string.h>
 # include <unistd.h>
@@ -53,5 +55,6 @@ typedef struct s_shell {
     char        **envp;          // entorno (export, unset)
     int         last_status;     // $? (último código de salida)
 } t_shell;
+
 
 #endif
