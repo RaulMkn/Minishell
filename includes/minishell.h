@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:02:29 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/12 18:55:51 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/12 19:20:18 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 # include <unistd.h>
 
 char				*find_command_path(char *cmd, char **envp);
-int					run_builtin(char **argv, char ***env);
+int					run_builtin(char **argv, char ***env, char *line);
 int					is_builtin(const char *cmd);
 char				**clone_env(char **envp);
 int					builtin_echo(char **argv);
@@ -32,7 +32,7 @@ int					builtin_cd(char **argv, char ***env);
 int					builtin_pwd(void);
 int					builtin_export(char **argv, char ***env);
 int					builtin_unset(char **argv, char ***env);
-int					builtin_exit(void);
+int					builtin_exit(char **mini_env, char *line, char **argv);
 int					builtin_env(char **env);
 int					replace_env(char **env, const char *key,
 						const char *new_var);

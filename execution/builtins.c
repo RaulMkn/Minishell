@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:03:17 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/12 18:57:17 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/14 21:53:54 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	is_builtin(const char *cmd)
 		|| !ft_strcmp(cmd, "env") || !ft_strcmp(cmd, "exit"));
 }
 
-int	run_builtin(char **argv, char ***env)
+int	run_builtin(char **argv, char ***env, char *line)
 {
 	if (!ft_strcmp(argv[0], "echo"))
 		return (builtin_echo(argv));
@@ -34,7 +34,7 @@ int	run_builtin(char **argv, char ***env)
 	else if (!ft_strcmp(argv[0], "env"))
 		return (builtin_env(*env));
 	else if (!ft_strcmp(argv[0], "exit"))
-		return (builtin_exit());
+		return (builtin_exit(*env, line, argv));
 	return (1);
 }
 
@@ -51,7 +51,7 @@ int	is_n_option(const char *str)
 			return (0);
 		i++;
 	}
-	return (i > 1); // al menos "-n"
+	return (i > 1);
 }
 
 int	builtin_echo(char **argv)
@@ -181,7 +181,11 @@ int	builtin_env(char **env)
 	return (0);
 }
 
-int	builtin_exit(void)
+int	builtin_exit(char **mini_env, char *line, char **argv)
 {
+	free_split(argv);
+	free_split(mini_env);
+	free(line);
+	rl_clear_history();
 	exit(0);
 }

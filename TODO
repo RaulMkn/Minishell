@@ -1,18 +1,18 @@
 # TODO: Implementación de Shell Básico
 
 ## Builtins a implementar
-- [ ] `echo`: Imprimir argumentos a stdout
-- [ ] `cd`: Cambiar directorio
-- [ ] `pwd`: Mostrar directorio actual
-- [ ] `export`: Establecer variables de entorno
-- [ ] `unset`: Eliminar variables de entorno
-- [ ] `env`: Mostrar entorno
-- [ ] `exit`: Salir del shell
+- [X] `echo`: Imprimir argumentos a stdout
+- [X] `cd`: Cambiar directorio
+- [X] `pwd`: Mostrar directorio actual
+- [X] `export`: Establecer variables de entorno
+- [X] `unset`: Eliminar variables de entorno
+- [X] `env`: Mostrar entorno
+- [X] `exit`: Salir del shell
 
 ## Manejo de comandos externos
-- [ ] Buscar y ejecutar binarios del PATH
-- [ ] Usar `fork()` + `execve()` para lanzar procesos
-- [ ] Manejar códigos de retorno
+- [X] Buscar y ejecutar binarios del PATH
+- [X] Usar `fork()` + `execve()` para lanzar procesos
+- [X] Manejar códigos de retorno
 
 ## Sistema de pipes
 - [ ] Implementar concatenación con `|`

@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:04:24 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/12 18:57:02 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/14 21:58:08 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,6 @@ int	append_env(char ***env, const char *new_var)
 	}
 	new_env[i++] = ft_strdup(new_var);
 	new_env[i] = NULL;
-	// free(*env);
 	*env = new_env;
 	return (0);
 }
@@ -101,20 +100,18 @@ int	replace_env(char **env, const char *key, const char *new_var)
 
 void	remove_env_entry(char ***env, int idx)
 {
-	int i;
-	int j;
+	int		i;
+	int		j;
+	char	**new_env;
 
 	i = 0;
 	j = 0;
-	char **new_env;
 
 	while ((*env)[i])
 		i++;
-
 	new_env = malloc(sizeof(char *) * i);
 	if (!new_env)
 		return ;
-
 	i = 0;
 	while ((*env)[i])
 	{

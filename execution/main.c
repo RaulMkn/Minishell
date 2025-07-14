@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 19:56:11 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/12 16:10:29 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/14 21:55:29 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int	main(int argc, char **argv, char **envp)
 			continue ;
 		}
 		if (is_builtin(cmd[0]))
-			run_builtin(cmd, &envp);
+			run_builtin(cmd, &mini_env, &line);
 		else
 		{
 			pid = fork();
@@ -64,7 +64,6 @@ int	main(int argc, char **argv, char **envp)
 			else
 				wait(NULL);
 		}
-		free(line);
 	}
 	return (0);
 }
