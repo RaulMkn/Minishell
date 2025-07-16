@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:03:17 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/14 21:53:54 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/14 22:12:29 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	run_builtin(char **argv, char ***env, char *line)
 	else if (!ft_strcmp(argv[0], "env"))
 		return (builtin_env(*env));
 	else if (!ft_strcmp(argv[0], "exit"))
-		return (builtin_exit(*env, line, argv));
+		return (builtin_exit(env, line, argv));
 	return (1);
 }
 
@@ -181,10 +181,10 @@ int	builtin_env(char **env)
 	return (0);
 }
 
-int	builtin_exit(char **mini_env, char *line, char **argv)
+int	builtin_exit(char ***mini_env, char *line, char **argv)
 {
 	free_split(argv);
-	free_split(mini_env);
+	free_split(*mini_env);
 	free(line);
 	rl_clear_history();
 	exit(0);
