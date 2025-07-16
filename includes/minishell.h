@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:02:29 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/14 22:17:20 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/16 19:14:17 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ int					append_env(char ***env, const char *new_var);
 int					is_valid_identifier(const char *str);
 int					get_env_index(char **env, const char *key);
 void				remove_env_entry(char ***env, int idx);
+int					is_n_option(const char *str);
 
 typedef struct s_cmd
 {

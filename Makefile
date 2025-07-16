@@ -6,7 +6,7 @@
 #    By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/11 19:22:34 by rmakende          #+#    #+#              #
-#    Updated: 2025/07/11 20:18:26 by rmakende         ###   ########.fr        #
+#    Updated: 2025/07/16 19:13:32 by rmakende         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,13 @@ LIBFT_DIR = ./Libft
 LIBFT = $(LIBFT_DIR)/libft.a
 EXEC_DIR = ./execution
 
-SRCS = $(EXEC_DIR)/main.c $(EXEC_DIR)/env.c $(EXEC_DIR)/builtins.c $(EXEC_DIR)/path_utils.c
+SRCS =	$(EXEC_DIR)/main.c \
+		$(EXEC_DIR)/builtins/builtins.c \
+		$(EXEC_DIR)/builtins/builtins2.c \
+		$(EXEC_DIR)/builtins/builtins_utils.c \
+		$(EXEC_DIR)/path_utils.c \
+		$(EXEC_DIR)/env/env.c \
+		$(EXEC_DIR)/env/env_utils.c
 OBJ_DIR = obj
 OBJS = $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
 
@@ -42,6 +48,14 @@ $(NAME): $(OBJS) $(LIBFT)
 	@echo "$(GREEN)$(NAME) compiled!$(NC)"
 
 $(OBJ_DIR)/%.o: $(EXEC_DIR)/%.c
+	@mkdir -p $(OBJ_DIR)
+	@$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/%.o: $(EXEC_DIR)/builtins/%.c
+	@mkdir -p $(OBJ_DIR)
+	@$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/%.o: $(EXEC_DIR)/env/%.c
 	@mkdir -p $(OBJ_DIR)
 	@$(CC) $(CFLAGS) -c $< -o $@
 

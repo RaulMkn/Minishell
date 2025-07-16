@@ -6,46 +6,11 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:04:24 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/14 21:58:08 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/16 19:06:46 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
-
-char	**clone_env(char **envp)
-{
-	int		i;
-	char	**copy;
-
-	i = 0;
-	while (envp[i])
-		i++;
-	copy = malloc(sizeof(char *) * (i + 1));
-	i = 0;
-	while (envp[i])
-	{
-		copy[i] = ft_strdup(envp[i]);
-		i++;
-	}
-	copy[i] = NULL;
-	return (copy);
-}
-
-int	get_env_index(char **env, const char *key)
-{
-	int	i;
-	int	len;
-
-	i = 0;
-	len = ft_strlen(key);
-	while (env[i])
-	{
-		if (!ft_strncmp(env[i], key, len) && env[i][len] == '=')
-			return (i);
-		i++;
-	}
-	return (-1);
-}
+#include "../../includes/minishell.h"
 
 int	is_valid_identifier(const char *str)
 {
@@ -106,7 +71,6 @@ void	remove_env_entry(char ***env, int idx)
 
 	i = 0;
 	j = 0;
-
 	while ((*env)[i])
 		i++;
 	new_env = malloc(sizeof(char *) * i);

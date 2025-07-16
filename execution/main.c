@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 19:56:11 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/14 22:16:51 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/16 19:03:47 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,16 +31,27 @@ char	**parse_line(char *line)
 	return (tokens);
 }
 
-int	main(int argc, char **argv, char **envp)
+static void	execute_command(char **cmd, char ***mini_env)
+{
+	pid_t	pid;
+
+	if (is_builtin(cmd[0]))
+		run_builtin(cmd, mini_env, NULL);
+	else
+	{
+		pid = fork();
+		if (pid == 0)
+			execve(find_command_path(*cmd, *mini_env), cmd, *mini_env);
+		else
+			wait(NULL);
+	}
+}
+
+static void	shell_loop(char **mini_env)
 {
 	char	*line;
 	char	**cmd;
-	pid_t	pid;
-	char	**mini_env;
 
-	mini_env = clone_env(envp);
-	(void)argc;
-	(void)argv;
 	while (1)
 	{
 		line = readline("minishell$ ");
@@ -52,22 +63,24 @@ int	main(int argc, char **argv, char **envp)
 		if (!cmd || !cmd[0])
 		{
 			free(line);
+			free_split(cmd);
 			continue ;
 		}
-		if (is_builtin(cmd[0]))
-			run_builtin(cmd, &mini_env, line);
-		else
-		{
-			pid = fork();
-			if (pid == 0)
-				execve(find_command_path(*cmd, mini_env), cmd, mini_env);
-			else
-				wait(NULL);
-		}
+		execute_command(cmd, &mini_env);
+		free_split(cmd);
+		free(line);
 	}
-	free_split(cmd);
+}
+
+int	main(int argc, char **argv, char **envp)
+{
+	char	**mini_env;
+
+	(void)argc;
+	(void)argv;
+	mini_env = clone_env(envp);
+	shell_loop(mini_env);
 	free_split(mini_env);
-	free(line);
 	rl_clear_history();
 	return (0);
 }
