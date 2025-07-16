@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 17:45:12 by ruortiz-          #+#    #+#             */
-/*   Updated: 2025/06/23 20:22:37 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/07/13 20:39:48 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,34 @@ typedef struct s_shell {
     t_command   *cmd_list;       // comandos a ejecutar
     char        **envp;          // entorno (export, unset)
     int         last_status;     // $? (último código de salida)
+    t_lexer_state lexer_state;
 } t_shell;
 
+typedef enum e_quote_state {
+    QUOTE_NONE,
+    QUOTE_SINGLE,
+    QUOTE_DOUBLE
+} t_quote_state;
+
+typedef enum e_error_type {
+    ERROR_NONE,
+    ERROR_SYNTAX,
+    ERROR_MEMORY,
+    ERROR_INVALID_OPERATOR
+} t_error_type;
+
+typedef struct s_lexer_state {
+    t_quote_state quote_state;
+    t_error_type error;
+    char *error_msg;
+} t_lexer_state;
+
+// Function prototypes
+char *expand_variables(char *str, char **env, int last_status);
+void clear_command(t_command *cmd);
+void set_error(t_lexer_state *state, t_error_type error, char *msg);
+t_token *tokenize_input(char *in, t_shell *shell);
+int is_valid_operator_sequence(t_token *tokens);
+void clear_tokens(t_token **tokens);
 
 #endif

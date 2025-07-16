@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 17:42:17 by ruortiz-          #+#    #+#             */
-/*   Updated: 2025/06/24 23:52:01 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/07/13 20:39:48 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,28 +151,102 @@ void handle_buffer_token(t_token **tokens, char **buffer)
     *buffer = NULL;
 }
 
-void handle_operator(t_token **tokens, char **buffer, size_t *i, char *input)
+static int	is_valid_operator_syntax(char *input, size_t i)
 {
-    t_token *new_token;
+	if (!input[i + 1] || !input[i + 2])
+		return (1);
+	if ((input[i] == '>' || input[i] == '<') && 
+		(input[i + 1] == '>' || input[i + 1] == '<'))
+		return (0);
+	if (input[i] == '|' && input[i + 1] == '|')
+		return (0);
+	return (1);
+}
 
-    handle_buffer_token(tokens, buffer);
-    if ((input[*i] == '>' || input[*i] == '<') && input[*i + 1] == input[*i])
+static void	handle_operator_error(t_token **tokens, char **buffer)
+{
+	if (*buffer)
+	{
+		free(*buffer);
+		*buffer = NULL;
+	}
+	while (*tokens)
+	{
+		free((*tokens)->value);
+		free(*tokens);
+		*tokens = (*tokens)->next;
+	}
+}
+
+static int is_valid_operator_char(char c)
+{
+    return (c == '|' || c == '<' || c == '>');
+}
+
+static int check_adjacent_operators(char *input, size_t i)
+{
+    if (!input[i])
+        return (1);
+    if (is_valid_operator_char(input[i]))
     {
-        if (!(new_token = create_operator_token(input[*i], 2)))
-            return ;
-        token_add_back(tokens, new_token);
+        if (input[i] == '|' && input[i + 1] == '|')
+            return (0);
+        if ((input[i] == '<' && (input[i + 1] == '>' || input[i + 1] == '|')) ||
+            (input[i] == '>' && (input[i + 1] == '<' || input[i + 1] == '|')))
+            return (0);
+    }
+    return (1);
+}
+
+static void handle_quotes(char c, t_lexer_state *state)
+{
+    if (c == '\'' && state->quote_state == QUOTE_NONE)
+        state->quote_state = QUOTE_SINGLE;
+    else if (c == '\'' && state->quote_state == QUOTE_SINGLE)
+        state->quote_state = QUOTE_NONE;
+    else if (c == '\"' && state->quote_state == QUOTE_NONE)
+        state->quote_state = QUOTE_DOUBLE;
+    else if (c == '\"' && state->quote_state == QUOTE_DOUBLE)
+        state->quote_state = QUOTE_NONE;
+}
+
+void	handle_operator(t_token **tokens, char **buffer, size_t *i, char *input)
+{
+    if (!check_adjacent_operators(input, *i))
+    {
+        handle_operator_error(tokens, buffer);
+        return ;
+    }
+    handle_buffer_token(tokens, buffer);
+    if ((input[*i] == '>' || input[*i] == '<') && 
+        input[*i + 1] == input[*i] && input[*i + 1] != ' ')
+    {
+        token_add_back(tokens, create_operator_token(input[*i], 2));
         (*i) += 2;
     }
     else
     {
-        if (!(new_token = create_operator_token(input[*i], 1)))
-            return ;
-        token_add_back(tokens, new_token);
+        token_add_back(tokens, create_operator_token(input[*i], 1));
         (*i)++;
     }
 }
 
-t_token *tokenize_input(char *in)
+static void handle_word(t_token **tokens, char *word, t_shell *shell)
+{
+    char *expanded;
+    
+    expanded = expand_variables(word, shell->envp, shell->last_status);
+    if (!expanded)
+    {
+        set_error(&shell->lexer_state, ERROR_MEMORY, "Error de memoria al expandir variables");
+        return;
+    }
+    
+    token_add_back(tokens, create_token(TOKEN_WORD, expanded));
+    free(expanded);
+}
+
+t_token *tokenize_input(char *in, t_shell *shell)
 {
     t_token *tokens;
     size_t i;
@@ -195,7 +269,7 @@ t_token *tokenize_input(char *in)
     if (buffer)
     {
         if (*buffer != '\0')
-            token_add_back(&tokens, create_token(TOKEN_WORD, buffer));
+            handle_word(&tokens, buffer, shell);
         free(buffer);
     }
     return (tokens);

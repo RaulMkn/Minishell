@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 19:56:25 by ruortiz-          #+#    #+#             */
-/*   Updated: 2025/06/23 20:18:51 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/07/13 20:10:49 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,11 +127,21 @@ static t_redir	*create_redirection(t_token *token)
 	return (new_redir);
 }
 
+static t_redir	*add_new_redirection(t_redir *redir, t_token *token)
+{
+	t_redir	*new_redir;
+
+	new_redir = create_redirection(token);
+	if (!new_redir)
+		return (NULL);
+	new_redir->next = redir;
+	return (new_redir);
+}
+
 t_redir	*parse_redirections(t_token **tokens)
 {
 	t_redir	*redir;
 	t_token	*token;
-	t_redir	*new_redir;
 
 	redir = NULL;
 	token = *tokens;
@@ -139,11 +149,11 @@ t_redir	*parse_redirections(t_token **tokens)
 			token->type == TOKEN_REDIR_OUT || token->type == TOKEN_APPEND || 
 			token->type == TOKEN_HEREDOC))
 	{
-		new_redir = create_redirection(token);
-		if (!new_redir)
+		if (!token->next || token->next->type != TOKEN_WORD)
 			return (NULL);
-		new_redir->next = redir;
-		redir = new_redir;
+		redir = add_new_redirection(redir, token);
+		if (!redir)
+			return (NULL);
 		token = token->next->next;
 	}
 	*tokens = token;
