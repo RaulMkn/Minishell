@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 19:56:25 by ruortiz-          #+#    #+#             */
-/*   Updated: 2025/07/20 17:56:32 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/20 18:56:07 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,14 @@ static t_redir	*create_redirection(t_token *token)
 	new_redir = malloc(sizeof(t_redir));
 	if (!new_redir)
 		return (NULL);
-	new_redir->type = token->type;
+	if (token->type == TOKEN_REDIR_IN)
+		new_redir->type = REDIR_IN;
+	else if (token->type == TOKEN_REDIR_OUT)
+		new_redir->type = REDIR_OUT;
+	else if (token->type == TOKEN_APPEND)
+		new_redir->type = REDIR_APPEND;
+	else if (token->type == TOKEN_HEREDOC)
+		new_redir->type = HEREDOC;
 	new_redir->file = ft_strdup(token->next->value);
 	if (!new_redir->file)
 	{
@@ -158,4 +165,24 @@ t_redir	*parse_redirections(t_token **tokens)
 	}
 	*tokens = token;
 	return (redir);
+}
+
+void clear_tokens(t_token **tokens)
+{
+    t_token *current;
+    t_token *next;
+
+    if (!tokens || !*tokens)
+        return;
+
+    current = *tokens;
+    while (current)
+    {
+        next = current->next;
+        if (current->value)
+            free(current->value);
+        free(current);
+        current = next;
+    }
+    *tokens = NULL;
 }

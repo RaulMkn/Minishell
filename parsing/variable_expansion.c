@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   variable_expansion.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:56:53 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/20 17:56:56 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/20 18:24:34 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 char *expand_variables(char *str, char **env, int last_status)
 {
-    char *result;
     int i;
     
     if (!str || !env)
@@ -67,3 +66,4 @@ void set_error(t_lexer_state *state, t_error_type error, char *msg)
     state->error = error;
     state->error_msg = ft_strdup(msg);
 }
+

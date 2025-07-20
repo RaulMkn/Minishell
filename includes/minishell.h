@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:02:29 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/20 18:01:36 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/20 19:01:03 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,20 @@ typedef struct s_redir
 	struct s_redir	*next;
 }					t_redir;
 
+typedef enum e_quote_state
+{
+	QUOTE_NONE,
+	QUOTE_SINGLE,
+	QUOTE_DOUBLE
+}					t_quote_state;
+
+typedef enum e_error_type
+{
+	ERROR_NONE,
+	ERROR_SYNTAX,
+	ERROR_MEMORY,
+	ERROR_INVALID_OPERATOR
+}					t_error_type;
 typedef struct s_lexer_state
 {
 	t_quote_state	quote_state;
@@ -74,21 +88,6 @@ typedef struct s_shell
 	t_lexer_state	lexer_state;
 }					t_shell;
 
-typedef enum e_quote_state
-{
-	QUOTE_NONE,
-	QUOTE_SINGLE,
-	QUOTE_DOUBLE
-}					t_quote_state;
-
-typedef enum e_error_type
-{
-	ERROR_NONE,
-	ERROR_SYNTAX,
-	ERROR_MEMORY,
-	ERROR_INVALID_OPERATOR
-}					t_error_type;
-
 typedef struct s_cmd
 {
 	char			**argv;
@@ -97,6 +96,12 @@ typedef struct s_cmd
 	int				append;
 	struct s_cmd	*next;
 }					t_cmd;
+
+// Añadir antes de las definiciones de funciones:
+char    **parse_argv(t_token **tokens);
+t_redir *parse_redirections(t_token **tokens);
+t_command *parse_tokens(t_token *tokens);
+
 // Function prototypes
 char				*expand_variables(char *str, char **env, int last_status);
 void				clear_command(t_command *cmd);

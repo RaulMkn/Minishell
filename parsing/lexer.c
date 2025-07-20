@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 17:42:17 by ruortiz-          #+#    #+#             */
-/*   Updated: 2025/07/20 17:56:24 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/20 19:11:37 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -257,6 +257,11 @@ t_token	*tokenize_input(char *in, t_shell *shell)
 	tokens = NULL;
 	i = 0;
 	buffer = NULL;
+	if (!in || !shell)
+		return (NULL);
+	shell->lexer_state.quote_state = QUOTE_NONE;
+	shell->lexer_state.error = ERROR_NONE;
+	shell->lexer_state.error_msg = NULL;
 	while (in[i])
 	{
 		if ((in[i] >= 9 && in[i] <= 13) || in[i] == 32)
