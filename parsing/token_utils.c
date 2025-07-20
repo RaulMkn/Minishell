@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   token_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 19:56:25 by ruortiz-          #+#    #+#             */
-/*   Updated: 2025/07/13 20:10:49 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/07/20 17:56:32 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../includes/minishell.h"
 
 static t_command	*init_new_command(t_token **curr_token)
 {
@@ -30,8 +30,8 @@ static t_command	*init_new_command(t_token **curr_token)
 	return (new_cmd);
 }
 
-static void	add_command_to_list(t_command **cmd_list, t_command **current, 
-							t_command *new_cmd)
+static void	add_command_to_list(t_command **cmd_list, t_command **current,
+		t_command *new_cmd)
 {
 	if (!*cmd_list)
 		*cmd_list = new_cmd;
@@ -145,9 +145,9 @@ t_redir	*parse_redirections(t_token **tokens)
 
 	redir = NULL;
 	token = *tokens;
-	while (token && (token->type == TOKEN_REDIR_IN || 
-			token->type == TOKEN_REDIR_OUT || token->type == TOKEN_APPEND || 
-			token->type == TOKEN_HEREDOC))
+	while (token && (token->type == TOKEN_REDIR_IN
+			|| token->type == TOKEN_REDIR_OUT || token->type == TOKEN_APPEND
+			|| token->type == TOKEN_HEREDOC))
 	{
 		if (!token->next || token->next->type != TOKEN_WORD)
 			return (NULL);
@@ -159,5 +159,3 @@ t_redir	*parse_redirections(t_token **tokens)
 	*tokens = token;
 	return (redir);
 }
-
-

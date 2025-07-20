@@ -6,7 +6,7 @@
 #    By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/11 19:22:34 by rmakende          #+#    #+#              #
-#    Updated: 2025/07/16 19:13:32 by rmakende         ###   ########.fr        #
+#    Updated: 2025/07/20 18:00:37 by rmakende         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,6 +17,7 @@ RL_FLAGS = -lreadline
 LIBFT_DIR = ./Libft
 LIBFT = $(LIBFT_DIR)/libft.a
 EXEC_DIR = ./execution
+PARSING_DIR = ./parsing
 
 SRCS =	$(EXEC_DIR)/main.c \
 		$(EXEC_DIR)/builtins/builtins.c \
@@ -24,7 +25,13 @@ SRCS =	$(EXEC_DIR)/main.c \
 		$(EXEC_DIR)/builtins/builtins_utils.c \
 		$(EXEC_DIR)/path_utils.c \
 		$(EXEC_DIR)/env/env.c \
-		$(EXEC_DIR)/env/env_utils.c
+		$(EXEC_DIR)/env/env_utils.c \
+		$(PARSING_DIR)/lexer.c \
+		$(PARSING_DIR)/quote_handler.c \
+		$(PARSING_DIR)/token_utils.c \
+		$(PARSING_DIR)/token_validation.c \
+		$(PARSING_DIR)/variable_expansion.c
+
 OBJ_DIR = obj
 OBJS = $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.c=.o)))
 
