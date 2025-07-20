@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex_utils_bonus.c                                :+:      :+:    :+:   */
+/*   path_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:45:08 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/11 20:11:48 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/20 13:00:53 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,26 +105,4 @@ char	**clean_arguments(char **args, char **path, char **envp)
 		exit(127);
 	}
 	return (args);
-}
-
-void	execute_command(char *cmd, char **envp)
-{
-	char	**args;
-	char	*path;
-
-	if (!cmd || !*cmd)
-		exit(126);
-	args = ft_split(cmd, ' ');
-	if (!args || !args[0])
-	{
-		free_split(args);
-		perror(NULL);
-		exit(EXIT_FAILURE);
-	}
-	args = clean_arguments(args, &path, envp);
-	execve(path, args, envp);
-	perror(path);
-	free_split(args);
-	free(path);
-	exit(errno);
 }

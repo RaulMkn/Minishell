@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:02:29 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/16 19:14:17 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/20 12:41:24 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ typedef struct s_cmd
 	char			*infile;
 	char			*outfile;
 	int				append;
-	int				pipe[2];
 	struct s_cmd	*next;
 }					t_cmd;
+
 #endif
