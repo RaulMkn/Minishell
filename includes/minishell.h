@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:02:29 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/20 19:01:03 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/07/20 21:12:21 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "../Libft/libft.h"
 # include <errno.h>
+# include <fcntl.h>  // Para open()
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <stdio.h>
@@ -128,5 +129,7 @@ int					is_valid_identifier(const char *str);
 int					get_env_index(char **env, const char *key);
 void				remove_env_entry(char ***env, int idx);
 int					is_n_option(const char *str);
+t_token *create_token(t_token_type type, char *value);
+void    token_add_back(t_token **tokens, t_token *new);
 
 #endif

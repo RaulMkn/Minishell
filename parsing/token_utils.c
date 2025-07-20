@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/23 19:56:25 by ruortiz-          #+#    #+#             */
-/*   Updated: 2025/07/20 18:56:07 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/07/20 21:02:45 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,26 +42,40 @@ static void	add_command_to_list(t_command **cmd_list, t_command **current,
 
 t_command	*parse_tokens(t_token *tokens)
 {
-	t_command	*cmd_list;
-	t_command	*current_cmd;
-	t_token		*curr_token;
-	t_command	*new_cmd;
+    t_command	*cmd_list;
+    t_command	*current_cmd;
+    t_token		*curr_token;
+    t_command	*new_cmd;
 
-	cmd_list = NULL;
-	current_cmd = NULL;
-	curr_token = tokens;
-	while (curr_token)
-	{
-		if (curr_token->type == TOKEN_WORD)
-		{
-			new_cmd = init_new_command(&curr_token);
-			if (!new_cmd)
-				return (NULL);
-			add_command_to_list(&cmd_list, &current_cmd, new_cmd);
-		}
-		curr_token = curr_token->next;
-	}
-	return (cmd_list);
+    cmd_list = NULL;
+    current_cmd = NULL;
+    curr_token = tokens;
+
+    while (curr_token)
+    {
+        if (curr_token->type == TOKEN_WORD)
+        {
+            new_cmd = init_new_command(&curr_token);
+            if (!new_cmd)
+            {
+                clear_command(cmd_list);
+                return (NULL);
+            }
+            add_command_to_list(&cmd_list, &current_cmd, new_cmd);
+        }
+        else if (curr_token->type == TOKEN_PIPE)
+        {
+            if (!current_cmd || !curr_token->next)
+            {
+                clear_command(cmd_list);
+                return (NULL);
+            }
+            curr_token = curr_token->next;
+        }
+        else
+            curr_token = curr_token->next;
+    }
+    return (cmd_list);
 }
 
 static char	**extend_argv(char **argv, int size)
@@ -82,11 +96,43 @@ static char	**extend_argv(char **argv, int size)
 	return (new_argv);
 }
 
+static char *clean_quotes(char *str)
+{
+    char *clean;
+    int i;
+    int j;
+    char quote;
+
+    if (!str)
+        return (NULL);
+    clean = malloc(strlen(str) + 1);
+    if (!clean)
+        return (NULL);
+    i = 0;
+    j = 0;
+    while (str[i])
+    {
+        if (str[i] == '\'' || str[i] == '\"')
+        {
+            quote = str[i++];
+            while (str[i] && str[i] != quote)
+                clean[j++] = str[i++];
+            if (str[i])
+                i++;
+        }
+        else
+            clean[j++] = str[i++];
+    }
+    clean[j] = '\0';
+    return (clean);
+}
+
 char	**parse_argv(t_token **tokens)
 {
 	int		argc;
 	char	**argv;
 	t_token	*token;
+	char	*cleaned;
 
 	argc = 0;
 	token = *tokens;
@@ -98,9 +144,13 @@ char	**parse_argv(t_token **tokens)
 		argv = extend_argv(argv, argc + 2);
 		if (!argv)
 			return (NULL);
-		argv[argc] = ft_strdup(token->value);
-		if (!argv[argc])
+		cleaned = clean_quotes(token->value);
+		if (!cleaned)
+		{
+			free_split(argv);
 			return (NULL);
+		}
+		argv[argc] = cleaned;
 		argc++;
 		token = token->next;
 	}

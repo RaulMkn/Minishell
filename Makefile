@@ -6,7 +6,7 @@
 #    By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/11 19:22:34 by rmakende          #+#    #+#              #
-#    Updated: 2025/07/20 19:12:20 by ruortiz-         ###   ########.fr        #
+#    Updated: 2025/07/20 19:21:57 by ruortiz-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ LIBFT = $(LIBFT_DIR)/libft.a
 EXEC_DIR = ./execution
 PARSING_DIR = ./parsing
 
-EXEC_SRCS = $(EXEC_DIR)/main.c \
+EXEC_SRCS =	$(EXEC_DIR)/main.c \
 		$(EXEC_DIR)/builtins/builtins.c \
 		$(EXEC_DIR)/builtins/builtins2.c \
 		$(EXEC_DIR)/builtins/builtins_utils.c \
@@ -28,6 +28,7 @@ EXEC_SRCS = $(EXEC_DIR)/main.c \
 		$(EXEC_DIR)/env/env_utils.c
 
 PARSING_SRCS = $(PARSING_DIR)/parsing.c \
+		$(PARSING_DIR)/lexer.c \
 		$(PARSING_DIR)/quote_handler.c \
 		$(PARSING_DIR)/token_utils.c \
 		$(PARSING_DIR)/token_validation.c \

@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 17:42:17 by ruortiz-          #+#    #+#             */
-/*   Updated: 2025/07/20 19:11:37 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/07/20 21:04:22 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,7 +152,7 @@ void	handle_buffer_token(t_token **tokens, char **buffer)
 	*buffer = NULL;
 }
 
-static int	is_valid_operator_syntax(char *input, size_t i)
+int      is_valid_operator_syntax(char *input, size_t i)
 {
 	if (!input[i + 1] || !input[i + 2])
 		return (1);
@@ -200,7 +200,7 @@ static int	check_adjacent_operators(char *input, size_t i)
 	return (1);
 }
 
-static void	handle_quotes(char c, t_lexer_state *state)
+static void     handle_quotes(char c, t_lexer_state *state)
 {
 	if (c == '\'' && state->quote_state == QUOTE_NONE)
 		state->quote_state = QUOTE_SINGLE;
@@ -233,19 +233,26 @@ void	handle_operator(t_token **tokens, char **buffer, size_t *i, char *input)
 	}
 }
 
-static void	handle_word(t_token **tokens, char *word, t_shell *shell)
+static void handle_word(t_token **tokens, char *word, t_shell *shell)
 {
-	char	*expanded;
+    char *expanded;
 
-	expanded = expand_variables(word, shell->envp, shell->last_status);
-	if (!expanded)
-	{
-		set_error(&shell->lexer_state, ERROR_MEMORY,
-			"Error de memoria al expandir variables");
-		return ;
-	}
-	token_add_back(tokens, create_token(TOKEN_WORD, expanded));
-	free(expanded);
+    if (shell->lexer_state.quote_state == QUOTE_SINGLE)
+    {
+        // En comillas simples, no expandir variables
+        token_add_back(tokens, create_token(TOKEN_WORD, word));
+        return;
+    }
+
+    expanded = expand_variables(word, shell->envp, shell->last_status);
+    if (!expanded)
+    {
+        set_error(&shell->lexer_state, ERROR_MEMORY,
+            "Error de memoria al expandir variables");
+        return;
+    }
+    token_add_back(tokens, create_token(TOKEN_WORD, expanded));
+    free(expanded);
 }
 
 t_token	*tokenize_input(char *in, t_shell *shell)
@@ -264,14 +271,31 @@ t_token	*tokenize_input(char *in, t_shell *shell)
 	shell->lexer_state.error_msg = NULL;
 	while (in[i])
 	{
-		if ((in[i] >= 9 && in[i] <= 13) || in[i] == 32)
-			handle_whitespace(&tokens, &buffer, &i, in);
-		else if (in[i] == '|' || in[i] == '<' || in[i] == '>')
+		if (in[i] == '\'' || in[i] == '\"')
+		{
+			handle_quotes(in[i], &shell->lexer_state);
+			buffer = ft_strjoin_char(buffer, in[i++]);
+		}
+		else if ((in[i] >= 9 && in[i] <= 13) || in[i] == 32)
+		{
+			if (shell->lexer_state.quote_state == QUOTE_NONE)
+				handle_whitespace(&tokens, &buffer, &i, in);
+			else
+				buffer = ft_strjoin_char(buffer, in[i++]);
+		}
+		else if ((in[i] == '|' || in[i] == '<' || in[i] == '>') && 
+                 shell->lexer_state.quote_state == QUOTE_NONE)
 			handle_operator(&tokens, &buffer, &i, in);
 		else if (!(buffer = ft_strjoin_char(buffer, in[i])))
 			return (NULL);
 		else
 			i++;
+	}
+	if (shell->lexer_state.quote_state != QUOTE_NONE)
+	{
+		set_error(&shell->lexer_state, ERROR_SYNTAX, "Comillas sin cerrar");
+		free(buffer);
+		return (NULL);
 	}
 	if (buffer)
 	{
@@ -281,3 +305,4 @@ t_token	*tokenize_input(char *in, t_shell *shell)
 	}
 	return (tokens);
 }
+
