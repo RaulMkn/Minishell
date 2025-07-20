@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/13 17:42:17 by ruortiz-          #+#    #+#             */
-/*   Updated: 2025/07/13 20:39:48 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/07/20 17:26:39 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ char *ft_strjoin_char(char *str, char c)
 
     len = 0;
     if (str)
-        len = strlen(str);
+        len = ft_strlen(str);
     if (!(new = malloc(sizeof(char) * (len + 2))))
     {
         free(str);
