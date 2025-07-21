@@ -1,50 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   redirect.c                                         :+:      :+:    :+:   */
+/*   pipeline_main.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/20 19:25:13 by rmakende          #+#    #+#             */
+/*   Created: 2025/07/22 00:50:00 by rmakende          #+#    #+#             */
 /*   Updated: 2025/07/22 01:51:18 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../../includes/minishell.h"
 
-void	redirect_input(const char *infile)
+static void	wait_for_all_children(void)
 {
-	int	fd;
-
-	fd = open(infile, O_RDONLY);
-	if (fd < 0)
-	{
-		perror(infile);
-		exit(EXIT_FAILURE);
-	}
-	dup2(fd, STDIN_FILENO);
-	close(fd);
+	while (wait(NULL) > 0)
+		;
 }
 
-void	redirect_output(const char *outfile, int append)
+int	exec_pipeline(t_cmd *cmd, char ***mini_env)
 {
-	int	fd;
+	int		pipe_fd[2];
+	int		in_fd;
+	pid_t	pid;
+	t_cmd	*curr;
 
-	if (append)
-		fd = open(outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
-	else
-		fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fd < 0)
+	in_fd = STDIN_FILENO;
+	curr = cmd;
+	while (curr)
 	{
-		perror(outfile);
-		exit(EXIT_FAILURE);
+		if (curr->next && pipe(pipe_fd) < 0)
+			perror_exit("pipe");
+		pid = fork();
+		if (pid == 0)
+			handle_child_process(curr, mini_env, in_fd, pipe_fd);
+		in_fd = handle_pipe_parent_process(in_fd, pipe_fd, curr);
+		curr = curr->next;
 	}
-	dup2(fd, STDOUT_FILENO);
-	close(fd);
-}
-
-void	perror_exit(char *msg)
-{
-	perror(msg);
-	exit(EXIT_FAILURE);
+	wait_for_all_children();
+	return (0);
 }

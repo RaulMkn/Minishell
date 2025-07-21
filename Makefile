@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+         #
+#    By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/11 19:22:34 by rmakende          #+#    #+#              #
-#    Updated: 2025/07/20 19:21:57 by ruortiz-         ###   ########.fr        #
+#    Updated: 2025/07/22 01:51:18 by rmakende         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,20 +19,39 @@ LIBFT = $(LIBFT_DIR)/libft.a
 EXEC_DIR = ./execution
 PARSING_DIR = ./parsing
 
-EXEC_SRCS =	$(EXEC_DIR)/main.c \
+EXEC_SRCS =	$(EXEC_DIR)/src/main.c \
+		$(EXEC_DIR)/src/shell_init.c \
+		$(EXEC_DIR)/src/shell_loop.c \
+		$(EXEC_DIR)/src/pipeline_executor.c \
+		$(EXEC_DIR)/src/pipe_handler.c \
+		$(EXEC_DIR)/src/redirection_handler.c \
+		$(EXEC_DIR)/pipes/exec_dispatch.c \
+		$(EXEC_DIR)/pipes/exec_single.c \
+		$(EXEC_DIR)/pipes/child_process.c \
+		$(EXEC_DIR)/pipes/parent_process.c \
+		$(EXEC_DIR)/pipes/pipeline_main.c \
 		$(EXEC_DIR)/builtins/builtins.c \
 		$(EXEC_DIR)/builtins/builtins2.c \
 		$(EXEC_DIR)/builtins/builtins_utils.c \
 		$(EXEC_DIR)/path_utils.c \
+		$(EXEC_DIR)/redirect.c \
 		$(EXEC_DIR)/env/env.c \
 		$(EXEC_DIR)/env/env_utils.c
 
 PARSING_SRCS = $(PARSING_DIR)/parsing.c \
-		$(PARSING_DIR)/lexer.c \
 		$(PARSING_DIR)/quote_handler.c \
-		$(PARSING_DIR)/token_utils.c \
 		$(PARSING_DIR)/token_validation.c \
-		$(PARSING_DIR)/variable_expansion.c
+		$(PARSING_DIR)/variable_expansion.c \
+		$(PARSING_DIR)/tokens/token_parser.c \
+		$(PARSING_DIR)/tokens/argv_parser.c \
+		$(PARSING_DIR)/tokens/redirection_parser.c \
+		$(PARSING_DIR)/tokens/token_cleanup.c \
+		$(PARSING_DIR)/lexer/token_utils.c \
+		$(PARSING_DIR)/lexer/string_utils.c \
+		$(PARSING_DIR)/lexer/buffer_handler.c \
+		$(PARSING_DIR)/lexer/operator_handler.c \
+		$(PARSING_DIR)/lexer/quote_handler.c \
+		$(PARSING_DIR)/lexer/tokenizer_main.c
 
 SRCS = $(EXEC_SRCS) $(PARSING_SRCS)
 
@@ -66,9 +85,9 @@ $(OBJ_DIR)/%.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 # Añadir regla para asegurar que los directorios existen
-$(OBJS): | $(OBJ_DIR)/execution $(OBJ_DIR)/parsing $(OBJ_DIR)/execution/builtins $(OBJ_DIR)/execution/env
+$(OBJS): | $(OBJ_DIR)/execution $(OBJ_DIR)/parsing $(OBJ_DIR)/execution/src $(OBJ_DIR)/execution/pipes $(OBJ_DIR)/execution/builtins $(OBJ_DIR)/execution/env $(OBJ_DIR)/parsing/tokens $(OBJ_DIR)/parsing/lexer
 
-$(OBJ_DIR)/execution $(OBJ_DIR)/parsing $(OBJ_DIR)/execution/builtins $(OBJ_DIR)/execution/env:
+$(OBJ_DIR)/execution $(OBJ_DIR)/parsing $(OBJ_DIR)/execution/src $(OBJ_DIR)/execution/pipes $(OBJ_DIR)/execution/builtins $(OBJ_DIR)/execution/env $(OBJ_DIR)/parsing/tokens $(OBJ_DIR)/parsing/lexer:
 	@mkdir -p $@
 
 clean:

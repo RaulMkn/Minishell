@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 19:23:08 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/20 19:32:06 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/22 01:51:18 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,56 @@ int	exec_single(t_cmd *cmd, char ***mini_env)
 	return (WEXITSTATUS(status));
 }
 
+static void	setup_child_input(t_cmd *curr, int in_fd)
+{
+	if (curr->infile)
+		redirect_input(curr->infile);
+	else if (in_fd != STDIN_FILENO)
+	{
+		dup2(in_fd, STDIN_FILENO);
+		close(in_fd);
+	}
+}
+
+static void	setup_child_output(t_cmd *curr, int *pipe_fd)
+{
+	if (curr->next)
+	{
+		dup2(pipe_fd[1], STDOUT_FILENO);
+		close(pipe_fd[0]);
+		close(pipe_fd[1]);
+	}
+}
+
+static void	execute_child_command(t_cmd *curr, char ***mini_env)
+{
+	if (is_builtin(curr->argv[0]))
+		exit(run_builtin(curr, mini_env, NULL));
+	execve(find_command_path(curr->argv[0], *mini_env), curr->argv,
+		*mini_env);
+	perror("execve");
+	exit(1);
+}
+
+static void	handle_child_process(t_cmd *curr, char ***mini_env, int in_fd, int *pipe_fd)
+{
+	setup_child_input(curr, in_fd);
+	setup_child_output(curr, pipe_fd);
+	execute_child_command(curr, mini_env);
+}
+
+static int	handle_parent_process(int in_fd, int *pipe_fd, t_cmd *curr)
+{
+	if (in_fd != STDIN_FILENO)
+		close(in_fd);
+	if (curr->next)
+	{
+		close(pipe_fd[1]);
+		return (pipe_fd[0]);
+	}
+	return (STDIN_FILENO);
+}
+
 int	exec_pipeline(t_cmd *cmd, char ***mini_env)
 {
 	int		pipe_fd[2];
@@ -60,34 +110,8 @@ int	exec_pipeline(t_cmd *cmd, char ***mini_env)
 			perror_exit("pipe");
 		pid = fork();
 		if (pid == 0)
-		{
-			if (curr->infile)
-				redirect_input(curr->infile);
-			else if (in_fd != STDIN_FILENO)
-			{
-				dup2(in_fd, STDIN_FILENO);
-				close(in_fd);
-			}
-			if (curr->next)
-			{
-				dup2(pipe_fd[1], STDOUT_FILENO);
-				close(pipe_fd[0]);
-				close(pipe_fd[1]);
-			}
-			if (is_builtin(curr->argv[0]))
-				exit(run_builtin(curr, mini_env, NULL));
-			execve(find_command_path(curr->argv[0], *mini_env), curr->argv,
-				*mini_env);
-			perror("execve");
-			exit(1);
-		}
-		if (in_fd != STDIN_FILENO)
-			close(in_fd);
-		if (curr->next)
-		{
-			close(pipe_fd[1]);
-			in_fd = pipe_fd[0];
-		}
+			handle_child_process(curr, mini_env, in_fd, pipe_fd);
+		in_fd = handle_parent_process(in_fd, pipe_fd, curr);
 		curr = curr->next;
 	}
 	while (wait(NULL) > 0)
