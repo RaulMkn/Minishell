@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:02:29 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/20 21:12:21 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/07/21 23:51:43 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include "../Libft/libft.h"
 # include <errno.h>
-# include <fcntl.h>  // Para open()
+# include <fcntl.h> // Para open()
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <stdio.h>
@@ -99,9 +99,9 @@ typedef struct s_cmd
 }					t_cmd;
 
 // Añadir antes de las definiciones de funciones:
-char    **parse_argv(t_token **tokens);
-t_redir *parse_redirections(t_token **tokens);
-t_command *parse_tokens(t_token *tokens);
+char				**parse_argv(t_token **tokens);
+t_redir				*parse_redirections(t_token **tokens);
+t_command			*parse_tokens(t_token *tokens);
 
 // Function prototypes
 char				*expand_variables(char *str, char **env, int last_status);
@@ -127,9 +127,10 @@ int					replace_env(char **env, const char *key,
 int					append_env(char ***env, const char *new_var);
 int					is_valid_identifier(const char *str);
 int					get_env_index(char **env, const char *key);
+char				*get_env_value(char **env, const char *key);
 void				remove_env_entry(char ***env, int idx);
 int					is_n_option(const char *str);
-t_token *create_token(t_token_type type, char *value);
-void    token_add_back(t_token **tokens, t_token *new);
+t_token				*create_token(t_token_type type, char *value);
+void				token_add_back(t_token **tokens, t_token *new);
 
 #endif

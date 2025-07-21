@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:03:17 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/16 19:06:23 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/21 23:45:03 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,29 @@
 
 int	builtin_cd(char **argv, char ***env)
 {
-	(void)env;
-	if (chdir(argv[1]) == -1)
+	char	*home;
+
+	if (argv[1] == NULL || (argv[1][0] == '\0'))
 	{
-		perror("error:");
-		return (1);
+		home = get_env_value(*env, "HOME");
+		if (!home)
+		{
+			write(2, "minishell: cd: HOME not set\n", 29);
+			return (1);
+		}
+		if (chdir(home) == -1)
+		{
+			perror("minishell: cd");
+			return (1);
+		}
+	}
+	else
+	{
+		if (chdir(argv[1]) == -1)
+		{
+			perror("minishell: cd");
+			return (1);
+		}
 	}
 	return (0);
 }
