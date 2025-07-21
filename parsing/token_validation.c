@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:56:40 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/20 17:56:45 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/22 00:22:05 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,21 @@ static int	check_pipe_syntax(t_token *token)
 {
 	if (!token->next || token->next->type == TOKEN_PIPE)
 		return (0);
-	if (token == NULL || token->type == TOKEN_PIPE)
+	return (1);
+}
+
+static int	check_sequence_start_end(t_token *tokens)
+{
+	t_token	*curr;
+
+	if (!tokens)
+		return (0);
+	if (tokens->type == TOKEN_PIPE)
+		return (0);
+	curr = tokens;
+	while (curr->next)
+		curr = curr->next;
+	if (curr->type == TOKEN_PIPE)
 		return (0);
 	return (1);
 }
@@ -32,6 +46,8 @@ int	is_valid_operator_sequence(t_token *tokens)
 {
 	t_token	*curr;
 
+	if (!check_sequence_start_end(tokens))
+		return (0);
 	curr = tokens;
 	while (curr)
 	{

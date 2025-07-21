@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 16:02:29 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/21 23:51:43 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/22 00:01:23 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,5 +132,6 @@ void				remove_env_entry(char ***env, int idx);
 int					is_n_option(const char *str);
 t_token				*create_token(t_token_type type, char *value);
 void				token_add_back(t_token **tokens, t_token *new);
+int					exec_dispatch(t_cmd *cmd, char ***mini_env);
 
 #endif
