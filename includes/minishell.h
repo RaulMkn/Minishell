@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 01:34:05 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/22 01:51:41 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/22 21:05:08 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,14 @@ typedef struct s_shell
 	int					last_status;
 	t_lexer_state		lexer_state;
 }						t_shell;
+
+typedef struct s_tokenizer_ctx
+{
+	t_token				**tokens;
+	char				**buffer;
+	size_t				*i;
+	char				*input;
+}						t_tokenizer_ctx;
 
 typedef struct s_cmd
 {

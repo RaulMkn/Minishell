@@ -6,20 +6,19 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:40:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/22 01:41:43 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/22 20:49:13 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-int	is_valid_operator_syntax(char *input, size_t i)
+int	is_valid_operator_syntax(char *s, size_t i)
 {
-	if (!input[i + 1] || !input[i + 2])
+	if (!s[i + 1] || !s[i + 2])
 		return (1);
-	if ((input[i] == '>' || input[i] == '<') && (input[i + 1] == '>' || input[i
-			+ 1] == '<'))
+	if ((s[i] == '>' || s[i] == '<') && (s[i + 1] == '>' || s[i + 1] == '<'))
 		return (0);
-	if (input[i] == '|' && input[i + 1] == '|')
+	if (s[i] == '|' && s[i + 1] == '|')
 		return (0);
 	return (1);
 }
@@ -44,17 +43,16 @@ static int	is_valid_operator_char(char c)
 	return (c == '|' || c == '<' || c == '>');
 }
 
-static int	check_adjacent_operators(char *input, size_t i)
+static int	check_adjacent_operators(char *s, size_t i)
 {
-	if (!input[i])
+	if (!s[i])
 		return (1);
-	if (is_valid_operator_char(input[i]))
+	if (is_valid_operator_char(s[i]))
 	{
-		if (input[i] == '|' && input[i + 1] == '|')
+		if (s[i] == '|' && s[i + 1] == '|')
 			return (0);
-		if ((input[i] == '<' && (input[i + 1] == '>' || input[i + 1] == '|'))
-			|| (input[i] == '>' && (input[i + 1] == '<' || input[i
-					+ 1] == '|')))
+		if ((s[i] == '<' && (s[i + 1] == '>' || s[i + 1] == '|'))
+			|| (s[i] == '>' && (s[i + 1] == '<' || s[i + 1] == '|')))
 			return (0);
 	}
 	return (1);
