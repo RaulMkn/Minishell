@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:45:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/22 01:41:31 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/24 23:56:53 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,18 +31,62 @@ static void	setup_output_pipe(int *pipe_fd)
 void	execute_child_process(t_command *cmd, char ***mini_env, int prev_fd,
 		int *pipe_fd)
 {
+	char	*command_path;
+		struct stat path_stat;
+
 	setup_input_pipe(prev_fd);
 	if (cmd->next)
 		setup_output_pipe(pipe_fd);
 	if (cmd->redir)
 		handle_redirections(cmd->redir);
+	// Verificar que el comando sea válido
+	if (!cmd->argv || !cmd->argv[0] || !cmd->argv[0][0])
+	{
+		ft_putstr_fd("minishell: : command not found\n", 2);
+		exit(127);
+	}
 	if (is_builtin(cmd->argv[0]))
 		exit(run_builtin(cmd->argv, mini_env, NULL));
 	else
 	{
-		execve(find_command_path(cmd->argv[0], *mini_env), cmd->argv,
-			*mini_env);
+		command_path = find_command_path(cmd->argv[0], *mini_env);
+		if (!command_path)
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(cmd->argv[0], 2);
+			ft_putstr_fd(": command not found\n", 2);
+			exit(127);
+		}
+		// Verificar si el archivo existe
+		if (access(command_path, F_OK) != 0)
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(cmd->argv[0], 2);
+			ft_putstr_fd(": No such file or directory\n", 2);
+			free(command_path);
+			exit(127);
+		}
+		// Verificar si es un directorio
+		if (stat(command_path, &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(cmd->argv[0], 2);
+			ft_putstr_fd(": Is a directory\n", 2);
+			free(command_path);
+			exit(126);
+		}
+		// Verificar permisos de ejecución
+		if (access(command_path, X_OK) != 0)
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(cmd->argv[0], 2);
+			ft_putstr_fd(": Permission denied\n", 2);
+			free(command_path);
+			exit(126);
+		}
+		execve(command_path, cmd->argv, *mini_env);
 		perror("execve");
+		free(command_path);
 		exit(1);
 	}
 }

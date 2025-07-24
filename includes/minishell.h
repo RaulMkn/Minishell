@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 01:34:05 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/22 21:05:08 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/24 23:41:20 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
+# include <sys/stat.h>
 # include <sys/wait.h>
 # include <unistd.h>
 
@@ -120,6 +121,7 @@ void					clear_tokens(t_token **tokens);
 char					*find_command_path(char *cmd, char **envp);
 int						run_builtin(char **argv, char ***env, char *line);
 int						is_builtin(const char *cmd);
+int						is_parent_builtin(const char *cmd);
 char					**clone_env(char **envp);
 int						builtin_echo(char **argv);
 int						builtin_cd(char **argv, char ***env);
@@ -158,7 +160,7 @@ int						exec_dispatch(t_cmd *cmd, char ***mini_env);
 void					init_shell(t_shell *shell, char **envp);
 void					cleanup_shell(t_shell *shell);
 void					shell_loop(t_shell *shell);
-void					execute_pipeline(t_command *cmd_list, char ***mini_env);
+int						execute_pipeline(t_command *cmd_list, char ***mini_env);
 void					handle_redirections(t_redir *redirs);
 void					execute_child_process(t_command *cmd, char ***mini_env,
 							int prev_fd, int *pipe_fd);

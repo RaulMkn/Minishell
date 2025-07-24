@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 18:51:40 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/16 19:00:45 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/24 23:56:46 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,12 @@ int	is_builtin(const char *cmd)
 	return (!ft_strcmp(cmd, "echo") || !ft_strcmp(cmd, "cd") || !ft_strcmp(cmd,
 			"pwd") || !ft_strcmp(cmd, "export") || !ft_strcmp(cmd, "unset")
 		|| !ft_strcmp(cmd, "env") || !ft_strcmp(cmd, "exit"));
+}
+
+int	is_parent_builtin(const char *cmd)
+{
+	return (!ft_strcmp(cmd, "cd") || !ft_strcmp(cmd, "exit") || !ft_strcmp(cmd,
+			"export") || !ft_strcmp(cmd, "unset"));
 }
 
 int	run_builtin(char **argv, char ***env, char *line)

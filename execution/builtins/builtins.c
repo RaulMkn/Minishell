@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:03:17 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/21 23:45:03 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/24 23:52:20 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,13 +77,18 @@ static int	export_process_args(char **argv, char ***env)
 	int		i;
 	char	*eq;
 	char	*key;
+	int		error_occurred;
 
 	i = 1;
+	error_occurred = 0;
 	while (argv[i])
 	{
 		eq = ft_strchr(argv[i], '=');
 		if (!is_valid_identifier(argv[i]))
+		{
 			write(2, "minishell: export: not a valid identifier\n", 42);
+			error_occurred = 1;
+		}
 		else if (eq)
 		{
 			key = ft_substr(argv[i], 0, eq - argv[i]);
@@ -95,7 +100,7 @@ static int	export_process_args(char **argv, char ***env)
 		}
 		i++;
 	}
-	return (0);
+	return (error_occurred);
 }
 
 int	builtin_export(char **argv, char ***env)

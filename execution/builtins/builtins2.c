@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 18:54:31 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/16 19:06:14 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/24 23:52:18 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,10 @@ int	builtin_unset(char **argv, char ***env)
 {
 	int	i;
 	int	idx;
+	int	error_occurred;
 
 	i = 1;
+	error_occurred = 0;
 	while (argv[i])
 	{
 		if (!is_valid_identifier(argv[i]))
@@ -49,6 +51,7 @@ int	builtin_unset(char **argv, char ***env)
 			write(2, "minishell: unset: `", 20);
 			write(2, argv[i], ft_strlen(argv[i]));
 			write(2, "`: not a valid identifier\n", 27);
+			error_occurred = 1;
 		}
 		else
 		{
@@ -58,7 +61,7 @@ int	builtin_unset(char **argv, char ***env)
 		}
 		i++;
 	}
-	return (0);
+	return (error_occurred);
 }
 
 int	builtin_env(char **env)

@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:45:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/22 01:41:02 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/24 23:57:13 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ static void	process_valid_tokens(t_shell *shell, t_token *tokens)
 			if (shell->cmd_list)
 				clear_command(shell->cmd_list);
 			shell->cmd_list = new_cmds;
-			execute_pipeline(shell->cmd_list, &shell->envp);
-			shell->last_status = 0;
+			shell->last_status = execute_pipeline(shell->cmd_list,
+					&shell->envp);
 		}
 		else
 			ft_putendl_fd("Error en el parseo de comandos", 2);
