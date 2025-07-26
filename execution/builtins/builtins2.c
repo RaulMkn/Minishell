@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 18:54:31 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/24 23:52:18 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/26 02:31:34 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,11 +78,54 @@ int	builtin_env(char **env)
 	return (0);
 }
 
-int	builtin_exit(char ***mini_env, char *line, char **argv)
+static int	is_valid_number(char *str)
+{
+	int	i;
+
+	i = 0;
+	if (str[i] == '+' || str[i] == '-')
+		i++;
+	if (!str[i])
+		return (0);
+	while (str[i])
+	{
+		if (!ft_isdigit(str[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+void	free_and_exit(char **argv, char **mini_env, char *line, int exit_status) __attribute__((noreturn));
+
+void	free_and_exit(char **argv, char **mini_env, char *line, int exit_status)
 {
 	free_split(argv);
-	free_split(*mini_env);
+	free_split(mini_env);
 	free(line);
 	rl_clear_history();
-	exit(0);
+	exit(exit_status);
+}
+int	builtin_exit(char ***mini_env, char *line, char **argv)
+{
+	long	exit_code;
+	int		final_code;
+
+	ft_printf("exit\n");
+	if (!argv[1])
+		free_and_exit(argv, *mini_env, line, 0);
+	if (!is_valid_number(argv[1]))
+	{
+		write(2, "minishell: exit: ", 17);
+		write(2, argv[1], ft_strlen(argv[1]));
+		write(2, ": numeric argument required\n", 28);
+		free_and_exit(argv, *mini_env, line, 2);
+	}
+	if (argv[2])
+		return (write(2, "minishell: exit: too many arguments\n", 37), 1);
+	exit_code = ft_atol(argv[1]);
+	final_code = (int)(exit_code % 256);
+	if (final_code < 0)
+		final_code += 256;
+	free_and_exit(argv, *mini_env, line, final_code);
 }

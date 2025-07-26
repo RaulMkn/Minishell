@@ -6,14 +6,14 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 01:34:05 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/24 23:41:20 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/26 01:12:18 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include "../Libft/libft.h"
+# include "../libft/libft.h"
 # include <errno.h>
 # include <fcntl.h> // Para open()
 # include <readline/history.h>

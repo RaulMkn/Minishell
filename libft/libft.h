@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 17:13:18 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/11 14:29:49 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/26 02:30:19 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ char				*ft_strcpy(char *dest, const char *src);
 size_t				ft_strspn(const char *s, const char *accept);
 char				*ft_cleaner(char *str, char *removers);
 int					ft_strcmp(const char *s1, const char *s2);
+long				ft_atol(char *str);
 
 typedef struct s_list
 {
