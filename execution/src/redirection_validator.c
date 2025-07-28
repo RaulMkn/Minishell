@@ -44,12 +44,9 @@ static int	validate_output_file(const char *filename)
 
 	if (!filename)
 		return (0);
-	
-	// Intentar abrir en modo escritura para verificar permisos
 	fd = open(filename, O_WRONLY | O_CREAT, 0644);
 	if (fd == -1)
 	{
-		// Si falla, verificar si es problema de directorio
 		dir_path = ft_strdup(filename);
 		if (!dir_path)
 			return (0);
@@ -92,8 +89,6 @@ static t_redir	*get_effective_redirections(t_redir *redirs)
 	last_in = NULL;
 	last_out = NULL;
 	last_append = NULL;
-	
-	// Encontrar las últimas redirecciones de cada tipo
 	current = redirs;
 	while (current)
 	{
@@ -103,11 +98,8 @@ static t_redir	*get_effective_redirections(t_redir *redirs)
 			last_out = current;
 		else if (current->type == REDIR_APPEND)
 			last_append = current;
-		
 		current = current->next;
 	}
-	
-	// Crear lista con solo las redirecciones efectivas
 	if (last_in)
 	{
 		t_redir *new_redir = malloc(sizeof(t_redir));

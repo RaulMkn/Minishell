@@ -42,7 +42,6 @@ void	execute_child_process(t_command *cmd, char ***mini_env, int prev_fd,
 		if (!handle_redirections(cmd->redir))
 			exit(1);
 	}
-	// Verificar que el comando sea válido
 	if (!cmd->argv || !cmd->argv[0] || !cmd->argv[0][0])
 	{
 		ft_putstr_fd("minishell: : command not found\n", 2);
@@ -60,7 +59,6 @@ void	execute_child_process(t_command *cmd, char ***mini_env, int prev_fd,
 			ft_putstr_fd(": command not found\n", 2);
 			exit(127);
 		}
-		// Verificar si el archivo existe
 		if (access(command_path, F_OK) != 0)
 		{
 			ft_putstr_fd("minishell: ", 2);
@@ -69,7 +67,6 @@ void	execute_child_process(t_command *cmd, char ***mini_env, int prev_fd,
 			free(command_path);
 			exit(127);
 		}
-		// Verificar si es un directorio
 		if (stat(command_path, &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
 		{
 			ft_putstr_fd("minishell: ", 2);
@@ -78,7 +75,6 @@ void	execute_child_process(t_command *cmd, char ***mini_env, int prev_fd,
 			free(command_path);
 			exit(126);
 		}
-		// Verificar permisos de ejecución
 		if (access(command_path, X_OK) != 0)
 		{
 			ft_putstr_fd("minishell: ", 2);

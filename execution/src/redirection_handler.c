@@ -113,14 +113,11 @@ static int	process_intermediate_redirections(t_redir *redirs, t_redir *last_inpu
 	
 	while (current)
 	{
-		// Saltar las redirecciones que serán aplicadas finalmente
 		if (current == last_input || current == last_output)
 		{
 			current = current->next;
 			continue;
 		}
-		
-		// Verificar redirecciones intermedias para detectar errores
 		if (current->type == REDIR_IN)
 		{
 			fd = open(current->file, O_RDONLY);
@@ -162,18 +159,12 @@ int	handle_redirections(t_redir *redirs)
 	if (!redirs)
 		return (1);
 	
-	// Encontrar las redirecciones efectivas
 	last_input = find_last_input_redirection(redirs);
 	last_output = find_last_output_redirection(redirs);
-	
-	// Procesar redirecciones intermedias para verificar errores
 	if (!process_intermediate_redirections(redirs, last_input, last_output))
 		return (0);
-	
-	// Aplicar solo las redirecciones efectivas
 	if (!apply_single_redirection(last_input))
 		return (0);
-	
 	if (!apply_single_redirection(last_output))
 		return (0);
 	

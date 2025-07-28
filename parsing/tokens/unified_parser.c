@@ -26,7 +26,6 @@ static t_redir	*create_redirection_from_tokens(t_token *redir_token,
 	new_redir = malloc(sizeof(t_redir));
 	if (!new_redir)
 		return (NULL);
-	// Determinar tipo de redirección
 	if (redir_token->type == TOKEN_REDIR_IN)
 		new_redir->type = REDIR_IN;
 	else if (redir_token->type == TOKEN_REDIR_OUT)
@@ -35,7 +34,6 @@ static t_redir	*create_redirection_from_tokens(t_token *redir_token,
 		new_redir->type = REDIR_APPEND;
 	else if (redir_token->type == TOKEN_HEREDOC)
 		new_redir->type = HEREDOC;
-	// Limpiar comillas del nombre del archivo
 	new_redir->file = remove_quotes(file_token->value);
 	if (!new_redir->file)
 	{
@@ -87,10 +85,6 @@ static char	**extend_argv_array(char **argv, int new_size)
 	return (new_argv);
 }
 
-/*
-** Parsea argumentos y redirecciones de forma unificada
-** Maneja casos como: echo hi < file bye > output
-*/
 t_command	*parse_command_unified(t_token **tokens)
 {
 	t_command	*cmd;
@@ -116,11 +110,9 @@ t_command	*parse_command_unified(t_token **tokens)
 	{
 		if (current->type == TOKEN_WORD)
 		{
-			// Agregar palabra a argv
 			argv = extend_argv_array(argv, argc + 2);
 			if (!argv)
 			{
-				// Cleanup and return error
 				free(cmd);
 				return (NULL);
 			}
@@ -136,10 +128,8 @@ t_command	*parse_command_unified(t_token **tokens)
 		}
 		else if (is_redirection_token(current->type))
 		{
-			// Procesar redirección
 			if (!current->next || current->next->type != TOKEN_WORD)
 			{
-				// Error: redirección sin archivo
 				free_split(argv);
 				free(cmd);
 				return (NULL);
@@ -153,11 +143,9 @@ t_command	*parse_command_unified(t_token **tokens)
 			}
 			add_redir_to_list(&cmd->redir, new_redir);
 			current = current->next->next;
-				// Saltar token de redirección y archivo
 		}
 		else
 		{
-			// Token no reconocido en este contexto
 			current = current->next;
 		}
 	}

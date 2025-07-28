@@ -82,15 +82,6 @@ void	handle_whitespace(t_token **tokens, char **buffer, size_t *i,
 	*i = handle_whitespaces(input, *i);
 }
 
-/*
-** Elimina comillas simples y dobles de una cadena
-** Maneja casos como:
-** - "hello" -> hello
-** - 'world' -> world  
-** - "file name" -> file name
-** - "file""name" -> filename
-** - 'don'\''t' -> don't (aunque este caso es complejo)
-*/
 char	*remove_quotes(const char *str)
 {
 	char	*result;
@@ -101,12 +92,10 @@ char	*remove_quotes(const char *str)
 
 	if (!str)
 		return (NULL);
-	
 	len = ft_strlen(str);
 	result = malloc(len + 1);
 	if (!result)
 		return (NULL);
-	
 	i = 0;
 	j = 0;
 	
@@ -115,25 +104,19 @@ char	*remove_quotes(const char *str)
 		if (str[i] == '"' || str[i] == '\'')
 		{
 			quote_char = str[i];
-			i++; // Saltar comilla de apertura
-			
-			// Copiar contenido hasta la comilla de cierre
+			i++;
 			while (i < len && str[i] != quote_char)
 			{
 				result[j++] = str[i++];
 			}
-			
-			// Saltar comilla de cierre si existe
 			if (i < len && str[i] == quote_char)
 				i++;
 		}
 		else
 		{
-			// Carácter normal, copiarlo directamente
 			result[j++] = str[i++];
 		}
 	}
-	
 	result[j] = '\0';
 	return (result);
 }
