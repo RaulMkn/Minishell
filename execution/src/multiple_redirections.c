@@ -1,11 +1,11 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   redirection_handler.c                              :+:      :+:    :+:   */
+/*   multiple_redirections.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/22 00:45:00 by rmakende          #+#    #+#             */
+/*   Created: 2025/07/28 21:40:00 by rmakende          #+#    #+#             */
 /*   Updated: 2025/07/28 21:25:28 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
@@ -14,6 +14,7 @@
 
 /*
 ** Encuentra la última redirección de entrada
+** En bash: cat <file1 <file2 <file3 → solo file3 se usa como entrada
 */
 static t_redir	*find_last_input_redirection(t_redir *redirs)
 {
@@ -35,6 +36,7 @@ static t_redir	*find_last_input_redirection(t_redir *redirs)
 
 /*
 ** Encuentra la última redirección de salida (normal o append)
+** En bash: echo hi >file1 >file2 >>file3 → solo file3 se usa (append mode)
 */
 static t_redir	*find_last_output_redirection(t_redir *redirs)
 {
@@ -103,6 +105,10 @@ static int	apply_single_redirection(t_redir *redir)
 
 /*
 ** Procesa redirecciones intermedias para verificar errores
+** En bash: ls >file1 >invalid_permission >file3
+** - Se intenta abrir file1 (éxito)
+** - Se intenta abrir invalid_permission (falla → error)
+** - No se llega a procesar file3
 */
 static int	process_intermediate_redirections(t_redir *redirs, t_redir *last_input, t_redir *last_output)
 {
@@ -154,7 +160,12 @@ static int	process_intermediate_redirections(t_redir *redirs, t_redir *last_inpu
 	return (1);
 }
 
-int	handle_redirections(t_redir *redirs)
+/*
+** Maneja redirecciones múltiples siguiendo el comportamiento de bash
+** 1. Procesa todas las redirecciones para detectar errores
+** 2. Solo aplica las últimas de cada tipo (entrada y salida)
+*/
+int	handle_multiple_redirections(t_redir *redirs)
 {
 	t_redir	*last_input;
 	t_redir	*last_output;

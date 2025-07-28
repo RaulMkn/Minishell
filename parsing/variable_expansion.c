@@ -6,32 +6,91 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:56:53 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/22 00:32:18 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/26 02:42:16 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-char	*expand_variables(char *str, char **env, int last_status)
+static char	*get_var_value(char *var_name, char **env, int last_status)
 {
 	int	i;
+	int	var_len;
+
+	if (!var_name)
+		return (NULL);
+	if (ft_strcmp(var_name, "?") == 0)
+		return (ft_itoa(last_status));
+	var_len = ft_strlen(var_name);
+	i = 0;
+	while (env[i])
+	{
+		if (ft_strncmp(env[i], var_name, var_len) == 0 && 
+			env[i][var_len] == '=')
+			return (ft_strdup(env[i] + var_len + 1));
+		i++;
+	}
+	return (ft_strdup(""));
+}
+
+static char	*build_result(char *current, char *to_add)
+{
+	char	*result;
+
+	if (!current)
+		return (ft_strdup(to_add));
+	if (!to_add)
+		return (current);
+	result = ft_strjoin(current, to_add);
+	free(current);
+	return (result);
+}
+
+char	*expand_variables(char *str, char **env, int last_status)
+{
+	char	*result;
+	char	*var_name;
+	char	*var_value;
+	char	*temp;
+	int		i;
+	int		start;
+	int		len;
 
 	if (!str || !env)
 		return (NULL);
-	if (str[0] == '$' && str[1] == '?')
-		return (ft_itoa(last_status));
-	if (str[0] == '$')
+	len = ft_strlen(str);
+	// Si el string está completamente rodeado de comillas simples, no expandir
+	if (len >= 2 && str[0] == '\'' && str[len - 1] == '\'')
+		return (ft_strdup(str));
+	result = NULL;
+	i = 0;
+	while (str[i])
 	{
-		i = 0;
-		while (env[i])
+		if (str[i] == '$' && str[i + 1] && str[i + 1] != ' ' && str[i + 1] != '"')
 		{
-			if (ft_strncmp(str + 1, env[i], ft_strchr(env[i], '=')
-					- env[i]) == 0)
-				return (ft_strdup(ft_strchr(env[i], '=') + 1));
+			start = ++i;
+			if (str[i] == '?')
+				i++;
+			else
+			{
+				while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
+					i++;
+			}
+			var_name = ft_substr(str, start, i - start);
+			var_value = get_var_value(var_name, env, last_status);
+			result = build_result(result, var_value);
+			free(var_name);
+			free(var_value);
+		}
+		else
+		{
+			temp = ft_substr(str, i, 1);
+			result = build_result(result, temp);
+			free(temp);
 			i++;
 		}
 	}
-	return (ft_strdup(str));
+	return (result ? result : ft_strdup(""));
 }
 
 void	clear_command(t_command *cmd)

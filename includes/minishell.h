@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 01:34:05 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/26 01:12:18 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/28 22:28:44 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,6 +142,7 @@ t_token					*create_token(t_token_type type, char *value);
 void					token_add_back(t_token **tokens, t_token *new);
 t_token					*create_operator_token(char c, int len);
 char					*ft_strjoin_char(char *str, char c);
+char					*remove_quotes(const char *str);
 void					handle_buffer_token(t_token **tokens, char **buffer);
 void					handle_whitespace(t_token **tokens, char **buffer,
 							size_t *i, char *input);
@@ -161,7 +162,7 @@ void					init_shell(t_shell *shell, char **envp);
 void					cleanup_shell(t_shell *shell);
 void					shell_loop(t_shell *shell);
 int						execute_pipeline(t_command *cmd_list, char ***mini_env);
-void					handle_redirections(t_redir *redirs);
+int						handle_redirections(t_redir *redirs);
 void					execute_child_process(t_command *cmd, char ***mini_env,
 							int prev_fd, int *pipe_fd);
 void					handle_parent_process(int *prev_fd, int *pipe_fd,

@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:40:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/22 00:48:24 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/28 22:28:44 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,4 +80,60 @@ void	handle_whitespace(t_token **tokens, char **buffer, size_t *i,
 {
 	create_word_token(tokens, buffer);
 	*i = handle_whitespaces(input, *i);
+}
+
+/*
+** Elimina comillas simples y dobles de una cadena
+** Maneja casos como:
+** - "hello" -> hello
+** - 'world' -> world  
+** - "file name" -> file name
+** - "file""name" -> filename
+** - 'don'\''t' -> don't (aunque este caso es complejo)
+*/
+char	*remove_quotes(const char *str)
+{
+	char	*result;
+	int		i;
+	int		j;
+	int		len;
+	char	quote_char;
+
+	if (!str)
+		return (NULL);
+	
+	len = ft_strlen(str);
+	result = malloc(len + 1);
+	if (!result)
+		return (NULL);
+	
+	i = 0;
+	j = 0;
+	
+	while (i < len)
+	{
+		if (str[i] == '"' || str[i] == '\'')
+		{
+			quote_char = str[i];
+			i++; // Saltar comilla de apertura
+			
+			// Copiar contenido hasta la comilla de cierre
+			while (i < len && str[i] != quote_char)
+			{
+				result[j++] = str[i++];
+			}
+			
+			// Saltar comilla de cierre si existe
+			if (i < len && str[i] == quote_char)
+				i++;
+		}
+		else
+		{
+			// Carácter normal, copiarlo directamente
+			result[j++] = str[i++];
+		}
+	}
+	
+	result[j] = '\0';
+	return (result);
 }

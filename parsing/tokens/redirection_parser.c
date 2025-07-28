@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:35:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/22 00:48:24 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/28 22:28:44 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static t_redir	*create_redirection(t_token *token)
 	if (!new_redir)
 		return (NULL);
 	new_redir->type = get_redir_type(token->type);
-	new_redir->file = ft_strdup(token->next->value);
+	new_redir->file = remove_quotes(token->next->value);
 	if (!new_redir->file)
 	{
 		free(new_redir);

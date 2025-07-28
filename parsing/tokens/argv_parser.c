@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:35:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/22 00:48:24 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/28 22:28:44 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,48 +30,11 @@ static char	**extend_argv(char **argv, int size)
 	return (new_argv);
 }
 
-static char	*clean_quotes_loop(char *str, char *clean)
-{
-	int		i;
-	int		j;
-	char	quote;
-
-	i = 0;
-	j = 0;
-	while (str[i])
-	{
-		if (str[i] == '\'' || str[i] == '\"')
-		{
-			quote = str[i++];
-			while (str[i] && str[i] != quote)
-				clean[j++] = str[i++];
-			if (str[i])
-				i++;
-		}
-		else
-			clean[j++] = str[i++];
-	}
-	clean[j] = '\0';
-	return (clean);
-}
-
-static char	*clean_quotes(char *str)
-{
-	char	*clean;
-
-	if (!str)
-		return (NULL);
-	clean = malloc(strlen(str) + 1);
-	if (!clean)
-		return (NULL);
-	return (clean_quotes_loop(str, clean));
-}
-
 static int	add_cleaned_arg(char **argv, t_token *token, int argc)
 {
 	char	*cleaned;
 
-	cleaned = clean_quotes(token->value);
+	cleaned = remove_quotes(token->value);
 	if (!cleaned)
 		return (0);
 	argv[argc] = cleaned;

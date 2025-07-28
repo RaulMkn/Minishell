@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:45:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/24 23:57:01 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/07/28 21:25:28 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,16 @@ static int	execute_parent_builtin(t_command *cmd, char ***mini_env)
 	original_stdin = dup(STDIN_FILENO);
 	original_stdout = dup(STDOUT_FILENO);
 	if (cmd->redir)
-		handle_redirections(cmd->redir);
+	{
+		if (!handle_redirections(cmd->redir))
+		{
+			dup2(original_stdin, STDIN_FILENO);
+			dup2(original_stdout, STDOUT_FILENO);
+			close(original_stdin);
+			close(original_stdout);
+			return (1);
+		}
+	}
 	result = run_builtin(cmd->argv, mini_env, NULL);
 	dup2(original_stdin, STDIN_FILENO);
 	dup2(original_stdout, STDOUT_FILENO);
@@ -73,7 +82,10 @@ static int	execute_single_command(t_command *cmd, char ***mini_env)
 		if (pid == 0)
 		{
 			if (cmd->redir)
-				handle_redirections(cmd->redir);
+			{
+				if (!handle_redirections(cmd->redir))
+					exit(1);
+			}
 			exit(run_builtin(cmd->argv, mini_env, NULL));
 		}
 		waitpid(pid, &status, 0);
@@ -119,7 +131,10 @@ static int	execute_single_command(t_command *cmd, char ***mini_env)
 	if (pid == 0)
 	{
 		if (cmd->redir)
-			handle_redirections(cmd->redir);
+		{
+			if (!handle_redirections(cmd->redir))
+				exit(1);
+		}
 		execve(command_path, cmd->argv, *mini_env);
 		perror("execve");
 		exit(1);
