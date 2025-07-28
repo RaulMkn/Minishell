@@ -6,7 +6,7 @@
 #    By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/11 19:22:34 by rmakende          #+#    #+#              #
-#    Updated: 2025/07/26 01:05:37 by rmakende         ###   ########.fr        #
+#    Updated: 2025/07/28 22:32:09 by rmakende         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -97,6 +97,7 @@ clean:
 fclean: clean
 	@echo "$(RED)Full clean...$(NC)"
 	@rm -f $(NAME)
+	@rm -f *.txt
 	@make -C $(LIBFT_DIR) fclean
 	@echo "$(GREEN)Full clean done!$(NC)"
 
