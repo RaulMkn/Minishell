@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:03:17 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/26 02:46:23 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/06 18:10:27 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,11 @@ int	builtin_cd(char **argv, char ***env)
 {
 	char	*home;
 
+	if (argv[1] && argv[2])
+	{
+		write(2, "minishell: cd: too many arguments\n", 34);
+		return (1);
+	}
 	if (argv[1] == NULL || (argv[1][0] == '\0'))
 	{
 		home = get_env_value(*env, "HOME");

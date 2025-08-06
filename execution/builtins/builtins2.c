@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 18:54:31 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/26 02:31:34 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/04 19:17:27 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,8 @@ static int	is_valid_number(char *str)
 	return (1);
 }
 
-void	free_and_exit(char **argv, char **mini_env, char *line, int exit_status) __attribute__((noreturn));
+void		free_and_exit(char **argv, char **mini_env, char *line,
+				int exit_status) __attribute__((noreturn));
 
 void	free_and_exit(char **argv, char **mini_env, char *line, int exit_status)
 {
@@ -111,6 +112,11 @@ int	builtin_exit(char ***mini_env, char *line, char **argv)
 	long	exit_code;
 	int		final_code;
 
+	if (argv[1] && argv[2])
+	{
+		write(2, "minishell: exit: too many arguments\n", 36);
+		return (1);
+	}
 	ft_printf("exit\n");
 	if (!argv[1])
 		free_and_exit(argv, *mini_env, line, 0);
