@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 01:34:05 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/28 22:37:21 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/06 18:40:51 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,7 @@ typedef struct s_cmd
 
 char					**parse_argv(t_token **tokens);
 t_redir					*parse_redirections(t_token **tokens);
+int						handle_multiple_redirections(t_redir *redirs);
 t_command				*parse_tokens(t_token *tokens);
 char					*expand_variables(char *str, char **env,
 							int last_status);

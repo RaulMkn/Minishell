@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:45:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/28 21:25:28 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/06 18:35:37 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static int	execute_parent_builtin(t_command *cmd, char ***mini_env)
 	original_stdout = dup(STDOUT_FILENO);
 	if (cmd->redir)
 	{
-		if (!handle_redirections(cmd->redir))
+        if (!handle_multiple_redirections(cmd->redir))
 		{
 			dup2(original_stdin, STDIN_FILENO);
 			dup2(original_stdout, STDOUT_FILENO);
@@ -83,7 +83,7 @@ static int	execute_single_command(t_command *cmd, char ***mini_env)
 		{
 			if (cmd->redir)
 			{
-				if (!handle_redirections(cmd->redir))
+                if (!handle_multiple_redirections(cmd->redir))
 					exit(1);
 			}
 			exit(run_builtin(cmd->argv, mini_env, NULL));
@@ -132,7 +132,7 @@ static int	execute_single_command(t_command *cmd, char ***mini_env)
 	{
 		if (cmd->redir)
 		{
-			if (!handle_redirections(cmd->redir))
+            if (!handle_multiple_redirections(cmd->redir))
 				exit(1);
 		}
 		execve(command_path, cmd->argv, *mini_env);

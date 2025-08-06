@@ -6,7 +6,7 @@
 #    By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/11 19:22:34 by rmakende          #+#    #+#              #
-#    Updated: 2025/07/28 22:32:09 by rmakende         ###   ########.fr        #
+#    Updated: 2025/08/06 18:42:18 by rmakende         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,8 +23,8 @@ EXEC_SRCS =	$(EXEC_DIR)/src/main.c \
 		$(EXEC_DIR)/src/shell_init.c \
 		$(EXEC_DIR)/src/shell_loop.c \
 		$(EXEC_DIR)/src/pipeline_executor.c \
+        $(EXEC_DIR)/src/multiple_redirections.c \
 		$(EXEC_DIR)/src/pipe_handler.c \
-		$(EXEC_DIR)/src/redirection_handler.c \
 		$(EXEC_DIR)/pipes/exec_dispatch.c \
 		$(EXEC_DIR)/pipes/exec_single.c \
 		$(EXEC_DIR)/pipes/child_process.c \

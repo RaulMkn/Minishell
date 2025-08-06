@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 21:40:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/28 21:25:28 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/06 18:48:38 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,54 +110,62 @@ static int	apply_single_redirection(t_redir *redir)
 ** - Se intenta abrir invalid_permission (falla → error)
 ** - No se llega a procesar file3
 */
-static int	process_intermediate_redirections(t_redir *redirs, t_redir *last_input, t_redir *last_output)
+static int process_intermediate_redirections(t_redir *redirs, t_redir *last_input, t_redir *last_output)
 {
-	t_redir	*current;
-	int		fd;
+    t_redir *current;
+    int     fd;
 
-	current = redirs;
-	
-	while (current)
-	{
-		// Saltar las redirecciones que serán aplicadas finalmente
-		if (current == last_input || current == last_output)
-		{
-			current = current->next;
-			continue;
-		}
-		
-		// Verificar redirecciones intermedias para detectar errores
-		if (current->type == REDIR_IN)
-		{
-			fd = open(current->file, O_RDONLY);
-			if (fd == -1)
-			{
-				perror(current->file);
-				return (0);
-			}
-			close(fd);
-		}
-		else if (current->type == REDIR_OUT || current->type == REDIR_APPEND)
-		{
-			int flags = O_WRONLY | O_CREAT;
-			if (current->type == REDIR_OUT)
-				flags |= O_TRUNC;
-			else
-				flags |= O_APPEND;
-				
-			fd = open(current->file, flags, 0644);
-			if (fd == -1)
-			{
-				perror(current->file);
-				return (0);
-			}
-			close(fd);
-		}
-		
-		current = current->next;
-	}
-	
-	return (1);
+    current = redirs;
+    
+    while (current)
+    {
+        // Saltar las redirecciones que serán aplicadas finalmente
+        if (current == last_input || current == last_output)
+        {
+            current = current->next;
+            continue;
+        }
+        
+        // 🔧 SOLO VALIDAR, NO APLICAR
+        if (current->type == REDIR_IN)
+        {
+            // Solo verificar si existe y es legible
+            if (access(current->file, R_OK) != 0)
+            {
+                perror(current->file);
+                return (0);
+            }
+        }
+        else if (current->type == REDIR_OUT || current->type == REDIR_APPEND)
+        {
+            // Solo verificar si se puede escribir (sin truncar)
+            if (access(current->file, F_OK) == 0)
+            {
+                // Archivo existe, verificar permisos de escritura
+                if (access(current->file, W_OK) != 0)
+                {
+                    perror(current->file);
+                    return (0);
+                }
+            }
+            else
+            {
+                // Archivo no existe, verificar si se puede crear
+                fd = open(current->file, O_WRONLY | O_CREAT | O_EXCL, 0644);
+                if (fd == -1)
+                {
+                    perror(current->file);
+                    return (0);
+                }
+                close(fd);
+                unlink(current->file); // Eliminar archivo temporal
+            }
+        }
+        
+        current = current->next;
+    }
+    
+    return (1);
 }
 
 /*

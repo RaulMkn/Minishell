@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:45:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/28 21:25:28 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/06 18:36:46 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	execute_child_process(t_command *cmd, char ***mini_env, int prev_fd,
 		setup_output_pipe(pipe_fd);
 	if (cmd->redir)
 	{
-		if (!handle_redirections(cmd->redir))
+		if (!handle_multiple_redirections(cmd->redir))
 			exit(1);
 	}
 	if (!cmd->argv || !cmd->argv[0] || !cmd->argv[0][0])
