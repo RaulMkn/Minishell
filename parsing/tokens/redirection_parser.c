@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection_parser.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:35:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/07 19:02:52 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/11 00:27:41 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,28 +43,28 @@ static t_redir	*create_redirection(t_token *token)
 	return (new_redir);
 }
 
-static t_redir *add_new_redirection(t_redir *redir, t_token *token)
+static t_redir	*add_new_redirection(t_redir *redir, t_token *token)
 {
-    t_redir *new_redir;
-    t_redir *current;
+	t_redir	*new_redir;
+	t_redir	*current;
 
-    new_redir = create_redirection(token);
-    if (!new_redir)
-        return (NULL);
-    if (!redir)
-    {
-        new_redir->next = NULL;
-        return (new_redir);
-    }
-    else
-    {
-        current = redir;
-        while (current->next)
-            current = current->next;
-        current->next = new_redir;
-        new_redir->next = NULL;
-        return (redir);
-    }
+	new_redir = create_redirection(token);
+	if (!new_redir)
+		return (NULL);
+	if (!redir)
+	{
+		new_redir->next = NULL;
+		return (new_redir);
+	}
+	else
+	{
+		current = redir;
+		while (current->next)
+			current = current->next;
+		current->next = new_redir;
+		new_redir->next = NULL;
+		return (redir);
+	}
 }
 
 static int	is_redirection_token(t_token_type type)

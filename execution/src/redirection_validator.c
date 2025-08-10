@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 21:35:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/28 21:25:28 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/11 00:28:01 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,12 @@ static int	validate_input_file(const char *filename)
 
 	if (!filename)
 		return (0);
-	
 	fd = open(filename, O_RDONLY);
 	if (fd == -1)
 	{
 		perror(filename);
 		return (0);
 	}
-	
 	close(fd);
 	return (1);
 }
@@ -50,7 +48,6 @@ static int	validate_output_file(const char *filename)
 		dir_path = ft_strdup(filename);
 		if (!dir_path)
 			return (0);
-		
 		last_slash = ft_strrchr(dir_path, '/');
 		if (last_slash)
 		{
@@ -63,12 +60,10 @@ static int	validate_output_file(const char *filename)
 				return (0);
 			}
 		}
-		
 		free(dir_path);
 		perror(filename);
 		return (0);
 	}
-	
 	close(fd);
 	return (1);
 }
@@ -84,6 +79,9 @@ static t_redir	*get_effective_redirections(t_redir *redirs)
 	t_redir	*last_in;
 	t_redir	*last_out;
 	t_redir	*last_append;
+	t_redir	*new_redir;
+	t_redir	*new_redir;
+	t_redir	*new_redir;
 
 	effective_list = NULL;
 	last_in = NULL;
@@ -102,7 +100,7 @@ static t_redir	*get_effective_redirections(t_redir *redirs)
 	}
 	if (last_in)
 	{
-		t_redir *new_redir = malloc(sizeof(t_redir));
+		new_redir = malloc(sizeof(t_redir));
 		if (new_redir)
 		{
 			*new_redir = *last_in;
@@ -110,11 +108,10 @@ static t_redir	*get_effective_redirections(t_redir *redirs)
 			effective_list = new_redir;
 		}
 	}
-	
-	// Solo una redirección de salida puede estar activa (out o append, no ambas)
+
 	if (last_append)
 	{
-		t_redir *new_redir = malloc(sizeof(t_redir));
+		new_redir = malloc(sizeof(t_redir));
 		if (new_redir)
 		{
 			*new_redir = *last_append;
@@ -124,7 +121,7 @@ static t_redir	*get_effective_redirections(t_redir *redirs)
 	}
 	else if (last_out)
 	{
-		t_redir *new_redir = malloc(sizeof(t_redir));
+		new_redir = malloc(sizeof(t_redir));
 		if (new_redir)
 		{
 			*new_redir = *last_out;
@@ -132,7 +129,6 @@ static t_redir	*get_effective_redirections(t_redir *redirs)
 			effective_list = new_redir;
 		}
 	}
-	
 	return (effective_list);
 }
 
@@ -145,18 +141,16 @@ int	validate_redirections(t_redir *redirs)
 	t_redir	*current;
 	t_redir	*effective_redirs;
 	int		valid;
+	t_redir	*temp;
 
 	if (!redirs)
 		return (1);
-	
 	// Obtener solo las redirecciones que realmente se aplicarán
 	effective_redirs = get_effective_redirections(redirs);
 	if (!effective_redirs)
 		return (1);
-	
 	valid = 1;
 	current = effective_redirs;
-	
 	while (current && valid)
 	{
 		if (current->type == REDIR_IN)
@@ -169,18 +163,15 @@ int	validate_redirections(t_redir *redirs)
 			if (!validate_output_file(current->file))
 				valid = 0;
 		}
-		
 		current = current->next;
 	}
-	
 	// Limpiar lista temporal
 	while (effective_redirs)
 	{
-		t_redir *temp = effective_redirs;
+		temp = effective_redirs;
 		effective_redirs = effective_redirs->next;
 		free(temp);
 	}
-	
 	return (valid);
 }
 
@@ -198,6 +189,5 @@ int	validate_pipeline_redirections(t_command *cmd_list)
 			return (0);
 		current = current->next;
 	}
-	
 	return (1);
 }

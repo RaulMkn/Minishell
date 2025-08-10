@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:40:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/28 22:28:44 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/11 00:31:44 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,6 @@ char	*remove_quotes(const char *str)
 		return (NULL);
 	i = 0;
 	j = 0;
-	
 	while (i < len)
 	{
 		if (str[i] == '"' || str[i] == '\'')

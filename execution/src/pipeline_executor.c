@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:45:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/06 19:48:45 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/11 00:28:22 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,92 +61,87 @@ static void	wait_for_children(void)
 }
 static int	execute_single_command(t_command *cmd, char ***mini_env)
 {
-    char		*command_path;
-    pid_t		pid;
-    int			status;
-    struct stat	path_stat;
+	char		*command_path;
+	pid_t		pid;
+	int			status;
+	struct stat	path_stat;
 
-    if (!cmd || !cmd->argv || !cmd->argv[0] || !cmd->argv[0][0])
-    {
-        ft_putstr_fd("minishell: : command not found\n", 2);
-        return (127);
-    }
-    if (is_parent_builtin(cmd->argv[0]))
-        return (execute_parent_builtin(cmd, mini_env));
-    if (is_builtin(cmd->argv[0]))
-    {
-        // Builtins que pueden ejecutarse en procesos hijos
-        pid = fork();
-        if (pid == 0)
-        {
-            if (cmd->redir)
-            {
-                if (!handle_multiple_redirections(cmd->redir))
-                    exit(1);
-            }
-            exit(run_builtin(cmd->argv, mini_env, NULL));
-        }
-        waitpid(pid, &status, 0);
-        return (WEXITSTATUS(status));
-    }
-
-    // 🔧 PRIMERO obtener command_path
-    command_path = find_command_path(cmd->argv[0], *mini_env);
-    if (!command_path)
-    {
-        ft_putstr_fd("minishell: ", 2);
-        ft_putstr_fd(cmd->argv[0], 2);
-        ft_putstr_fd(": command not found\n", 2);
-        return (127);
-    }
-
-    // 🔧 DESPUÉS hacer las verificaciones con command_path válido
-    // Para Test 133: $PWD y Test 141: ./test_files
-    if (stat(command_path, &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
-    {
-        ft_putstr_fd("minishell: ", 2);
-        ft_putstr_fd(cmd->argv[0], 2);
-        ft_putstr_fd(": Is a directory\n", 2);
-        free(command_path);
-        return (126);
-    }
-    
-    // Para Test 137: ./missing.out y Test 142: /test_files
-    if (access(command_path, F_OK) != 0)
-    {
-        ft_putstr_fd("minishell: ", 2);
-        ft_putstr_fd(cmd->argv[0], 2);
-        ft_putstr_fd(": No such file or directory\n", 2);
-        free(command_path);
-        return (127);
-    }
-    
-    // Para Test 136: ./test_files/invalid_permission
-    if (access(command_path, X_OK) != 0)
-    {
-        ft_putstr_fd("minishell: ", 2);
-        ft_putstr_fd(cmd->argv[0], 2);
-        ft_putstr_fd(": Permission denied\n", 2);
-        free(command_path);
-        return (126);
-    }
-
-    // 🔧 FINALMENTE ejecutar el comando
-    pid = fork();
-    if (pid == 0)
-    {
-        if (cmd->redir)
-        {
-            if (!handle_multiple_redirections(cmd->redir))
-                exit(1);
-        }
-        execve(command_path, cmd->argv, *mini_env);
-        perror("execve");
-        exit(1);
-    }
-    free(command_path);
-    waitpid(pid, &status, 0);
-    return (WEXITSTATUS(status));
+	if (!cmd || !cmd->argv || !cmd->argv[0] || !cmd->argv[0][0])
+	{
+		ft_putstr_fd("minishell: : command not found\n", 2);
+		return (127);
+	}
+	if (is_parent_builtin(cmd->argv[0]))
+		return (execute_parent_builtin(cmd, mini_env));
+	if (is_builtin(cmd->argv[0]))
+	{
+		// Builtins que pueden ejecutarse en procesos hijos
+		pid = fork();
+		if (pid == 0)
+		{
+			if (cmd->redir)
+			{
+				if (!handle_multiple_redirections(cmd->redir))
+					exit(1);
+			}
+			exit(run_builtin(cmd->argv, mini_env, NULL));
+		}
+		waitpid(pid, &status, 0);
+		return (WEXITSTATUS(status));
+	}
+	// 🔧 PRIMERO obtener command_path
+	command_path = find_command_path(cmd->argv[0], *mini_env);
+	if (!command_path)
+	{
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(cmd->argv[0], 2);
+		ft_putstr_fd(": command not found\n", 2);
+		return (127);
+	}
+	// 🔧 DESPUÉS hacer las verificaciones con command_path válido
+	// Para Test 133: $PWD y Test 141: ./test_files
+	if (stat(command_path, &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
+	{
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(cmd->argv[0], 2);
+		ft_putstr_fd(": Is a directory\n", 2);
+		free(command_path);
+		return (126);
+	}
+	// Para Test 137: ./missing.out y Test 142: /test_files
+	if (access(command_path, F_OK) != 0)
+	{
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(cmd->argv[0], 2);
+		ft_putstr_fd(": No such file or directory\n", 2);
+		free(command_path);
+		return (127);
+	}
+	// Para Test 136: ./test_files/invalid_permission
+	if (access(command_path, X_OK) != 0)
+	{
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(cmd->argv[0], 2);
+		ft_putstr_fd(": Permission denied\n", 2);
+		free(command_path);
+		return (126);
+	}
+	// 🔧 FINALMENTE ejecutar el comando
+	pid = fork();
+	if (pid == 0)
+	{
+		if (cmd->redir)
+		{
+			if (!handle_multiple_redirections(cmd->redir))
+				exit(1);
+		}
+		execve(command_path, cmd->argv, *mini_env);
+		perror("execve");
+		exit(1);
+	}
+	free(command_path);
+	waitpid(pid, &status, 0);
+	return (WEXITSTATUS(status));
 }
 
 int	execute_pipeline(t_command *cmd_list, char ***mini_env)
