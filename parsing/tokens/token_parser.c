@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_parser.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:35:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/22 01:35:24 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/07 19:19:33 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,20 @@
 static t_command	*init_new_command(t_token **curr_token)
 {
 	t_command	*new_cmd;
+	t_token		*start_token;
 
 	new_cmd = malloc(sizeof(t_command));
 	if (!new_cmd)
 		return (NULL);
-	new_cmd->argv = parse_argv(curr_token);
+	start_token = *curr_token;
+	new_cmd->argv = parse_argv_with_redirections(curr_token);
 	if (!new_cmd->argv)
 	{
 		free(new_cmd);
 		return (NULL);
 	}
-	new_cmd->redir = parse_redirections(curr_token);
+	*curr_token = start_token;
+	new_cmd->redir = parse_redirections_mixed(curr_token);
 	new_cmd->next = NULL;
 	return (new_cmd);
 }
@@ -63,6 +66,18 @@ static int	handle_pipe_token(t_token **curr_token, t_command *current_cmd)
 	return (1);
 }
 
+static int	is_redirection_token(t_token_type type)
+{
+	return (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT
+		|| type == TOKEN_APPEND || type == TOKEN_HEREDOC);
+}
+
+static int	handle_redirection_token(t_token **curr_token, t_command **cmd_list,
+		t_command **current_cmd)
+{
+	return (handle_word_token(curr_token, cmd_list, current_cmd));
+}
+
 t_command	*parse_tokens(t_token *tokens)
 {
 	t_command	*cmd_list;
@@ -77,6 +92,11 @@ t_command	*parse_tokens(t_token *tokens)
 		if (curr_token->type == TOKEN_WORD)
 		{
 			if (!handle_word_token(&curr_token, &cmd_list, &current_cmd))
+				return (NULL);
+		}
+		else if (is_redirection_token(curr_token->type))
+		{
+			if (!handle_redirection_token(&curr_token, &cmd_list, &current_cmd))
 				return (NULL);
 		}
 		else if (curr_token->type == TOKEN_PIPE)

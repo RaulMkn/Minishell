@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 01:34:05 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/06 18:40:51 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/07 19:01:47 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,10 @@ typedef struct s_cmd
 
 char					**parse_argv(t_token **tokens);
 t_redir					*parse_redirections(t_token **tokens);
+char					**parse_argv_with_redirections(t_token **tokens);
+t_redir					*parse_redirections_mixed(t_token **tokens);
+t_command				*parse_command_unified(t_token **tokens);
+void					clear_redir_list(t_redir *redir);
 int						handle_multiple_redirections(t_redir *redirs);
 t_command				*parse_tokens(t_token *tokens);
 char					*expand_variables(char *str, char **env,

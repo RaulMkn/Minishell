@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unified_parser.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 21:30:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/28 22:28:44 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/07 18:56:40 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ t_command	*parse_command_unified(t_token **tokens)
 			argv = extend_argv_array(argv, argc + 2);
 			if (!argv)
 			{
+				clear_redir_list(cmd->redir);
 				free(cmd);
 				return (NULL);
 			}
@@ -120,6 +121,7 @@ t_command	*parse_command_unified(t_token **tokens)
 			if (!argv[argc])
 			{
 				free_split(argv);
+				clear_redir_list(cmd->redir);
 				free(cmd);
 				return (NULL);
 			}
@@ -131,6 +133,7 @@ t_command	*parse_command_unified(t_token **tokens)
 			if (!current->next || current->next->type != TOKEN_WORD)
 			{
 				free_split(argv);
+				clear_redir_list(cmd->redir);
 				free(cmd);
 				return (NULL);
 			}
@@ -138,6 +141,7 @@ t_command	*parse_command_unified(t_token **tokens)
 			if (!new_redir)
 			{
 				free_split(argv);
+				clear_redir_list(cmd->redir);
 				free(cmd);
 				return (NULL);
 			}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   argv_parser.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:35:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/28 22:28:44 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/07 19:17:35 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,53 @@ static int	add_cleaned_arg(char **argv, t_token *token, int argc)
 		return (0);
 	argv[argc] = cleaned;
 	return (1);
+}
+
+static int	is_redirection_token(t_token_type type)
+{
+	return (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT
+		|| type == TOKEN_APPEND || type == TOKEN_HEREDOC);
+}
+
+char	**parse_argv_with_redirections(t_token **tokens)
+{
+	int		argc;
+	char	**argv;
+	t_token	*token;
+
+	argc = 0;
+	token = *tokens;
+	argv = malloc(sizeof(char *) * 1);
+	if (!argv)
+		return (NULL);
+	while (token && token->type != TOKEN_PIPE)
+	{
+		if (token->type == TOKEN_WORD)
+		{
+			argv = extend_argv(argv, argc + 2);
+			if (!argv)
+				return (NULL);
+			if (!add_cleaned_arg(argv, token, argc))
+			{
+				free_split(argv);
+				return (NULL);
+			}
+			argc++;
+			token = token->next;
+		}
+		else if (is_redirection_token(token->type))
+		{
+			if (token->next && token->next->type == TOKEN_WORD)
+				token = token->next->next;
+			else
+				token = token->next;
+		}
+		else
+			token = token->next;
+	}
+	argv[argc] = NULL;
+	*tokens = token;
+	return (argv);
 }
 
 char	**parse_argv(t_token **tokens)

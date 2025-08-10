@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection_parser.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:35:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/06 20:15:13 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/07 19:02:52 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,4 +91,45 @@ t_redir	*parse_redirections(t_token **tokens)
 	}
 	*tokens = token;
 	return (redir);
+}
+
+t_redir	*parse_redirections_mixed(t_token **tokens)
+{
+	t_redir	*redir;
+	t_token	*token;
+
+	redir = NULL;
+	token = *tokens;
+	while (token && token->type != TOKEN_PIPE)
+	{
+		if (is_redirection_token(token->type))
+		{
+			if (!token->next || token->next->type != TOKEN_WORD)
+				return (clear_redir_list(redir), NULL);
+			redir = add_new_redirection(redir, token);
+			if (!redir)
+				return (NULL);
+			token = token->next->next;
+		}
+		else
+			token = token->next;
+	}
+	*tokens = token;
+	return (redir);
+}
+
+void	clear_redir_list(t_redir *redir)
+{
+	t_redir	*current;
+	t_redir	*next;
+
+	current = redir;
+	while (current)
+	{
+		next = current->next;
+		if (current->file)
+			free(current->file);
+		free(current);
+		current = next;
+	}
 }
