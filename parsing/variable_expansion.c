@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:56:53 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/07 19:17:35 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/11 19:48:23 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,33 @@ char	*expand_variables(char *str, char **env, int last_status)
 	// Si el string está completamente rodeado de comillas simples, no expandir
 	if (len >= 2 && str[0] == '\'' && str[len - 1] == '\'')
 		return (ft_strdup(str));
+	
+	// Si es solo una variable que se expande a vacío, devolver NULL
+	if (str[0] == '$' && str[1])
+	{
+		start = 1;
+		i = 1;
+		if (str[i] == '?')
+			i++;
+		else
+		{
+			while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
+				i++;
+		}
+		if (str[i] == '\0')  // Es solo una variable
+		{
+			var_name = ft_substr(str, start, i - start);
+			var_value = get_var_value(var_name, env, last_status);
+			free(var_name);
+			if (var_value && var_value[0] == '\0')
+			{
+				free(var_value);
+				return (NULL);  // Variable vacía = no crear token
+			}
+			return (var_value);
+		}
+	}
+	
 	result = NULL;
 	i = 0;
 	while (str[i])
@@ -123,4 +150,41 @@ void	set_error(t_lexer_state *state, t_error_type error, char *msg)
 		free(state->error_msg);
 	state->error = error;
 	state->error_msg = ft_strdup(msg);
+}
+
+void	expand_and_filter_tokens(t_token **tokens, t_shell *shell)
+{
+	t_token	*current;
+	t_token	*prev;
+	char	*expanded_value;
+
+	current = *tokens;
+	prev = NULL;
+	while (current)
+	{
+		if (current->type == TOKEN_WORD)
+		{
+			expanded_value = expand_variables(current->value, shell->envp,
+					shell->last_status);
+			if (!expanded_value)
+			{
+				if (prev)
+					prev->next = current->next;
+				else
+					*tokens = current->next;
+				t_token *next = current->next;
+				free(current->value);
+				free(current);
+				current = next;
+				continue ;
+			}
+			else
+			{
+				free(current->value);
+				current->value = expanded_value;
+			}
+		}
+		prev = current;
+		current = current->next;
+	}
 }

@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 01:34:05 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/07 19:01:47 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/11 19:48:23 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,8 @@ int						handle_multiple_redirections(t_redir *redirs);
 t_command				*parse_tokens(t_token *tokens);
 char					*expand_variables(char *str, char **env,
 							int last_status);
+void					expand_and_filter_tokens(t_token **tokens,
+							t_shell *shell);
 void					clear_command(t_command *cmd);
 void					set_error(t_lexer_state *state, t_error_type error,
 							char *msg);

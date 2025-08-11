@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline_executor.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:45:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/11 00:28:22 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/11 19:45:45 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,16 +66,28 @@ static int	execute_single_command(t_command *cmd, char ***mini_env)
 	int			status;
 	struct stat	path_stat;
 
-	if (!cmd || !cmd->argv || !cmd->argv[0] || !cmd->argv[0][0])
+	if (!cmd || !cmd->argv)
 	{
-		ft_putstr_fd("minishell: : command not found\n", 2);
-		return (127);
+		return (0);
 	}
+	// Verificar si el array está vacío o solo tiene NULL
+	if (!cmd->argv[0] || cmd->argv[0][0] == '\0')
+	{
+		return (0);
+	}
+	// Verificar si todos los argumentos son vacíos
+	int i = 0;
+	while (cmd->argv[i] && cmd->argv[i][0] == '\0')
+		i++;
+	if (!cmd->argv[i])  // Solo argumentos vacíos
+	{
+		return (0);
+	}
+	
 	if (is_parent_builtin(cmd->argv[0]))
 		return (execute_parent_builtin(cmd, mini_env));
 	if (is_builtin(cmd->argv[0]))
 	{
-		// Builtins que pueden ejecutarse en procesos hijos
 		pid = fork();
 		if (pid == 0)
 		{
@@ -89,7 +101,7 @@ static int	execute_single_command(t_command *cmd, char ***mini_env)
 		waitpid(pid, &status, 0);
 		return (WEXITSTATUS(status));
 	}
-	// 🔧 PRIMERO obtener command_path
+
 	command_path = find_command_path(cmd->argv[0], *mini_env);
 	if (!command_path)
 	{
@@ -98,8 +110,7 @@ static int	execute_single_command(t_command *cmd, char ***mini_env)
 		ft_putstr_fd(": command not found\n", 2);
 		return (127);
 	}
-	// 🔧 DESPUÉS hacer las verificaciones con command_path válido
-	// Para Test 133: $PWD y Test 141: ./test_files
+
 	if (stat(command_path, &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
 	{
 		ft_putstr_fd("minishell: ", 2);
@@ -108,7 +119,7 @@ static int	execute_single_command(t_command *cmd, char ***mini_env)
 		free(command_path);
 		return (126);
 	}
-	// Para Test 137: ./missing.out y Test 142: /test_files
+	
 	if (access(command_path, F_OK) != 0)
 	{
 		ft_putstr_fd("minishell: ", 2);
@@ -117,7 +128,7 @@ static int	execute_single_command(t_command *cmd, char ***mini_env)
 		free(command_path);
 		return (127);
 	}
-	// Para Test 136: ./test_files/invalid_permission
+	
 	if (access(command_path, X_OK) != 0)
 	{
 		ft_putstr_fd("minishell: ", 2);
@@ -126,7 +137,7 @@ static int	execute_single_command(t_command *cmd, char ***mini_env)
 		free(command_path);
 		return (126);
 	}
-	// 🔧 FINALMENTE ejecutar el comando
+
 	pid = fork();
 	if (pid == 0)
 	{

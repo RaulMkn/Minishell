@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   buffer_handler.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:40:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/22 00:48:24 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/11 19:45:45 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,16 +44,37 @@ static void	handle_word(t_token **tokens, char *word, t_shell *shell)
 {
 	char	*expanded;
 
+	if (!word || word[0] == '\0')
+		return;
 	if (shell->lexer_state.quote_state == QUOTE_SINGLE)
 	{
 		token_add_back(tokens, create_token(TOKEN_WORD, word));
 		return ;
 	}
+	
+	// Si la palabra contiene solo una variable que empieza con $
+	if (word[0] == '$' && word[1])
+	{
+		expanded = expand_variables(word, shell->envp, shell->last_status);
+		if (!expanded || expanded[0] == '\0')
+		{
+			// Variable vacía, NO crear token
+			if (expanded)
+				free(expanded);
+			return ;
+		}
+		token_add_back(tokens, create_token(TOKEN_WORD, expanded));
+		free(expanded);
+		return ;
+	}
+	
+	// Para palabras normales o mixtas
 	expanded = expand_variables(word, shell->envp, shell->last_status);
 	if (!expanded)
+		return ;
+	if (expanded[0] == '\0')
 	{
-		set_error(&shell->lexer_state, ERROR_MEMORY,
-			"Error de memoria al expandir variables");
+		free(expanded);
 		return ;
 	}
 	token_add_back(tokens, create_token(TOKEN_WORD, expanded));

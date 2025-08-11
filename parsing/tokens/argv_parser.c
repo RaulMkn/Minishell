@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:35:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/07 19:17:35 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/11 19:45:45 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,17 @@ static int	add_cleaned_arg(char **argv, t_token *token, int argc)
 {
 	char	*cleaned;
 
+	if (!token || !token->value || token->value[0] == '\0')
+		return (-1);  // Saltar token vacío
 	cleaned = remove_quotes(token->value);
 	if (!cleaned)
-		return (0);
+		return (0);  // Error de memoria
+	if (cleaned[0] == '\0')
+	{
+		// Argumento completamente vacío, saltarlo
+		free(cleaned);
+		return (-1);
+	}
 	argv[argc] = cleaned;
 	return (1);
 }
@@ -52,6 +60,7 @@ char	**parse_argv_with_redirections(t_token **tokens)
 	int		argc;
 	char	**argv;
 	t_token	*token;
+	int		result;
 
 	argc = 0;
 	token = *tokens;
@@ -65,12 +74,14 @@ char	**parse_argv_with_redirections(t_token **tokens)
 			argv = extend_argv(argv, argc + 2);
 			if (!argv)
 				return (NULL);
-			if (!add_cleaned_arg(argv, token, argc))
+			result = add_cleaned_arg(argv, token, argc);
+			if (result == 0)
 			{
 				free_split(argv);
 				return (NULL);
 			}
-			argc++;
+			if (result == 1)  // Solo incrementar si realmente se añadió
+				argc++;
 			token = token->next;
 		}
 		else if (is_redirection_token(token->type))
@@ -93,6 +104,7 @@ char	**parse_argv(t_token **tokens)
 	int		argc;
 	char	**argv;
 	t_token	*token;
+	int		result;
 
 	argc = 0;
 	token = *tokens;
@@ -104,12 +116,14 @@ char	**parse_argv(t_token **tokens)
 		argv = extend_argv(argv, argc + 2);
 		if (!argv)
 			return (NULL);
-		if (!add_cleaned_arg(argv, token, argc))
+		result = add_cleaned_arg(argv, token, argc);
+		if (result == 0)
 		{
 			free_split(argv);
 			return (NULL);
 		}
-		argc++;
+		if (result == 1)  // Solo incrementar si realmente se añadió
+			argc++;
 		token = token->next;
 	}
 	argv[argc] = NULL;
