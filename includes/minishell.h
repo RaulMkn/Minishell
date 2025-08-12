@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 01:34:05 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/11 19:48:23 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/12 21:08:39 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,7 +169,6 @@ void					init_shell(t_shell *shell, char **envp);
 void					cleanup_shell(t_shell *shell);
 void					shell_loop(t_shell *shell);
 int						execute_pipeline(t_command *cmd_list, char ***mini_env);
-int						handle_redirections(t_redir *redirs);
 void					execute_child_process(t_command *cmd, char ***mini_env,
 							int prev_fd, int *pipe_fd);
 void					handle_parent_process(int *prev_fd, int *pipe_fd,
@@ -188,5 +187,11 @@ int						handle_pipe_parent_process(int in_fd, int *pipe_fd,
 void					redirect_input(const char *infile);
 void					redirect_output(const char *outfile, int append);
 void					perror_exit(char *msg);
+void					copy_string_chars(char *new, char *str, int len);
+void					create_word_token(t_token **tokens, char **buffer);
+size_t					handle_whitespaces(const char *input, size_t i);
+void					remove_quotes_copy(const char *str, char *res);
+int						is_redirection_token(t_token_type type);
+
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:56:53 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/11 19:48:23 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/12 21:38:17 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ static char	*get_var_value(char *var_name, char **env, int last_status)
 	i = 0;
 	while (env[i])
 	{
-		if (ft_strncmp(env[i], var_name, var_len) == 0 && 
-			env[i][var_len] == '=')
+		if (ft_strncmp(env[i], var_name, var_len) == 0
+			&& env[i][var_len] == '=')
 			return (ft_strdup(env[i] + var_len + 1));
 		i++;
 	}
@@ -59,11 +59,8 @@ char	*expand_variables(char *str, char **env, int last_status)
 	if (!str || !env)
 		return (NULL);
 	len = ft_strlen(str);
-	// Si el string está completamente rodeado de comillas simples, no expandir
 	if (len >= 2 && str[0] == '\'' && str[len - 1] == '\'')
 		return (ft_strdup(str));
-	
-	// Si es solo una variable que se expande a vacío, devolver NULL
 	if (str[0] == '$' && str[1])
 	{
 		start = 1;
@@ -75,7 +72,7 @@ char	*expand_variables(char *str, char **env, int last_status)
 			while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
 				i++;
 		}
-		if (str[i] == '\0')  // Es solo una variable
+		if (str[i] == '\0')
 		{
 			var_name = ft_substr(str, start, i - start);
 			var_value = get_var_value(var_name, env, last_status);
@@ -83,17 +80,17 @@ char	*expand_variables(char *str, char **env, int last_status)
 			if (var_value && var_value[0] == '\0')
 			{
 				free(var_value);
-				return (NULL);  // Variable vacía = no crear token
+				return (NULL);
 			}
 			return (var_value);
 		}
 	}
-	
 	result = NULL;
 	i = 0;
 	while (str[i])
 	{
-		if (str[i] == '$' && str[i + 1] && str[i + 1] != ' ' && str[i + 1] != '"')
+		if (str[i] == '$' && str[i + 1] && str[i + 1] != ' '
+			&& str[i + 1] != '"')
 		{
 			start = ++i;
 			if (str[i] == '?')
@@ -117,7 +114,9 @@ char	*expand_variables(char *str, char **env, int last_status)
 			i++;
 		}
 	}
-	return (result ? result : ft_strdup(""));
+	if (result)
+		return (result);
+	return (ft_strdup(""));
 }
 
 void	clear_command(t_command *cmd)
@@ -156,6 +155,7 @@ void	expand_and_filter_tokens(t_token **tokens, t_shell *shell)
 {
 	t_token	*current;
 	t_token	*prev;
+	t_token	*next;
 	char	*expanded_value;
 
 	current = *tokens;
@@ -172,7 +172,7 @@ void	expand_and_filter_tokens(t_token **tokens, t_shell *shell)
 					prev->next = current->next;
 				else
 					*tokens = current->next;
-				t_token *next = current->next;
+				next = current->next;
 				free(current->value);
 				free(current);
 				current = next;

@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:40:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/11 19:45:45 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/12 19:55:38 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,45 +40,27 @@ void	handle_buffer_token(t_token **tokens, char **buffer)
 	*buffer = NULL;
 }
 
+static void	add_expanded_word(t_token **tokens, char *expanded)
+{
+	if (!expanded || !*expanded)
+		return (free(expanded));
+	token_add_back(tokens, create_token(TOKEN_WORD, expanded));
+	free(expanded);
+}
+
 static void	handle_word(t_token **tokens, char *word, t_shell *shell)
 {
 	char	*expanded;
 
-	if (!word || word[0] == '\0')
-		return;
+	if (!word || !*word)
+		return ;
 	if (shell->lexer_state.quote_state == QUOTE_SINGLE)
-	{
-		token_add_back(tokens, create_token(TOKEN_WORD, word));
-		return ;
-	}
-	
-	// Si la palabra contiene solo una variable que empieza con $
+		return (token_add_back(tokens, create_token(TOKEN_WORD, word)));
 	if (word[0] == '$' && word[1])
-	{
-		expanded = expand_variables(word, shell->envp, shell->last_status);
-		if (!expanded || expanded[0] == '\0')
-		{
-			// Variable vacía, NO crear token
-			if (expanded)
-				free(expanded);
-			return ;
-		}
-		token_add_back(tokens, create_token(TOKEN_WORD, expanded));
-		free(expanded);
-		return ;
-	}
-	
-	// Para palabras normales o mixtas
+		return (add_expanded_word(tokens,
+				expand_variables(word, shell->envp, shell->last_status)));
 	expanded = expand_variables(word, shell->envp, shell->last_status);
-	if (!expanded)
-		return ;
-	if (expanded[0] == '\0')
-	{
-		free(expanded);
-		return ;
-	}
-	token_add_back(tokens, create_token(TOKEN_WORD, expanded));
-	free(expanded);
+	add_expanded_word(tokens, expanded);
 }
 
 void	handle_final_buffer(t_token **tokens, char **buffer, t_shell *shell)
@@ -89,4 +71,28 @@ void	handle_final_buffer(t_token **tokens, char **buffer, t_shell *shell)
 		handle_word(tokens, *buffer, shell);
 	free(*buffer);
 	*buffer = NULL;
+}
+
+char	*ft_strjoin_char(char *str, char c)
+{
+	char	*new;
+	int		len;
+
+	len = 0;
+	if (str)
+		len = ft_strlen(str);
+	new = malloc(sizeof(char) * (len + 2));
+	if (!new)
+	{
+		free(str);
+		return (NULL);
+	}
+	if (str)
+	{
+		copy_string_chars(new, str, len);
+		free(str);
+	}
+	new[len] = c;
+	new[len + 1] = '\0';
+	return (new);
 }

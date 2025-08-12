@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:35:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/07 19:19:33 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/12 21:06:42 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,12 +64,6 @@ static int	handle_pipe_token(t_token **curr_token, t_command *current_cmd)
 		return (0);
 	*curr_token = (*curr_token)->next;
 	return (1);
-}
-
-static int	is_redirection_token(t_token_type type)
-{
-	return (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT
-		|| type == TOKEN_APPEND || type == TOKEN_HEREDOC);
 }
 
 static int	handle_redirection_token(t_token **curr_token, t_command **cmd_list,

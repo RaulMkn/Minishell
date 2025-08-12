@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   quote_handler.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:40:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/22 00:48:24 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/12 20:44:15 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,4 +43,28 @@ void	handle_regular_char(char **buffer, char c, size_t *i, t_shell *shell)
 	*buffer = ft_strjoin_char(*buffer, c);
 	if (*buffer)
 		(*i)++;
+}
+
+void	remove_quotes_copy(const char *str, char *res)
+{
+	int		i;
+	int		j;
+	char	q;
+
+	i = 0;
+	j = 0;
+	while (str[i])
+	{
+		if (str[i] == '"' || str[i] == '\'')
+		{
+			q = str[i++];
+			while (str[i] && str[i] != q)
+				res[j++] = str[i++];
+			if (str[i] == q)
+				i++;
+		}
+		else
+			res[j++] = str[i++];
+	}
+	res[j] = '\0';
 }

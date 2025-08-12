@@ -3,14 +3,14 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+         #
+#    By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/11 19:22:34 by rmakende          #+#    #+#              #
-#    Updated: 2025/08/06 18:42:18 by rmakende         ###   ########.fr        #
+#    Updated: 2025/08/12 21:10:40 by ruortiz-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-CC = gcc
+CC = cc
 CFLAGS = -Wall -Wextra -Werror -g3 -I./includes
 RL_FLAGS = -lreadline
 
@@ -39,13 +39,14 @@ EXEC_SRCS =	$(EXEC_DIR)/src/main.c \
 		$(EXEC_DIR)/env/env_utils.c
 
 PARSING_SRCS = $(PARSING_DIR)/parsing.c \
-		$(PARSING_DIR)/quote_handler.c \
 		$(PARSING_DIR)/token_validation.c \
 		$(PARSING_DIR)/variable_expansion.c \
 		$(PARSING_DIR)/tokens/token_parser.c \
 		$(PARSING_DIR)/tokens/argv_parser.c \
 		$(PARSING_DIR)/tokens/redirection_parser.c \
+		$(PARSING_DIR)/tokens/unified_parser.c \
 		$(PARSING_DIR)/tokens/token_cleanup.c \
+		$(PARSING_DIR)/tokens/token_creation.c \
 		$(PARSING_DIR)/lexer/token_utils.c \
 		$(PARSING_DIR)/lexer/string_utils.c \
 		$(PARSING_DIR)/lexer/buffer_handler.c \

@@ -6,17 +6,11 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 21:30:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/07 18:56:40 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/12 21:32:15 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
-
-static int	is_redirection_token(t_token_type type)
-{
-	return (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_OUT
-		|| type == TOKEN_APPEND || type == TOKEN_HEREDOC);
-}
 
 static t_redir	*create_redirection_from_tokens(t_token *redir_token,
 		t_token *file_token)
@@ -98,10 +92,7 @@ t_command	*parse_command_unified(t_token **tokens)
 		return (NULL);
 	argv = malloc(sizeof(char *));
 	if (!argv)
-	{
-		free(cmd);
-		return (NULL);
-	}
+		return (free(cmd), NULL);
 	argv[0] = NULL;
 	argc = 0;
 	current = *tokens;
@@ -112,46 +103,28 @@ t_command	*parse_command_unified(t_token **tokens)
 		{
 			argv = extend_argv_array(argv, argc + 2);
 			if (!argv)
-			{
-				clear_redir_list(cmd->redir);
-				free(cmd);
-				return (NULL);
-			}
+				return (clear_redir_list(cmd->redir), free(cmd), NULL);
 			argv[argc] = remove_quotes(current->value);
 			if (!argv[argc])
-			{
-				free_split(argv);
-				clear_redir_list(cmd->redir);
-				free(cmd);
-				return (NULL);
-			}
+				return (free_split(argv), clear_redir_list(cmd->redir),
+					free(cmd), NULL);
 			argc++;
 			current = current->next;
 		}
 		else if (is_redirection_token(current->type))
 		{
 			if (!current->next || current->next->type != TOKEN_WORD)
-			{
-				free_split(argv);
-				clear_redir_list(cmd->redir);
-				free(cmd);
-				return (NULL);
-			}
+				return (free_split(argv), clear_redir_list(cmd->redir),
+					free(cmd), NULL);
 			new_redir = create_redirection_from_tokens(current, current->next);
 			if (!new_redir)
-			{
-				free_split(argv);
-				clear_redir_list(cmd->redir);
-				free(cmd);
-				return (NULL);
-			}
+				return (free_split(argv), clear_redir_list(cmd->redir),
+					free(cmd), NULL);
 			add_redir_to_list(&cmd->redir, new_redir);
 			current = current->next->next;
 		}
 		else
-		{
 			current = current->next;
-		}
 	}
 	cmd->argv = argv;
 	cmd->next = NULL;
