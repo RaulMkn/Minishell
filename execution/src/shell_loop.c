@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:45:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/12 18:53:34 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/12 19:46:47 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,33 +14,22 @@
 
 static void	process_valid_tokens(t_shell *shell, t_token *tokens)
 {
-	t_command	*new_cmds;
+	t_command	*new;
 
 	if (!tokens)
-	{
-		shell->last_status = 0;
-		return ;
-	}
+		return (shell->last_status = 0, (void)0);
 	if (is_valid_operator_sequence(tokens))
 	{
-		new_cmds = parse_tokens(tokens);
-		if (new_cmds)
+		new = parse_tokens(tokens);
+		if (new)
 		{
-			if (!new_cmds->argv || !new_cmds->argv[0])
-			{
-				shell->last_status = 0;
-				clear_command(new_cmds);
-				return ;
-			}
-			if (new_cmds->argv[0][0] == '\0')
-			{
-				shell->last_status = 0;
-				clear_command(new_cmds);
-				return ;
-			}
+			if (!new->argv || !new->argv[0])
+				return (shell->last_status = 0, clear_command(new), (void)0);
+			if (new->argv[0][0] == '\0')
+				return (shell->last_status = 0, clear_command(new), (void)0);
 			if (shell->cmd_list)
 				clear_command(shell->cmd_list);
-			shell->cmd_list = new_cmds;
+			shell->cmd_list = new;
 			shell->last_status = execute_pipeline(shell->cmd_list,
 					&shell->envp);
 		}

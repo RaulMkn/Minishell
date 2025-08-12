@@ -6,34 +6,58 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:45:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/11 20:27:31 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/12 21:33:29 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-static void	setup_input_pipe(int prev_fd)
+static void	print_error_and_exit(char *cmd_name, char *msg, int exit_code)
 {
-	if (prev_fd != -1)
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd(cmd_name, 2);
+	ft_putstr_fd(msg, 2);
+	exit(exit_code);
+}
+
+static void	validate_command_path(char *command_path, char *cmd_name)
+{
+	struct stat	path_stat;
+
+	if (!command_path)
+		print_error_and_exit(cmd_name, ": command not found\n", 127);
+	if (access(command_path, F_OK) != 0)
 	{
-		dup2(prev_fd, STDIN_FILENO);
-		close(prev_fd);
+		free(command_path);
+		print_error_and_exit(cmd_name, ": No such file or directory\n", 127);
+	}
+	if (stat(command_path, &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
+	{
+		free(command_path);
+		print_error_and_exit(cmd_name, ": Is a directory\n", 126);
+	}
+	if (access(command_path, X_OK) != 0)
+	{
+		free(command_path);
+		print_error_and_exit(cmd_name, ": Permission denied\n", 126);
 	}
 }
 
-static void	setup_output_pipe(int *pipe_fd)
+static void	validate_and_execute_external(t_command *cmd, char ***mini_env)
 {
-	dup2(pipe_fd[1], STDOUT_FILENO);
-	close(pipe_fd[1]);
-	close(pipe_fd[0]);
+	char	*command_path;
+
+	command_path = find_command_path(cmd->argv[0], *mini_env);
+	validate_command_path(command_path, cmd->argv[0]);
+	execve(command_path, cmd->argv, *mini_env);
+	perror("execve");
+	free(command_path);
+	exit(1);
 }
 
 void	execute_child_process(t_command *cmd, char ***mini_env, int prev_fd,
 		int *pipe_fd)
 {
-	char		*command_path;
-	struct stat	path_stat;
-
 	setup_input_pipe(prev_fd);
 	if (cmd->next)
 		setup_output_pipe(pipe_fd);
@@ -50,44 +74,7 @@ void	execute_child_process(t_command *cmd, char ***mini_env, int prev_fd,
 	if (is_builtin(cmd->argv[0]))
 		exit(run_builtin(cmd->argv, mini_env, NULL));
 	else
-	{
-		command_path = find_command_path(cmd->argv[0], *mini_env);
-		if (!command_path)
-		{
-			ft_putstr_fd("minishell: ", 2);
-			ft_putstr_fd(cmd->argv[0], 2);
-			ft_putstr_fd(": command not found\n", 2);
-			exit(127);
-		}
-		if (access(command_path, F_OK) != 0)
-		{
-			ft_putstr_fd("minishell: ", 2);
-			ft_putstr_fd(cmd->argv[0], 2);
-			ft_putstr_fd(": No such file or directory\n", 2);
-			free(command_path);
-			exit(127);
-		}
-		if (stat(command_path, &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
-		{
-			ft_putstr_fd("minishell: ", 2);
-			ft_putstr_fd(cmd->argv[0], 2);
-			ft_putstr_fd(": Is a directory\n", 2);
-			free(command_path);
-			exit(126);
-		}
-		if (access(command_path, X_OK) != 0)
-		{
-			ft_putstr_fd("minishell: ", 2);
-			ft_putstr_fd(cmd->argv[0], 2);
-			ft_putstr_fd(": Permission denied\n", 2);
-			free(command_path);
-			exit(126);
-		}
-		execve(command_path, cmd->argv, *mini_env);
-		perror("execve");
-		free(command_path);
-		exit(1);
-	}
+		validate_and_execute_external(cmd, mini_env);
 }
 
 void	handle_parent_process(int *prev_fd, int *pipe_fd, t_command *current)

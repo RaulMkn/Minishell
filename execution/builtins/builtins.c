@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:03:17 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/06 18:10:27 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/12 21:38:34 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,23 +17,14 @@ int	builtin_cd(char **argv, char ***env)
 	char	*home;
 
 	if (argv[1] && argv[2])
-	{
-		write(2, "minishell: cd: too many arguments\n", 34);
-		return (1);
-	}
+		return (write(2, "minishell: cd: too many arguments\n", 34), 1);
 	if (argv[1] == NULL || (argv[1][0] == '\0'))
 	{
 		home = get_env_value(*env, "HOME");
 		if (!home)
-		{
-			write(2, "minishell: cd: HOME not set\n", 29);
-			return (1);
-		}
+			return (write(2, "minishell: cd: HOME not set\n", 29), 1);
 		if (chdir(home) == -1)
-		{
-			perror("minishell: cd");
-			return (1);
-		}
+			return (perror("minishell: cd"), 1);
 	}
 	else
 	{
@@ -77,15 +68,13 @@ static int	export_display_all(char **env)
 	return (0);
 }
 
-static int	export_process_args(char **argv, char ***env)
+static int	export_process_args(char **argv, char ***env, int *error_occurred)
 {
 	int		i;
 	char	*eq;
 	char	*key;
-	int		error_occurred;
 
 	i = 1;
-	error_occurred = 0;
 	while (argv[i])
 	{
 		eq = ft_strchr(argv[i], '=');
@@ -110,7 +99,10 @@ static int	export_process_args(char **argv, char ***env)
 
 int	builtin_export(char **argv, char ***env)
 {
+	int	error_occurred;
+
+	error_occurred = 0;
 	if (!argv[1])
 		return (export_display_all(*env));
-	return (export_process_args(argv, env));
+	return (export_process_args(argv, env, &error_occurred));
 }

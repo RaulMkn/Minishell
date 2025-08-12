@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+         #
+#    By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/11 19:22:34 by rmakende          #+#    #+#              #
-#    Updated: 2025/08/12 21:10:40 by ruortiz-         ###   ########.fr        #
+#    Updated: 2025/08/12 22:27:19 by rmakende         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,9 +22,12 @@ PARSING_DIR = ./parsing
 EXEC_SRCS =	$(EXEC_DIR)/src/main.c \
 		$(EXEC_DIR)/src/shell_init.c \
 		$(EXEC_DIR)/src/shell_loop.c \
-		$(EXEC_DIR)/src/pipeline_executor.c \
+		$(EXEC_DIR)/src/pipeline_executor/error_utils.c \
+		$(EXEC_DIR)/src/pipeline_executor/pipeline_executor.c \
+		$(EXEC_DIR)/src/pipeline_executor/pipeline_executor_utils.c \
         $(EXEC_DIR)/src/multiple_redirections.c \
 		$(EXEC_DIR)/src/pipe_handler.c \
+		$(EXEC_DIR)/src/setup_pipes.c \
 		$(EXEC_DIR)/pipes/exec_dispatch.c \
 		$(EXEC_DIR)/pipes/exec_single.c \
 		$(EXEC_DIR)/pipes/child_process.c \

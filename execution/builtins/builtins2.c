@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 18:54:31 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/12 18:59:06 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/12 21:34:03 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,23 +78,6 @@ int	builtin_env(char **env)
 	return (0);
 }
 
-static int	is_valid_number(char *str)
-{
-	int	i;
-
-	i = 0;
-	if (str[i] == '+' || str[i] == '-')
-		i++;
-	if (!str[i])
-		return (0);
-	while (str[i])
-	{
-		if (!ft_isdigit(str[i]))
-			return (0);
-		i++;
-	}
-	return (1);
-}
 __attribute__((noreturn))
 void	free_and_exit(char **argv, char **mini_env, char *line, int exit_status)
 {
@@ -104,6 +87,7 @@ void	free_and_exit(char **argv, char **mini_env, char *line, int exit_status)
 	rl_clear_history();
 	exit(exit_status);
 }
+
 int	builtin_exit(char ***mini_env, char *line, char **argv)
 {
 	long	exit_code;
