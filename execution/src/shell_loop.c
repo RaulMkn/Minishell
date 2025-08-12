@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell_loop.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:45:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/11 19:48:23 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/12 18:53:34 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ static void	process_valid_tokens(t_shell *shell, t_token *tokens)
 
 	if (!tokens)
 	{
-		// Solo variables vacías, no hacer nada
 		shell->last_status = 0;
 		return ;
 	}
@@ -27,7 +26,6 @@ static void	process_valid_tokens(t_shell *shell, t_token *tokens)
 		new_cmds = parse_tokens(tokens);
 		if (new_cmds)
 		{
-			// Verificar si el comando tiene argumentos válidos
 			if (!new_cmds->argv || !new_cmds->argv[0])
 			{
 				shell->last_status = 0;
@@ -47,10 +45,7 @@ static void	process_valid_tokens(t_shell *shell, t_token *tokens)
 					&shell->envp);
 		}
 		else
-		{
-			// Si parse_tokens devuelve NULL, verificar si hay tokens válidos
 			shell->last_status = 0;
-		}
 	}
 	else
 		ft_putendl_fd("Error de sintaxis", 2);

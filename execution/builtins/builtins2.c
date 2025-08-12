@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 18:54:31 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/04 19:17:27 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/12 18:59:06 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,10 +95,7 @@ static int	is_valid_number(char *str)
 	}
 	return (1);
 }
-
-void		free_and_exit(char **argv, char **mini_env, char *line,
-				int exit_status) __attribute__((noreturn));
-
+__attribute__((noreturn))
 void	free_and_exit(char **argv, char **mini_env, char *line, int exit_status)
 {
 	free_split(argv);

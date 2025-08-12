@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:45:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/06 18:36:46 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/11 20:27:31 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ static void	setup_output_pipe(int *pipe_fd)
 void	execute_child_process(t_command *cmd, char ***mini_env, int prev_fd,
 		int *pipe_fd)
 {
-	char	*command_path;
-		struct stat path_stat;
+	char		*command_path;
+	struct stat	path_stat;
 
 	setup_input_pipe(prev_fd);
 	if (cmd->next)

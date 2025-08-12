@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 21:35:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/11 00:28:01 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/11 20:27:10 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,18 +54,13 @@ static int	validate_output_file(const char *filename)
 			*last_slash = '\0';
 			if (access(dir_path, W_OK) == -1)
 			{
-				ft_putstr_fd("minishell: ", 2);
-				perror(dir_path);
-				free(dir_path);
-				return (0);
+				return (ft_putstr_fd("minishell: ", 2), perror(dir_path),
+					free(dir_path), 0);
 			}
 		}
-		free(dir_path);
-		perror(filename);
-		return (0);
+		return (free(dir_path), perror(filename), (0));
 	}
-	close(fd);
-	return (1);
+	return (close(fd), 1);
 }
 
 /*
@@ -108,7 +103,6 @@ static t_redir	*get_effective_redirections(t_redir *redirs)
 			effective_list = new_redir;
 		}
 	}
-
 	if (last_append)
 	{
 		new_redir = malloc(sizeof(t_redir));
@@ -145,7 +139,6 @@ int	validate_redirections(t_redir *redirs)
 
 	if (!redirs)
 		return (1);
-	// Obtener solo las redirecciones que realmente se aplicarán
 	effective_redirs = get_effective_redirections(redirs);
 	if (!effective_redirs)
 		return (1);
@@ -165,7 +158,6 @@ int	validate_redirections(t_redir *redirs)
 		}
 		current = current->next;
 	}
-	// Limpiar lista temporal
 	while (effective_redirs)
 	{
 		temp = effective_redirs;
