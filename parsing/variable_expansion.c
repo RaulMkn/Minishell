@@ -3,60 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   variable_expansion.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:56:53 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/13 02:09:29 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/13 17:14:58 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-static char	*get_var_value(char *var_name, char **env, int last_status)
-{
-	int	i;
-	int	var_len;
-
-	if (!var_name)
-		return (NULL);
-	if (ft_strcmp(var_name, "?") == 0)
-		return (ft_itoa(last_status));
-	var_len = ft_strlen(var_name);
-	i = 0;
-	while (env[i])
-	{
-		if (ft_strncmp(env[i], var_name, var_len) == 0
-			&& env[i][var_len] == '=')
-			return (ft_strdup(env[i] + var_len + 1));
-		i++;
-	}
-	return (ft_strdup(""));
-}
-
-static char	*build_result(char *current, char *to_add)
-{
-	char	*result;
-
-	if (!current)
-		return (ft_strdup(to_add));
-	if (!to_add)
-		return (current);
-	result = ft_strjoin(current, to_add);
-	free(current);
-	return (result);
-}
-
-static int	get_var_name_length(char *str, int start)
-{
-	int	i;
-
-	i = start;
-	if (str[i] == '?')
-		return (1);
-	while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
-		i++;
-	return (i - start);
-}
 
 static char	*expand_simple_variable(char *str, char **env, int last_status)
 {
@@ -101,27 +55,21 @@ static char	*expand_complex_variables(char *str, char **env, int last_status)
 {
 	char	*result;
 	char	*var_value;
-	char	*temp;
 	int		i;
 
 	result = NULL;
 	i = 0;
 	while (str[i])
 	{
-		if (str[i] == '$' && str[i + 1] && str[i + 1] != ' ' && str[i
-			+ 1] != '"')
+		if (str[i] == '$' && str[i + 1] && str[i + 1] != ' '
+			&& str[i + 1] != '"')
 		{
 			var_value = process_variable_expansion(str, &i, env, last_status);
 			result = build_result(result, var_value);
 			free(var_value);
 		}
 		else
-		{
-			temp = ft_substr(str, i, 1);
-			result = build_result(result, temp);
-			free(temp);
-			i++;
-		}
+			append_char(&result, str, &i);
 	}
 	if (result)
 		return (result);
@@ -155,27 +103,6 @@ char	*expand_variables(char *str, char **env, int last_status, int len)
 	return (expand_complex_variables(str, env, last_status));
 }
 
-static t_token	*remove_empty_token(t_token **tokens, t_token *prev,
-		t_token *current)
-{
-	t_token	*next;
-
-	if (prev)
-		prev->next = current->next;
-	else
-		*tokens = current->next;
-	next = current->next;
-	free(current->value);
-	free(current);
-	return (next);
-}
-
-static void	update_token_value(t_token *current, char *expanded_value)
-{
-	free(current->value);
-	current->value = expanded_value;
-}
-
 void	expand_and_filter_tokens(t_token **tokens, t_shell *shell)
 {
 	t_token	*current;
@@ -203,36 +130,4 @@ void	expand_and_filter_tokens(t_token **tokens, t_shell *shell)
 		prev = current;
 		current = current->next;
 	}
-}
-
-void	clear_command(t_command *cmd)
-{
-	int		i;
-	t_redir	*tmp;
-
-	if (!cmd)
-		return ;
-	if (cmd->argv)
-	{
-		i = 0;
-		while (cmd->argv[i])
-			free(cmd->argv[i++]);
-		free(cmd->argv);
-	}
-	while (cmd->redir)
-	{
-		tmp = cmd->redir->next;
-		free(cmd->redir->file);
-		free(cmd->redir);
-		cmd->redir = tmp;
-	}
-	free(cmd);
-}
-
-void	set_error(t_lexer_state *state, t_error_type error, char *msg)
-{
-	if (state->error_msg)
-		free(state->error_msg);
-	state->error = error;
-	state->error_msg = ft_strdup(msg);
 }

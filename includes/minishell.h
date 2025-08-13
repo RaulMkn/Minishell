@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 01:34:05 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/12 22:51:54 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/13 17:13:44 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,5 +212,14 @@ int						process_word_token(t_token **current, char ***argv,
 							int *argc);
 int						process_redirection_token(t_token **current,
 							t_redir **redir_list);
+char					*get_var_value(char *var_name, char **env,
+							int last_status);
+char					*build_result(char *current, char *to_add);
+int						get_var_name_length(char *str, int start);
+t_token					*remove_empty_token(t_token **tokens,
+							t_token *prev, t_token *current);
+void					update_token_value(t_token *current,
+							char *expanded_value);
+void					append_char(char **result, char *str, int *i);
 
 #endif

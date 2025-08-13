@@ -3,16 +3,16 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+         #
+#    By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/17 19:11:54 by rmakende          #+#    #+#              #
-#    Updated: 2025/07/26 02:24:13 by rmakende         ###   ########.fr        #
+#    Updated: 2025/08/13 17:21:51 by ruortiz-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = libft.a
 
-CC = gcc
+CC = cc
 
 AR = ar
 

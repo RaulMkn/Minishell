@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+         #
+#    By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/11 19:22:34 by rmakende          #+#    #+#              #
-#    Updated: 2025/08/13 02:11:30 by rmakende         ###   ########.fr        #
+#    Updated: 2025/08/13 16:53:23 by ruortiz-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,7 +41,8 @@ EXEC_SRCS =	$(EXEC_DIR)/src/main.c \
 		$(EXEC_DIR)/env/env.c \
 		$(EXEC_DIR)/env/env_utils.c
 
-PARSING_SRCS = $(PARSING_DIR)/parsing.c \
+PARSING_SRCS = $(PARSING_DIR)/parsing_utils.c \
+		$(PARSING_DIR)/expand_tokens.c \
 		$(PARSING_DIR)/token_validation.c \
 		$(PARSING_DIR)/variable_expansion.c \
 		$(PARSING_DIR)/tokens/token_parser.c \
