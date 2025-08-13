@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 01:34:05 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/12 22:28:57 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/12 22:51:54 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ void					clear_redir_list(t_redir *redir);
 int						handle_multiple_redirections(t_redir *redirs);
 t_command				*parse_tokens(t_token *tokens);
 char					*expand_variables(char *str, char **env,
-							int last_status);
+							int last_status, int len);
 void					expand_and_filter_tokens(t_token **tokens,
 							t_shell *shell);
 void					clear_command(t_command *cmd);
@@ -192,6 +192,25 @@ void					create_word_token(t_token **tokens, char **buffer);
 size_t					handle_whitespaces(const char *input, size_t i);
 void					remove_quotes_copy(const char *str, char *res);
 int						is_redirection_token(t_token_type type);
-
+int						validate_command_args(t_command *cmd);
+int						execute_parent_builtin(t_command *cmd,
+							char ***mini_env);
+int						check_command_path(char *command_path, char *cmd_name);
+int						check_file_permissions(char *command_path,
+							char *cmd_name);
+int						create_pipe_if_needed(t_command *current, int *pipe_fd);
+int						is_single_command(t_command *cmd_list);
+void					setup_input_pipe(int prev_fd);
+void					setup_output_pipe(int *pipe_fd);
+int						is_valid_number(char *str);
+t_redir					*create_redirection_from_tokens(t_token *redir_token,
+							t_token *file_token);
+void					add_redir_to_list(t_redir **redir_list,
+							t_redir *new_redir);
+char					**extend_argv_array(char **argv, int new_size);
+int						process_word_token(t_token **current, char ***argv,
+							int *argc);
+int						process_redirection_token(t_token **current,
+							t_redir **redir_list);
 
 #endif

@@ -6,7 +6,7 @@
 #    By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/11 19:22:34 by rmakende          #+#    #+#              #
-#    Updated: 2025/08/12 22:27:19 by rmakende         ###   ########.fr        #
+#    Updated: 2025/08/13 02:11:30 by rmakende         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,7 +47,8 @@ PARSING_SRCS = $(PARSING_DIR)/parsing.c \
 		$(PARSING_DIR)/tokens/token_parser.c \
 		$(PARSING_DIR)/tokens/argv_parser.c \
 		$(PARSING_DIR)/tokens/redirection_parser.c \
-		$(PARSING_DIR)/tokens/unified_parser.c \
+		$(PARSING_DIR)/tokens/unified_parser/unified_parser.c \
+		$(PARSING_DIR)/tokens/unified_parser/unified_parser_utils.c \
 		$(PARSING_DIR)/tokens/token_cleanup.c \
 		$(PARSING_DIR)/tokens/token_creation.c \
 		$(PARSING_DIR)/lexer/token_utils.c \

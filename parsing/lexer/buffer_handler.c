@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   buffer_handler.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:40:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/12 19:55:38 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/13 02:10:37 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,8 @@ static void	handle_word(t_token **tokens, char *word, t_shell *shell)
 		return (token_add_back(tokens, create_token(TOKEN_WORD, word)));
 	if (word[0] == '$' && word[1])
 		return (add_expanded_word(tokens,
-				expand_variables(word, shell->envp, shell->last_status)));
-	expanded = expand_variables(word, shell->envp, shell->last_status);
+				expand_variables(word, shell->envp, shell->last_status, 1)));
+	expanded = expand_variables(word, shell->envp, shell->last_status, 1);
 	add_expanded_word(tokens, expanded);
 }
 
