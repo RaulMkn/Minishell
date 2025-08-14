@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 01:34:05 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/13 17:13:44 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/14 17:33:50 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,16 @@
 # include <fcntl.h>
 # include <readline/history.h>
 # include <readline/readline.h>
+# include <signal.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <sys/stat.h>
 # include <sys/wait.h>
 # include <unistd.h>
+
+extern volatile sig_atomic_t	g_signal_received;
+extern volatile sig_atomic_t	g_in_heredoc; // NUEVO
 
 typedef enum e_token_type
 {
@@ -113,7 +117,6 @@ char					**parse_argv_with_redirections(t_token **tokens);
 t_redir					*parse_redirections_mixed(t_token **tokens);
 t_command				*parse_command_unified(t_token **tokens);
 void					clear_redir_list(t_redir *redir);
-int						handle_multiple_redirections(t_redir *redirs);
 t_command				*parse_tokens(t_token *tokens);
 char					*expand_variables(char *str, char **env,
 							int last_status, int len);
@@ -168,9 +171,9 @@ int						exec_dispatch(t_cmd *cmd, char ***mini_env);
 void					init_shell(t_shell *shell, char **envp);
 void					cleanup_shell(t_shell *shell);
 void					shell_loop(t_shell *shell);
-int						execute_pipeline(t_command *cmd_list, char ***mini_env);
+int						execute_pipeline(t_command *cmd_list, char ***mini_env, t_shell *shell);
 void					execute_child_process(t_command *cmd, char ***mini_env,
-							int prev_fd, int *pipe_fd);
+							int prev_fd, int *pipe_fd, t_shell *shell);
 void					handle_parent_process(int *prev_fd, int *pipe_fd,
 							t_command *current);
 
@@ -184,6 +187,8 @@ void					handle_child_process(t_cmd *curr, char ***mini_env,
 							int in_fd, int *pipe_fd);
 int						handle_pipe_parent_process(int in_fd, int *pipe_fd,
 							t_cmd *curr);
+
+//redirection functions
 void					redirect_input(const char *infile);
 void					redirect_output(const char *outfile, int append);
 void					perror_exit(char *msg);
@@ -194,7 +199,7 @@ void					remove_quotes_copy(const char *str, char *res);
 int						is_redirection_token(t_token_type type);
 int						validate_command_args(t_command *cmd);
 int						execute_parent_builtin(t_command *cmd,
-							char ***mini_env);
+							char ***mini_env, t_shell *shell);
 int						check_command_path(char *command_path, char *cmd_name);
 int						check_file_permissions(char *command_path,
 							char *cmd_name);
@@ -220,6 +225,15 @@ t_token					*remove_empty_token(t_token **tokens,
 							t_token *prev, t_token *current);
 void					update_token_value(t_token *current,
 							char *expanded_value);
+void					setup_interactive_signals(void);
+void					setup_execution_signals(void);
+int						handle_multiple_redirections(t_redir *redirs, t_shell *shell);
+int						execute_pipeline(t_command *cmd_list, char ***mini_env, t_shell *shell);
+void					execute_child_process(t_command *cmd, char ***mini_env,
+							int prev_fd, int *pipe_fd, t_shell *shell);
+int						execute_parent_builtin(t_command *cmd,
+							char ***mini_env, t_shell *shell);
+int						handle_heredoc(char *delimiter, t_shell *shell);
 void					append_char(char **result, char *str, int *i);
 
 #endif

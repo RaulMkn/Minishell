@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe_handler.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:45:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/12 21:33:29 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/14 17:11:45 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,14 +56,15 @@ static void	validate_and_execute_external(t_command *cmd, char ***mini_env)
 }
 
 void	execute_child_process(t_command *cmd, char ***mini_env, int prev_fd,
-		int *pipe_fd)
+		int *pipe_fd, t_shell *shell)
 {
+	setup_execution_signals();
 	setup_input_pipe(prev_fd);
 	if (cmd->next)
 		setup_output_pipe(pipe_fd);
 	if (cmd->redir)
 	{
-		if (!handle_multiple_redirections(cmd->redir))
+		if (!handle_multiple_redirections(cmd->redir, shell))
 			exit(1);
 	}
 	if (!cmd->argv || !cmd->argv[0] || !cmd->argv[0][0])

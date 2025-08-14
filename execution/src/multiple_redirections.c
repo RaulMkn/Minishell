@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   multiple_redirections.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 21:40:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/11 20:31:36 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/14 17:11:12 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ static t_redir	*find_last_output_redirection(t_redir *redirs)
 	return (last_output);
 }
 
-static int	apply_redirection(t_redir *redir)
+static int	apply_redirection(t_redir *redir, t_shell *shell)
 {
 	int	fd;
 
@@ -56,6 +56,8 @@ static int	apply_redirection(t_redir *redir)
 		fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	else if (redir->type == REDIR_APPEND)
 		fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	else if (redir->type == HEREDOC)
+		return (handle_heredoc(redir->file, shell) == 0);
 	else
 		return (1);
 	if (fd == -1)
@@ -85,6 +87,11 @@ static int	validate_redirections_sequentially(t_redir *redirs)
 			fd = open(current->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		else if (current->type == REDIR_APPEND)
 			fd = open(current->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+		else if (current->type == HEREDOC)
+		{
+			current = current->next;
+			continue;
+		}
 		else
 			fd = -2;
 		if (fd == -1)
@@ -99,7 +106,7 @@ static int	validate_redirections_sequentially(t_redir *redirs)
 	return (1);
 }
 
-int	handle_multiple_redirections(t_redir *redirs)
+int	handle_multiple_redirections(t_redir *redirs, t_shell *shell)
 {
 	t_redir	*last_input;
 	t_redir	*last_output;
@@ -110,9 +117,9 @@ int	handle_multiple_redirections(t_redir *redirs)
 		return (0);
 	last_input = find_last_input_redirection(redirs);
 	last_output = find_last_output_redirection(redirs);
-	if (!apply_redirection(last_input))
+	if (!apply_redirection(last_input, shell))
 		return (0);
-	if (!apply_redirection(last_output))
+	if (!apply_redirection(last_output, shell))
 		return (0);
 	return (1);
 }

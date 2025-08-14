@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   path_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:45:08 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/20 13:00:53 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/14 16:38:56 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,12 +70,18 @@ char	*find_command_path(char *cmd, char **envp)
 	while (path_dirs[++i])
 	{
 		full_path = join_paths(path_dirs[i], cmd);
-		if (!full_path || (access(full_path, X_OK) == 0))
+		if (!full_path)
+		{
+			free_split(path_dirs);
+			return (NULL);
+		}
+		if (access(full_path, X_OK) == 0)
 			break ;
 		free(full_path);
 		full_path = NULL;
 	}
-	return (free_split(path_dirs), full_path);
+	free_split(path_dirs);
+	return (full_path);
 }
 
 char	**clean_arguments(char **args, char **path, char **envp)

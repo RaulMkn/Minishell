@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection_valdiator_utils.c                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 21:45:42 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/12 21:47:54 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/13 21:01:04 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

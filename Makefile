@@ -6,12 +6,12 @@
 #    By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/11 19:22:34 by rmakende          #+#    #+#              #
-#    Updated: 2025/08/13 16:53:23 by ruortiz-         ###   ########.fr        #
+#    Updated: 2025/08/14 16:46:00 by ruortiz-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-CC = cc
-CFLAGS = -Wall -Wextra -Werror -g3 -I./includes
+CC = gcc
+CFLAGS = -Wall -Wextra -Werror -g3 -I./includes #-fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer
 RL_FLAGS = -lreadline
 
 LIBFT_DIR = ./libft
@@ -22,10 +22,12 @@ PARSING_DIR = ./parsing
 EXEC_SRCS =	$(EXEC_DIR)/src/main.c \
 		$(EXEC_DIR)/src/shell_init.c \
 		$(EXEC_DIR)/src/shell_loop.c \
+		$(EXEC_DIR)/src/signals.c \
 		$(EXEC_DIR)/src/pipeline_executor/error_utils.c \
 		$(EXEC_DIR)/src/pipeline_executor/pipeline_executor.c \
 		$(EXEC_DIR)/src/pipeline_executor/pipeline_executor_utils.c \
         $(EXEC_DIR)/src/multiple_redirections.c \
+		$(EXEC_DIR)/src/redirect_heredoc.c \
 		$(EXEC_DIR)/src/pipe_handler.c \
 		$(EXEC_DIR)/src/setup_pipes.c \
 		$(EXEC_DIR)/pipes/exec_dispatch.c \

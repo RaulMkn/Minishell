@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline_executor_utils.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 19:51:51 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/12 20:21:42 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/14 17:11:45 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	is_single_command(t_command *cmd_list)
 	return (cmd_list && !cmd_list->next);
 }
 
-int	execute_parent_builtin(t_command *cmd, char ***mini_env)
+int	execute_parent_builtin(t_command *cmd, char ***mini_env, t_shell *shell)
 {
 	int	original_stdin;
 	int	original_stdout;
@@ -37,7 +37,7 @@ int	execute_parent_builtin(t_command *cmd, char ***mini_env)
 	original_stdout = dup(STDOUT_FILENO);
 	if (cmd->redir)
 	{
-		if (!handle_multiple_redirections(cmd->redir))
+		if (!handle_multiple_redirections(cmd->redir, shell))
 		{
 			dup2(original_stdin, STDIN_FILENO);
 			dup2(original_stdout, STDOUT_FILENO);

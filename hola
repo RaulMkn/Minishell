@@ -1,0 +1,15 @@
+Makefile
+README.md
+es.subject.pdf
+execution
+hola
+includes
+libft
+minishell
+minishell_tester
+obj
+parsing
+tmp_err_bash
+tmp_err_minishell
+tmp_out_bash
+tmp_out_minishell

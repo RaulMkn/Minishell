@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:04:24 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/16 19:06:46 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/14 16:38:56 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,21 +32,24 @@ int	append_env(char ***env, const char *new_var)
 {
 	int		i;
 	char	**new_env;
+	char	**old_env;
 
 	i = 0;
-	while ((*env)[i])
+	old_env = *env;
+	while (old_env[i])
 		i++;
 	new_env = malloc(sizeof(char *) * (i + 2));
 	if (!new_env)
 		return (1);
 	i = 0;
-	while ((*env)[i])
+	while (old_env[i])
 	{
-		new_env[i] = (*env)[i];
+		new_env[i] = old_env[i];
 		i++;
 	}
 	new_env[i++] = ft_strdup(new_var);
 	new_env[i] = NULL;
+	free(old_env);
 	*env = new_env;
 	return (0);
 }

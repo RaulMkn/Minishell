@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell_loop.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:45:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/12 19:46:47 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/14 17:52:19 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static void	process_valid_tokens(t_shell *shell, t_token *tokens)
 				clear_command(shell->cmd_list);
 			shell->cmd_list = new;
 			shell->last_status = execute_pipeline(shell->cmd_list,
-					&shell->envp);
+					&shell->envp, shell);
 		}
 		else
 			shell->last_status = 0;
@@ -66,9 +66,17 @@ void	shell_loop(t_shell *shell)
 	{
 		line = readline("minishell$ ");
 		if (!line)
+		{
+			ft_printf("exit\n");
 			break ;
+		}
 		if (*line)
 			process_input_line(shell, line);
+		if (g_signal_received == SIGINT)
+		{
+			shell->last_status = 130;
+			g_signal_received = 0;
+		}
 		free(line);
 	}
 }

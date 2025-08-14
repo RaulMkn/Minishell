@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins2.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 18:54:31 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/12 21:34:03 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/14 16:41:46 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,11 +79,8 @@ int	builtin_env(char **env)
 }
 
 __attribute__((noreturn))
-void	free_and_exit(char **argv, char **mini_env, char *line, int exit_status)
+void	free_and_exit(int exit_status)
 {
-	free_split(argv);
-	free_split(mini_env);
-	free(line);
 	rl_clear_history();
 	exit(exit_status);
 }
@@ -93,6 +90,8 @@ int	builtin_exit(char ***mini_env, char *line, char **argv)
 	long	exit_code;
 	int		final_code;
 
+	(void)mini_env;
+	(void)line;
 	if (argv[1] && argv[2])
 	{
 		write(2, "minishell: exit: too many arguments\n", 36);
@@ -100,13 +99,13 @@ int	builtin_exit(char ***mini_env, char *line, char **argv)
 	}
 	ft_printf("exit\n");
 	if (!argv[1])
-		free_and_exit(argv, *mini_env, line, 0);
+		free_and_exit(0);
 	if (!is_valid_number(argv[1]))
 	{
 		write(2, "minishell: exit: ", 17);
 		write(2, argv[1], ft_strlen(argv[1]));
 		write(2, ": numeric argument required\n", 28);
-		free_and_exit(argv, *mini_env, line, 2);
+		free_and_exit(2);
 	}
 	if (argv[2])
 		return (write(2, "minishell: exit: too many arguments\n", 37), 1);
@@ -114,5 +113,6 @@ int	builtin_exit(char ***mini_env, char *line, char **argv)
 	final_code = (int)(exit_code % 256);
 	if (final_code < 0)
 		final_code += 256;
-	free_and_exit(argv, *mini_env, line, final_code);
+	free_and_exit(final_code);
 }
+
