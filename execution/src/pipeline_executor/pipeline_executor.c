@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline_executor.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:45:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/14 16:46:00 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/14 23:33:30 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,22 +56,88 @@ static int	execute_external_command(t_command *cmd, char *command_path,
 	return (WEXITSTATUS(status));
 }
 
+int	has_heredoc(t_redir *redirs)
+{
+	t_redir	*current;
+
+	current = redirs;
+	while (current)
+	{
+		if (current->type == HEREDOC)
+			return (1);
+		current = current->next;
+	}
+	return (0);
+}
+
+int	process_all_heredocs(t_redir *redirs, t_shell *shell)
+{
+	t_redir	*current;
+
+	current = redirs;
+	while (current)
+	{
+		if (current->type == HEREDOC)
+		{
+			if (handle_heredoc(current->file, shell) == -1)
+				return (-1);
+		}
+		current = current->next;
+	}
+	return (0);
+}
 static int	execute_single_command(t_command *cmd, char ***mini_env,
 		t_shell *shell)
 {
 	char	*command_path;
 	int		error_code;
+	int		original_stdin;
 
+	original_stdin = -1;
 	if (!validate_command_args(cmd))
 		return (0);
+	if (cmd->redir && has_heredoc(cmd->redir))
+	{
+		original_stdin = dup(STDIN_FILENO);
+		if (process_all_heredocs(cmd->redir, shell) == -1)
+		{
+			if (original_stdin != -1)
+			{
+				dup2(original_stdin, STDIN_FILENO);
+				close(original_stdin);
+			}
+			return (shell->last_status);
+		}
+	}
 	if (is_parent_builtin(cmd->argv[0]))
-		return (execute_parent_builtin(cmd, mini_env, shell));
+	{
+		error_code = execute_parent_builtin(cmd, mini_env, shell);
+		if (original_stdin != -1)
+		{
+			dup2(original_stdin, STDIN_FILENO);
+			close(original_stdin);
+		}
+		return (error_code);
+	}
 	if (is_builtin(cmd->argv[0]))
-		return (execute_builtin_in_fork(cmd, mini_env, shell));
+	{
+		error_code = execute_builtin_in_fork(cmd, mini_env, shell);
+		if (original_stdin != -1)
+		{
+			dup2(original_stdin, STDIN_FILENO);
+			close(original_stdin);
+		}
+		return (error_code);
+	}
 	command_path = find_command_path(cmd->argv[0], *mini_env);
 	error_code = check_command_path(command_path, cmd->argv[0]);
 	if (error_code)
 	{
+		if (original_stdin != -1)
+		{
+			dup2(original_stdin, STDIN_FILENO);
+			close(original_stdin);
+		}
 		if (command_path)
 			free(command_path);
 		return (error_code);
@@ -79,10 +145,20 @@ static int	execute_single_command(t_command *cmd, char ***mini_env,
 	error_code = check_file_permissions(command_path, cmd->argv[0]);
 	if (error_code)
 	{
+		if (original_stdin != -1)
+		{
+			dup2(original_stdin, STDIN_FILENO);
+			close(original_stdin);
+		}
 		free(command_path);
 		return (error_code);
 	}
 	error_code = execute_external_command(cmd, command_path, mini_env, shell);
+	if (original_stdin != -1)
+	{
+		dup2(original_stdin, STDIN_FILENO);
+		close(original_stdin);
+	}
 	return (free(command_path), error_code);
 }
 

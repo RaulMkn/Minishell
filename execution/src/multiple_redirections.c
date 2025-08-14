@@ -3,123 +3,92 @@
 /*                                                        :::      ::::::::   */
 /*   multiple_redirections.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 21:40:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/14 17:11:12 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/14 23:29:06 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-static t_redir	*find_last_input_redirection(t_redir *redirs)
-{
-	t_redir	*last_input;
-	t_redir	*current;
-
-	last_input = NULL;
-	current = redirs;
-	while (current)
-	{
-		if (current->type == REDIR_IN || current->type == HEREDOC)
-			last_input = current;
-		current = current->next;
-	}
-	return (last_input);
-}
-
-static t_redir	*find_last_output_redirection(t_redir *redirs)
-{
-	t_redir	*last_output;
-	t_redir	*current;
-
-	last_output = NULL;
-	current = redirs;
-	while (current)
-	{
-		if (current->type == REDIR_OUT || current->type == REDIR_APPEND)
-			last_output = current;
-		current = current->next;
-	}
-	return (last_output);
-}
-
-static int	apply_redirection(t_redir *redir, t_shell *shell)
+static int	handle_input_redirection(char *filename)
 {
 	int	fd;
 
-	if (!redir)
-		return (1);
-	if (redir->type == REDIR_IN)
-		fd = open(redir->file, O_RDONLY);
-	else if (redir->type == REDIR_OUT)
-		fd = open(redir->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	else if (redir->type == REDIR_APPEND)
-		fd = open(redir->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-	else if (redir->type == HEREDOC)
-		return (handle_heredoc(redir->file, shell) == 0);
-	else
-		return (1);
+	if (!filename)
+		return (-1);
+	fd = open(filename, O_RDONLY);
 	if (fd == -1)
 	{
-		perror(redir->file);
-		return (0);
+		perror(filename);
+		return (-1);
 	}
-	if (redir->type == REDIR_IN)
-		dup2(fd, STDIN_FILENO);
-	else
-		dup2(fd, STDOUT_FILENO);
+	if (dup2(fd, STDIN_FILENO) == -1)
+	{
+		perror("dup2 stdin");
+		close(fd);
+		return (-1);
+	}
 	close(fd);
-	return (1);
+	return (0);
 }
 
-static int	validate_redirections_sequentially(t_redir *redirs)
+static int	handle_output_redirection(char *filename, int append)
 {
-	t_redir	*current;
-	int		fd;
+	int	fd;
+	int	flags;
+
+	if (!filename)
+		return (-1);
+	flags = O_WRONLY | O_CREAT;
+	if (append)
+		flags |= O_APPEND;
+	else
+		flags |= O_TRUNC;
+	fd = open(filename, flags, 0644);
+	if (fd == -1)
+	{
+		perror(filename);
+		return (-1);
+	}
+	if (dup2(fd, STDOUT_FILENO) == -1)
+	{
+		perror("dup2 stdout");
+		close(fd);
+		return (-1);
+	}
+	close(fd);
+	return (0);
+}
+
+int	handle_multiple_redirections(t_redir *redirs, t_shell *shell)
+{
+	t_redir *current;
+
+	(void)shell;
+	if (!redirs)
+		return (1);
 
 	current = redirs;
 	while (current)
 	{
 		if (current->type == REDIR_IN)
-			fd = open(current->file, O_RDONLY);
+		{
+			if (handle_input_redirection(current->file) == -1)
+				return (0);
+		}
 		else if (current->type == REDIR_OUT)
-			fd = open(current->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		{
+			if (handle_output_redirection(current->file, 0) == -1)
+				return (0);
+		}
 		else if (current->type == REDIR_APPEND)
-			fd = open(current->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		else if (current->type == HEREDOC)
 		{
-			current = current->next;
-			continue;
+			if (handle_output_redirection(current->file, 1) == -1)
+				return (0);
 		}
-		else
-			fd = -2;
-		if (fd == -1)
-		{
-			perror(current->file);
-			return (0);
-		}
-		if (fd >= 0)
-			close(fd);
 		current = current->next;
 	}
-	return (1);
-}
-
-int	handle_multiple_redirections(t_redir *redirs, t_shell *shell)
-{
-	t_redir	*last_input;
-	t_redir	*last_output;
-
-	if (!redirs)
-		return (1);
-	if (!validate_redirections_sequentially(redirs))
-		return (0);
-	last_input = find_last_input_redirection(redirs);
-	last_output = find_last_output_redirection(redirs);
-	if (!apply_redirection(last_input, shell))
-		return (0);
-	if (!apply_redirection(last_output, shell))
-		return (0);
 	return (1);
 }
