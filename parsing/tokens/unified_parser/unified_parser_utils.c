@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   unified_parser_utils.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 22:47:23 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/13 02:11:59 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/15 18:10:56 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../includes/minishell.h"
 
-t_redir	*create_redirection_from_tokens(t_token *redir_token,
+t_redir	*create_redirection_tn(t_token *redir_token,
 		t_token *file_token)
 {
 	t_redir	*new_redir;
@@ -98,7 +98,7 @@ int	process_redirection_token(t_token **current, t_redir **redir_list)
 
 	if (!(*current)->next || (*current)->next->type != TOKEN_WORD)
 		return (0);
-	new_redir = create_redirection_from_tokens(*current, (*current)->next);
+	new_redir = create_redirection_tn(*current, (*current)->next);
 	if (!new_redir)
 		return (0);
 	add_redir_to_list(redir_list, new_redir);

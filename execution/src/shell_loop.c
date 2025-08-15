@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:45:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/14 17:52:19 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/15 18:47:08 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,19 +64,25 @@ void	shell_loop(t_shell *shell)
 
 	while (1)
 	{
+		if (get_signal_received() == SIGINT)
+		{
+			shell->last_status = 130;
+			set_signal_received(0);
+		}
 		line = readline("minishell$ ");
 		if (!line)
 		{
+			if (get_signal_received() == SIGINT)
+			{
+				shell->last_status = 130;
+				set_signal_received(0);
+				continue ;
+			}
 			ft_printf("exit\n");
 			break ;
 		}
 		if (*line)
 			process_input_line(shell, line);
-		if (g_signal_received == SIGINT)
-		{
-			shell->last_status = 130;
-			g_signal_received = 0;
-		}
 		free(line);
 	}
 }

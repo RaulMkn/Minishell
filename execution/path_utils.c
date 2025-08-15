@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 21:45:08 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/14 16:38:56 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/15 18:42:42 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,39 +49,45 @@ char	*get_path_env(char **envp)
 	return (NULL);
 }
 
-char	*find_command_path(char *cmd, char **envp)
+static char	*search_in_path_dirs(char *cmd, char **path_dirs)
 {
-	const char	*path_env = get_path_env(envp);
-	char		**path_dirs;
-	char		*full_path;
-	int			i;
+	char	*full_path;
+	int		i;
 
-	if (!cmd || !*cmd || !envp)
-		return (NULL);
-	if (ft_strchr(cmd, '/'))
-		return (ft_strdup(cmd));
-	if (!path_env)
-		return (NULL);
-	path_dirs = ft_split(path_env, ':');
-	if (!path_dirs)
-		return (NULL);
 	full_path = NULL;
 	i = -1;
 	while (path_dirs[++i])
 	{
 		full_path = join_paths(path_dirs[i], cmd);
 		if (!full_path)
-		{
-			free_split(path_dirs);
 			return (NULL);
-		}
 		if (access(full_path, X_OK) == 0)
 			break ;
 		free(full_path);
 		full_path = NULL;
 	}
-	free_split(path_dirs);
 	return (full_path);
+}
+
+char	*find_command_path(char *cmd, char **envp)
+{
+	const char	*path_env;
+	char		**path_dirs;
+	char		*result;
+
+	if (!cmd || !*cmd || !envp)
+		return (NULL);
+	if (ft_strchr(cmd, '/'))
+		return (ft_strdup(cmd));
+	path_env = get_path_env(envp);
+	if (!path_env)
+		return (NULL);
+	path_dirs = ft_split(path_env, ':');
+	if (!path_dirs)
+		return (NULL);
+	result = search_in_path_dirs(cmd, path_dirs);
+	free_split(path_dirs);
+	return (result);
 }
 
 char	**clean_arguments(char **args, char **path, char **envp)

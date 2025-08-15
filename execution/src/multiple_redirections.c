@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   multiple_redirections.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 21:40:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/14 23:29:06 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/15 18:51:23 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,30 +64,21 @@ static int	handle_output_redirection(char *filename, int append)
 
 int	handle_multiple_redirections(t_redir *redirs, t_shell *shell)
 {
-	t_redir *current;
+	t_redir	*current;
 
 	(void)shell;
 	if (!redirs)
 		return (1);
-
 	current = redirs;
 	while (current)
 	{
-		if (current->type == REDIR_IN)
-		{
-			if (handle_input_redirection(current->file) == -1)
-				return (0);
-		}
-		else if (current->type == REDIR_OUT)
-		{
-			if (handle_output_redirection(current->file, 0) == -1)
-				return (0);
-		}
-		else if (current->type == REDIR_APPEND)
-		{
-			if (handle_output_redirection(current->file, 1) == -1)
-				return (0);
-		}
+		if (current->type == REDIR_IN
+			&& handle_input_redirection(current->file) == -1)
+			return (0);
+		if ((current->type == REDIR_OUT || current->type == REDIR_APPEND)
+			&& handle_output_redirection(current->file,
+				current->type == REDIR_APPEND) == -1)
+			return (0);
 		current = current->next;
 	}
 	return (1);

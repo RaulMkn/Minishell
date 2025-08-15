@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:35:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/12 21:03:49 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/15 18:10:10 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ static int	process_token(t_token **token_ptr, char ***argv, int *argc)
 	return (1);
 }
 
-char	**parse_argv_with_redirections(t_token **tokens)
+char	**pars_argv_redirections(t_token **tokens)
 {
 	int		argc;
 	char	**argv;

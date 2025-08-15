@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline_executor.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:45:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/14 23:33:30 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/15 18:41:15 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ int	process_all_heredocs(t_redir *redirs, t_shell *shell)
 	}
 	return (0);
 }
+
 static int	execute_single_command(t_command *cmd, char ***mini_env,
 		t_shell *shell)
 {
@@ -169,6 +170,7 @@ static int	handle_pipeline_loop(t_command *cmd_list, char ***mini_env,
 	int			pipe_fd[2];
 	int			prev_fd;
 	pid_t		pid;
+	t_pipe_data	p_data;
 
 	current = cmd_list;
 	prev_fd = -1;
@@ -179,7 +181,11 @@ static int	handle_pipeline_loop(t_command *cmd_list, char ***mini_env,
 			return (1);
 		pid = fork();
 		if (pid == 0)
-			execute_child_process(current, mini_env, prev_fd, pipe_fd, shell);
+		{
+			p_data.prev_fd = prev_fd;
+			p_data.pipe_fd = pipe_fd;
+			execute_child_process(current, mini_env, &p_data, shell);
+		}
 		else
 			handle_parent_process(&prev_fd, pipe_fd, current);
 		current = current->next;

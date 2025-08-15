@@ -6,7 +6,7 @@
 #    By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/11 19:22:34 by rmakende          #+#    #+#              #
-#    Updated: 2025/08/14 16:46:00 by ruortiz-         ###   ########.fr        #
+#    Updated: 2025/08/15 18:41:15 by ruortiz-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,6 +23,7 @@ EXEC_SRCS =	$(EXEC_DIR)/src/main.c \
 		$(EXEC_DIR)/src/shell_init.c \
 		$(EXEC_DIR)/src/shell_loop.c \
 		$(EXEC_DIR)/src/signals.c \
+		$(EXEC_DIR)/src/signals-utils.c \
 		$(EXEC_DIR)/src/pipeline_executor/error_utils.c \
 		$(EXEC_DIR)/src/pipeline_executor/pipeline_executor.c \
 		$(EXEC_DIR)/src/pipeline_executor/pipeline_executor_utils.c \

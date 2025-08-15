@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:35:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/13 17:39:51 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/15 18:10:10 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static t_command	*init_new_command(t_token **curr_token)
 	if (!new_cmd)
 		return (NULL);
 	start_token = *curr_token;
-	new_cmd->argv = parse_argv_with_redirections(curr_token);
+	new_cmd->argv = pars_argv_redirections(curr_token);
 	if (!new_cmd->argv)
 	{
 		free(new_cmd);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 01:34:05 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/14 22:56:50 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/15 18:47:08 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,16 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
+# include <sys/ioctl.h>
 # include <sys/stat.h>
 # include <sys/wait.h>
 # include <unistd.h>
 
-extern volatile sig_atomic_t	g_signal_received;
-extern volatile sig_atomic_t g_in_heredoc; // NUEVO
+typedef struct s_signal_state
+{
+	volatile sig_atomic_t	signal_received;
+	volatile sig_atomic_t	in_heredoc;
+}	t_signal_state;
 
 typedef enum e_token_type
 {
@@ -86,6 +90,12 @@ typedef struct s_command
 	struct s_command			*next;
 }								t_command;
 
+typedef struct s_pipe_data
+{
+	int							prev_fd;
+	int							*pipe_fd;
+}								t_pipe_data;
+
 typedef struct s_shell
 {
 	t_command					*cmd_list;
@@ -113,7 +123,7 @@ typedef struct s_cmd
 
 char							**parse_argv(t_token **tokens);
 t_redir							*parse_redirections(t_token **tokens);
-char							**parse_argv_with_redirections(t_token **tokens);
+char							**pars_argv_redirections(t_token **tokens);
 t_redir							*parse_redirections_mixed(t_token **tokens);
 t_command						*parse_command_unified(t_token **tokens);
 void							clear_redir_list(t_redir *redir);
@@ -177,7 +187,7 @@ void							shell_loop(t_shell *shell);
 int								execute_pipeline(t_command *cmd_list,
 									char ***mini_env, t_shell *shell);
 void							execute_child_process(t_command *cmd,
-									char ***mini_env, int prev_fd, int *pipe_fd,
+									char ***mini_env, t_pipe_data *p_data,
 									t_shell *shell);
 void							handle_parent_process(int *prev_fd,
 									int *pipe_fd, t_command *current);
@@ -219,7 +229,7 @@ int								is_single_command(t_command *cmd_list);
 void							setup_input_pipe(int prev_fd);
 void							setup_output_pipe(int *pipe_fd);
 int								is_valid_number(char *str);
-t_redir							*create_redirection_from_tokens(t_token *redir_token,
+t_redir							*create_redirection_tn(t_token *redir_token,
 									t_token *file_token);
 void							add_redir_to_list(t_redir **redir_list,
 									t_redir *new_redir);
@@ -238,12 +248,13 @@ void							update_token_value(t_token *current,
 									char *expanded_value);
 void							setup_interactive_signals(void);
 void							setup_execution_signals(void);
+t_signal_state					*get_signal_state(void);
+void							set_signal_received(int signal);
+void							set_heredoc_state(int state);
+int								get_signal_received(void);
+int								get_heredoc_state(void);
+void							reset_signal_state(void);
 int								handle_multiple_redirections(t_redir *redirs,
-									t_shell *shell);
-int								execute_pipeline(t_command *cmd_list,
-									char ***mini_env, t_shell *shell);
-void							execute_child_process(t_command *cmd,
-									char ***mini_env, int prev_fd, int *pipe_fd,
 									t_shell *shell);
 int								execute_parent_builtin(t_command *cmd,
 									char ***mini_env, t_shell *shell);

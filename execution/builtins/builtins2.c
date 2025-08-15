@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 18:54:31 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/14 16:41:46 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/15 18:37:17 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,10 +93,7 @@ int	builtin_exit(char ***mini_env, char *line, char **argv)
 	(void)mini_env;
 	(void)line;
 	if (argv[1] && argv[2])
-	{
-		write(2, "minishell: exit: too many arguments\n", 36);
-		return (1);
-	}
+		return (printf("minishell: exit: too many arguments\n"), 1);
 	ft_printf("exit\n");
 	if (!argv[1])
 		free_and_exit(0);
@@ -115,4 +112,3 @@ int	builtin_exit(char ***mini_env, char *line, char **argv)
 		final_code += 256;
 	free_and_exit(final_code);
 }
-

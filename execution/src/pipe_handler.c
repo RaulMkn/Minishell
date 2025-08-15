@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:45:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/14 17:11:45 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/15 18:20:01 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,13 +55,13 @@ static void	validate_and_execute_external(t_command *cmd, char ***mini_env)
 	exit(1);
 }
 
-void	execute_child_process(t_command *cmd, char ***mini_env, int prev_fd,
-		int *pipe_fd, t_shell *shell)
+void	execute_child_process(t_command *cmd, char ***mini_env,
+		t_pipe_data *p_data, t_shell *shell)
 {
 	setup_execution_signals();
-	setup_input_pipe(prev_fd);
+	setup_input_pipe(p_data->prev_fd);
 	if (cmd->next)
-		setup_output_pipe(pipe_fd);
+		setup_output_pipe(p_data->pipe_fd);
 	if (cmd->redir)
 	{
 		if (!handle_multiple_redirections(cmd->redir, shell))
