@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer_main.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:40:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/16 19:16:46 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/16 20:30:51 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ static int	is_forbidden_sequence(char *input, size_t i, t_shell *shell)
 	// Agregar detección para "<>"
 	if (input[i] == '<' && input[i + 1] == '>')
 	{
-		set_error(&shell->lexer_state, ERROR_SYNTAX, 
+		set_error(&shell->lexer_state, ERROR_SYNTAX,
 			"syntax error near unexpected token `newline'");
 		return (1);
 	}
@@ -99,7 +99,8 @@ t_token	*tokenize_input(char *input, t_shell *shell)
 		if (is_forbidden_sequence(input, i, shell))
 		{
 			if (shell->lexer_state.error == ERROR_NONE)
-				set_error(&shell->lexer_state, ERROR_SYNTAX, "Operador no soportado");
+				set_error(&shell->lexer_state, ERROR_SYNTAX,
+					"Operador no soportado");
 			if (buffer)
 				free(buffer);
 			clear_tokens(&tokens);

@@ -34,10 +34,8 @@ static int	create_temp_file(char **filename)
 static int	read_heredoc_input(int fd, char *delimiter, t_shell *shell)
 {
 	char	*line;
-	size_t	delimiter_len;
 
 	(void)shell;
-	delimiter_len = ft_strlen(delimiter);
 	set_heredoc_state(1);
 	while (1)
 	{
@@ -46,12 +44,10 @@ static int	read_heredoc_input(int fd, char *delimiter, t_shell *shell)
 			return (set_heredoc_state(0), free(line), -1);
 		if (!line)
 		{
-			ft_putstr_fd(
-				"minishell: warning: document by end-of-file\n", 2);
+			ft_putstr_fd("minishell: warning: document by end-of-file\n", 2);
 			break ;
 		}
-		if (ft_strlen(line) == delimiter_len
-			&& ft_strncmp(line, delimiter, delimiter_len) == 0)
+		if (ft_strcmp(line, delimiter) == 0)
 			return (free(line), set_heredoc_state(0), 0);
 		write(fd, line, ft_strlen(line));
 		write(fd, "\n", 1);
@@ -82,12 +78,12 @@ static int	open_temp_for_reading(char *filename, int original_stdin)
 	return (0);
 }
 
-static int	write_heredoc_to_temp(char *delimiter,
-			t_shell *shell, int original_stdin, char *filename)
+static int	write_heredoc_to_temp(char *delimiter, t_shell *shell,
+		int original_stdin, char **filename)
 {
 	int	temp_fd;
 
-	temp_fd = create_temp_file(&filename);
+	temp_fd = create_temp_file(filename);
 	if (temp_fd == -1)
 	{
 		close(original_stdin);
@@ -96,8 +92,8 @@ static int	write_heredoc_to_temp(char *delimiter,
 	if (read_heredoc_input(temp_fd, delimiter, shell) == -1)
 	{
 		close(temp_fd);
-		unlink(filename);
-		free(filename);
+		unlink(*filename);
+		free(*filename);
 		dup2(original_stdin, STDIN_FILENO);
 		close(original_stdin);
 		shell->last_status = 130;
@@ -117,8 +113,8 @@ int	handle_heredoc(char *delimiter, t_shell *shell)
 	original_stdin = dup(STDIN_FILENO);
 	set_signal_received(0);
 	temp_filename = NULL;
-	if (write_heredoc_to_temp(delimiter, shell,
-			original_stdin, temp_filename) == -1)
+	if (write_heredoc_to_temp(delimiter, shell, original_stdin,
+			&temp_filename) == -1)
 		return (-1);
 	if (open_temp_for_reading(temp_filename, original_stdin) == -1)
 		return (-1);

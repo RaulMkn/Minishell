@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_parser.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:35:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/16 18:54:41 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/16 20:32:15 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,8 +87,9 @@ static t_token	*concatenate_consecutive_tokens(t_token *tokens)
 	t_token	*current;
 	t_token	*next;
 	char	*new_value;
-	int     has_single_quotes;
-	
+	int		has_single_quotes;
+	char	*unquoted;
+
 	current = tokens;
 	while (current && current->next)
 	{
@@ -97,18 +98,19 @@ static t_token	*concatenate_consecutive_tokens(t_token *tokens)
 		{
 			// Detectar si el token actual tiene comillas simples
 			has_single_quotes = ft_strchr(current->value, '\'') != NULL;
-			
-			// Concatenar tokens, pero preservar el valor literal de las comillas simples
-			if ((ft_strchr(current->value, '\'') && next->value[0] == '$') ||
-				(current->value[ft_strlen(current->value) - 1] == '\'' && next->value[0]) ||
-				(ft_strchr(current->value, '"') && next->value[0] == '$') ||
-				(current->value[ft_strlen(current->value) - 1] == '"' && next->value[0]))
+
+			if ((ft_strchr(current->value, '\'') && next->value[0] == '$')
+						|| (current->value[ft_strlen(current->value)
+						- 1] == '\'' && next->value[0])
+					|| (ft_strchr(current->value, '"') && next->value[0] == '$')
+					|| (current->value[ft_strlen(current->value) - 1] == '"'
+						&& next->value[0]))
 			{
-				// Si hay comillas simples y luego un $, mantener el contenido literal
+
 				if (has_single_quotes && next->value[0] == '$')
 				{
 					// Eliminar las comillas del primer token para obtener su contenido literal
-					char *unquoted = remove_quotes(current->value);
+					unquoted = remove_quotes(current->value);
 					new_value = ft_strjoin(unquoted, next->value);
 					free(unquoted);
 				}
@@ -116,7 +118,6 @@ static t_token	*concatenate_consecutive_tokens(t_token *tokens)
 				{
 					new_value = ft_strjoin(current->value, next->value);
 				}
-				
 				if (new_value)
 				{
 					free(current->value);
@@ -124,7 +125,7 @@ static t_token	*concatenate_consecutive_tokens(t_token *tokens)
 					current->next = next->next;
 					free(next->value);
 					free(next);
-					continue;
+					continue ;
 				}
 			}
 		}

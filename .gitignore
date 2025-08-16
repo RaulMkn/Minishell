@@ -8,3 +8,5 @@ minishell_tester
 *.txt
 *.sh
 prueba
+*xt
+*txt;
