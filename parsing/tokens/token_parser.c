@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:35:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/15 18:10:10 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/16 18:54:41 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,57 @@ static t_command	*parse_tokens_loop(t_token *curr_token,
 	return (*cmd_list);
 }
 
+static t_token	*concatenate_consecutive_tokens(t_token *tokens)
+{
+	t_token	*current;
+	t_token	*next;
+	char	*new_value;
+	int     has_single_quotes;
+	
+	current = tokens;
+	while (current && current->next)
+	{
+		next = current->next;
+		if (current->type == TOKEN_WORD && next->type == TOKEN_WORD)
+		{
+			// Detectar si el token actual tiene comillas simples
+			has_single_quotes = ft_strchr(current->value, '\'') != NULL;
+			
+			// Concatenar tokens, pero preservar el valor literal de las comillas simples
+			if ((ft_strchr(current->value, '\'') && next->value[0] == '$') ||
+				(current->value[ft_strlen(current->value) - 1] == '\'' && next->value[0]) ||
+				(ft_strchr(current->value, '"') && next->value[0] == '$') ||
+				(current->value[ft_strlen(current->value) - 1] == '"' && next->value[0]))
+			{
+				// Si hay comillas simples y luego un $, mantener el contenido literal
+				if (has_single_quotes && next->value[0] == '$')
+				{
+					// Eliminar las comillas del primer token para obtener su contenido literal
+					char *unquoted = remove_quotes(current->value);
+					new_value = ft_strjoin(unquoted, next->value);
+					free(unquoted);
+				}
+				else
+				{
+					new_value = ft_strjoin(current->value, next->value);
+				}
+				
+				if (new_value)
+				{
+					free(current->value);
+					current->value = new_value;
+					current->next = next->next;
+					free(next->value);
+					free(next);
+					continue;
+				}
+			}
+		}
+		current = current->next;
+	}
+	return (tokens);
+}
+
 t_command	*parse_tokens(t_token *tokens)
 {
 	t_command	*cmd_list;
@@ -91,5 +142,6 @@ t_command	*parse_tokens(t_token *tokens)
 	cmd_list = NULL;
 	current_cmd = NULL;
 	curr_token = tokens;
+	curr_token = concatenate_consecutive_tokens(curr_token);
 	return (parse_tokens_loop(curr_token, &cmd_list, &current_cmd));
 }

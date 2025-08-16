@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:56:53 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/16 18:39:25 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/16 18:59:40 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,14 +81,18 @@ char	*expand_variables(char *str, char **env, int last_status, int len)
 	char    *pid_str;
 	char    *var_value;
 	int     i;
+	int     inside_single_quotes = 0;
 
 	if (!str || !env)
 		return (NULL);
 	
-	// Manejo de comillas y casos especiales
 	len = ft_strlen(str);
+	
+	// Si la cadena entera está entre comillas simples, retornar el contenido literal
 	if (len >= 2 && str[0] == '\'' && str[len - 1] == '\'')
-		return (ft_substr(str, 1, len - 2));
+		return (ft_strdup(str)); // Devolver con comillas para preservar literalidad
+	
+	// Las comillas dobles permiten expansión de variables
 	if (len >= 2 && str[0] == '"' && str[len - 1] == '"')
 	{
 		char *inner = ft_substr(str, 1, len - 2);
@@ -97,11 +101,30 @@ char	*expand_variables(char *str, char **env, int last_status, int len)
 		return (expanded);
 	}
 	
-	// Procesamiento principal para expansiones fuera de comillas
+	// Para secuencias de $ fuera de comillas y manejo de comillas simples
 	result = NULL;
 	i = 0;
 	while (i < len)
 	{
+		// Manejo de comillas simples - entrar/salir del modo literal
+		if (str[i] == '\'')
+		{
+			inside_single_quotes = !inside_single_quotes;
+			char temp[2] = {str[i], '\0'};
+			result = build_result(result, temp);
+			i++;
+			continue;
+		}
+		
+		// Si estamos dentro de comillas simples, todo es literal
+		if (inside_single_quotes)
+		{
+			char temp[2] = {str[i], '\0'};
+			result = build_result(result, temp);
+			i++;
+			continue;
+		}
+		
 		// Detectar y expandir $$ (PID)
 		if (i < len - 1 && str[i] == '$' && str[i + 1] == '$')
 		{
@@ -166,3 +189,4 @@ void	expand_and_filter_tokens(t_token **tokens, t_shell *shell)
 		current = current->next;
 	}
 }
+
