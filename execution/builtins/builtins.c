@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:03:17 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/16 18:08:44 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/16 20:31:14 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,27 +178,29 @@ int	builtin_cd(char **argv, char ***env)
 
 int	builtin_pwd(char **env)
 {
-    char	*cwd;
-    char	*env_pwd;
+	char	*cwd;
+	char	*env_pwd;
 
-    cwd = getcwd(NULL, 0);
-    if (!cwd)
-    {
-        env_pwd = get_env_value(env, "PWD");
-        if (env_pwd)
-            return (ft_printf("%s\n", env_pwd), 0);
-        else
-        {
-            write(2, "pwd: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory\n", 108);
-            return (1);
-        }
-    }
-    env_pwd = get_env_value(env, "PWD");
-    if (!env_pwd || ft_strcmp(env_pwd, cwd) != 0)
-        set_env_variable(&env, "PWD", cwd);
-    ft_printf("%s\n", cwd);
-    free(cwd);
-    return (0);
+	cwd = getcwd(NULL, 0);
+	if (!cwd)
+	{
+		env_pwd = get_env_value(env, "PWD");
+		if (env_pwd)
+			return (ft_printf("%s\n", env_pwd), 0);
+		else
+		{
+			write(2,
+				"pwd: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory\n",
+				108);
+			return (1);
+		}
+	}
+	env_pwd = get_env_value(env, "PWD");
+	if (!env_pwd || ft_strcmp(env_pwd, cwd) != 0)
+		set_env_variable(&env, "PWD", cwd);
+	ft_printf("%s\n", cwd);
+	free(cwd);
+	return (0);
 }
 
 // ...existing code...
