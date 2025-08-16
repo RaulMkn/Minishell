@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins2.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 18:54:31 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/15 18:37:17 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/16 13:24:02 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,7 @@ int	builtin_env(char **env)
 	return (0);
 }
 
-__attribute__((noreturn))
-void	free_and_exit(int exit_status)
+__attribute__((noreturn)) void free_and_exit(int exit_status)
 {
 	rl_clear_history();
 	exit(exit_status);
@@ -93,7 +92,10 @@ int	builtin_exit(char ***mini_env, char *line, char **argv)
 	(void)mini_env;
 	(void)line;
 	if (argv[1] && argv[2])
-		return (printf("minishell: exit: too many arguments\n"), 1);
+	{
+		ft_printf("exit\n");
+		return (write(2, "too many arguments\n", 19), 1);
+	}
 	ft_printf("exit\n");
 	if (!argv[1])
 		free_and_exit(0);
@@ -104,8 +106,6 @@ int	builtin_exit(char ***mini_env, char *line, char **argv)
 		write(2, ": numeric argument required\n", 28);
 		free_and_exit(2);
 	}
-	if (argv[2])
-		return (write(2, "minishell: exit: too many arguments\n", 37), 1);
 	exit_code = ft_atol(argv[1]);
 	final_code = (int)(exit_code % 256);
 	if (final_code < 0)

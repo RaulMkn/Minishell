@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 01:34:05 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/15 18:47:08 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/16 12:56:40 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,6 @@ int								is_parent_builtin(const char *cmd);
 char							**clone_env(char **envp);
 int								builtin_echo(char **argv);
 int								builtin_cd(char **argv, char ***env);
-int								builtin_pwd(void);
 int								builtin_export(char **argv, char ***env);
 int								builtin_unset(char **argv, char ***env);
 int								builtin_exit(char ***mini_env, char *line,
@@ -263,5 +262,9 @@ void							append_char(char **result, char *str, int *i);
 int								has_heredoc(t_redir *redirs);
 int								process_all_heredocs(t_redir *redirs,
 									t_shell *shell);
+
+								
+int		builtin_pwd(char **env); 
+int		set_env_variable(char ***env, const char *key, const char *value);
 
 #endif

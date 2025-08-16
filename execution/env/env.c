@@ -3,14 +3,47 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:04:24 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/14 16:38:56 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/16 13:16:16 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+int	set_env_variable(char ***env, const char *key, const char *value)
+{
+    char	*key_eq;
+    char	*new_var;
+    char	*temp_key;
+
+    if (!key || !value)
+        return (1);
+    
+    key_eq = ft_strjoin(key, "=");
+    if (!key_eq)
+        return (1);
+    new_var = ft_strjoin(key_eq, value);
+    free(key_eq);
+    if (!new_var)
+        return (1);
+    
+    temp_key = ft_strdup(key);
+    if (get_env_index(*env, key) >= 0)
+    {
+        replace_env(*env, temp_key, new_var);
+    }
+    else
+    {
+        append_env(env, new_var);
+    }
+    free(temp_key);
+    free(new_var);
+    return (0);
+}
+
+// ...existing code...
 
 int	is_valid_identifier(const char *str)
 {

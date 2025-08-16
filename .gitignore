@@ -5,3 +5,6 @@ minishell
 *.pdf
 TODO
 minishell_tester
+*.txt
+*.sh
+prueba
