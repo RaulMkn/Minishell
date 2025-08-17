@@ -12,22 +12,29 @@
 
 #include "../../../includes/minishell.h"
 
-int	get_heredoc_state(void)
-{
-	return (get_signal_state()->in_heredoc);
-}
-
 void	reset_signal_state(void)
 {
 	get_signal_state()->signal_received = 0;
 	get_signal_state()->in_heredoc = 0;
 }
 
+static void	sigquit_handler_interactive(int sig)
+{
+	(void)sig;
+	if (rl_line_buffer && *rl_line_buffer)
+	{
+		write(STDOUT_FILENO, "\nQuit\n", 6);
+		rl_replace_line("", 0);
+		rl_on_new_line();
+		rl_redisplay();
+	}
+}
+
 static void	sigint_handler_interactive(int sig)
 {
 	(void)sig;
 	set_signal_received(SIGINT);
-	if (get_heredoc_state())
+	if (get_signal_state()->in_heredoc)
 	{
 		ioctl(STDIN_FILENO, TIOCSTI, "\n");
 		rl_on_new_line();
@@ -44,8 +51,12 @@ static void	sigint_handler_interactive(int sig)
 void	setup_interactive_signals(void)
 {
 	struct sigaction	sa_int;
+	struct sigaction	sa_quit;
 
-	signal(SIGQUIT, SIG_IGN);
+	sa_quit.sa_handler = sigquit_handler_interactive;
+	sigemptyset(&sa_quit.sa_mask);
+	sa_quit.sa_flags = SA_RESTART;
+	sigaction(SIGQUIT, &sa_quit, NULL);
 	sa_int.sa_handler = sigint_handler_interactive;
 	sigemptyset(&sa_int.sa_mask);
 	sa_int.sa_flags = SA_RESTART;
