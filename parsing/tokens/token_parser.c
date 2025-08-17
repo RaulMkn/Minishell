@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_parser.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:35:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/17 14:09:58 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/17 23:47:32 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,29 @@ static t_command	*init_new_command(t_token **curr_token)
 	}
 	*curr_token = start_token;
 	new_cmd->redir = parse_redirections_mixed(curr_token);
+	
+	// Si no hay comando pero hay redirecciones, usar comando vacío especial
+	if (!new_cmd->argv[0] && new_cmd->redir)
+	{
+		free(new_cmd->argv);
+		new_cmd->argv = malloc(sizeof(char*) * 2);
+		if (!new_cmd->argv)
+		{
+			clear_redir_list(new_cmd->redir);
+			free(new_cmd);
+			return (NULL);
+		}
+		new_cmd->argv[0] = ft_strdup(":");
+		if (!new_cmd->argv[0])
+		{
+			free(new_cmd->argv);
+			clear_redir_list(new_cmd->redir);
+			free(new_cmd);
+			return (NULL);
+		}
+		new_cmd->argv[1] = NULL;
+	}
+	
 	new_cmd->next = NULL;
 	return (new_cmd);
 }
