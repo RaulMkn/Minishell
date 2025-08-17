@@ -51,11 +51,16 @@ static void	process_input_line(t_shell *shell, char *line)
 		if (tokens)
 			expand_and_filter_tokens(&tokens, shell);
 		process_valid_tokens(shell, tokens);
-		if (tokens)
-			clear_tokens(&tokens);
 	}
 	else if (shell->lexer_state.error_msg)
+	{
 		ft_putendl_fd(shell->lexer_state.error_msg, 2);
+		free(shell->lexer_state.error_msg);
+		shell->lexer_state.error_msg = NULL;
+		shell->lexer_state.error = ERROR_NONE;
+	}
+	if (tokens)
+		clear_tokens(&tokens);
 }
 
 void	shell_loop(t_shell *shell)

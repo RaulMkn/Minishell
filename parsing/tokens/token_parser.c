@@ -40,10 +40,7 @@ static int	handle_word_token(t_token **curr_token, t_command **cmd_list,
 
 	new_cmd = init_new_command(curr_token);
 	if (!new_cmd)
-	{
-		clear_command(*cmd_list);
 		return (0);
-	}
 	if (!*cmd_list)
 		*cmd_list = new_cmd;
 	else
@@ -61,12 +58,18 @@ static t_command	*parse_tokens_loop(t_token *curr_token,
 			|| is_redirection_token(curr_token->type))
 		{
 			if (!handle_word_token(&curr_token, cmd_list, current_cmd))
+			{
+				clear_command(*cmd_list);
 				return (NULL);
+			}
 		}
 		else if (curr_token->type == TOKEN_PIPE)
 		{
 			if (!handle_pipe_token(&curr_token, *current_cmd))
-				return (clear_command(*cmd_list), NULL);
+			{
+				clear_command(*cmd_list);
+				return (NULL);
+			}
 		}
 		else
 			curr_token = curr_token->next;

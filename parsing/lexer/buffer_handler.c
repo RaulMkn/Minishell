@@ -32,10 +32,14 @@ void	handle_buffer_token(t_token **tokens, char **buffer)
 
 static void	handle_word(t_token **tokens, char *word, t_shell *shell)
 {
+	t_token	*new_token;
+
 	(void)shell;
 	if (!word || !*word)
 		return ;
-	token_add_back(tokens, create_token(TOKEN_WORD, ft_strdup(word)));
+	new_token = create_token(TOKEN_WORD, word);
+	if (new_token)
+		token_add_back(tokens, new_token);
 }
 
 void	handle_final_buffer(t_token **tokens, char **buffer, t_shell *shell)
