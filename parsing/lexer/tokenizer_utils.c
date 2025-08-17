@@ -78,7 +78,7 @@ int	handle_unclosed_quotes(t_shell *shell, char **buffer)
 {
 	if (shell->lexer_state.quote_state != QUOTE_NONE)
 	{
-		set_error(&shell->lexer_state, ERROR_SYNTAX, "Comillas sin cerrar");
+		set_error(&shell->lexer_state, ERROR_SYNTAX, "Unclosed quotation marks");
 		free(*buffer);
 		return (0);
 	}
