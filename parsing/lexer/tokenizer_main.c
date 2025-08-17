@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:40:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/16 20:30:51 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/17 01:26:41 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,24 +35,43 @@ static int	handle_unclosed_quotes(t_shell *shell, char **buffer)
 	}
 	return (1);
 }
-
 static int	is_forbidden_sequence(char *input, size_t i, t_shell *shell)
 {
-	// Agregar detección para "<>"
-	if (input[i] == '<' && input[i + 1] == '>')
-	{
-		set_error(&shell->lexer_state, ERROR_SYNTAX,
-			"syntax error near unexpected token `newline'");
-		return (1);
-	}
-	if (input[i] == '&' && input[i + 1] == '&')
-		return (1);
-	if (input[i] == '|' && input[i + 1] == '|')
-		return (1);
-	if (input[i] == '*')
-		return (1);
-	return (0);
+    // Si el carácter está dentro de comillas, no considerarlo forbidden
+    int j;
+    int state; // 0 = none, 1 = single, 2 = double
+
+    (void)shell;
+    if (!input || i == 0)
+        return (0);
+    state = QUOTE_NONE;
+    j = 0;
+    while (j < (int)i)
+    {
+        if (input[j] == '\'' && state != QUOTE_DOUBLE)
+            state = (state == QUOTE_SINGLE) ? QUOTE_NONE : QUOTE_SINGLE;
+        else if (input[j] == '\"' && state != QUOTE_SINGLE)
+            state = (state == QUOTE_DOUBLE) ? QUOTE_NONE : QUOTE_DOUBLE;
+        j++;
+    }
+    if (state != QUOTE_NONE)
+        return (0); // dentro de comillas -> no prohibir nada
+
+    // Agregar detección para "<>" (fuera de comillas)
+    if (input[i] == '<' && input[i + 1] == '>')
+    {
+        set_error(&shell->lexer_state, ERROR_SYNTAX,
+            "syntax error near unexpected token `newline'");
+        return (1);
+    }
+    if (input[i] == '&' && input[i + 1] == '&')
+        return (1);
+    if (input[i] == '|' && input[i + 1] == '|')
+        return (1);
+    // NO marcar '*' como forbidden aquí: el expand/filter debe manejarlo más tarde
+    return (0);
 }
+// ...existing code...
 
 static void	process_character(t_tokenizer_ctx *ctx, t_shell *shell)
 {

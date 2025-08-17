@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   variable_expansion.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:56:53 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/16 18:59:40 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/17 02:05:50 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,32 +161,35 @@ char	*expand_variables(char *str, char **env, int last_status, int len)
 	return (result ? result : ft_strdup(""));
 }
 
+// ...existing code...
 void	expand_and_filter_tokens(t_token **tokens, t_shell *shell)
 {
-	t_token	*current;
-	t_token	*prev;
-	char	*expanded_value;
-	int		len;
+    t_token	*current;
+    t_token	*prev;
+    char	*expanded_value;
+    int		len;
 
-	current = *tokens;
-	prev = NULL;
-	len = 0;
-	while (current)
-	{
-		if (current->type == TOKEN_WORD)
-		{
-			expanded_value = expand_variables(current->value, shell->envp,
-					shell->last_status, len);
-			if (!expanded_value)
-			{
-				current = remove_empty_token(tokens, prev, current);
-				continue ;
-			}
-			else
-				update_token_value(current, expanded_value);
-		}
-		prev = current;
-		current = current->next;
-	}
+    current = *tokens;
+    prev = NULL;
+    len = 0;
+    while (current)
+    {
+        if (current->type == TOKEN_WORD)
+        {
+            expanded_value = expand_variables(current->value, shell->envp,
+                    shell->last_status, len);
+            if (!expanded_value)
+            {
+                current = remove_empty_token(tokens, prev, current);
+                continue ;
+            }
+            else
+                update_token_value(current, expanded_value);
+            /* Si el token quedó totalmente envuelto por comillas simples,
+               remove_quotes() se encarga en las fases siguientes según diseño. */
+        }
+        prev = current;
+        current = current->next;
+    }
 }
 
