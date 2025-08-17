@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer_main.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:40:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/16 20:30:51 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/17 02:13:56 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,10 @@ static int	handle_unclosed_quotes(t_shell *shell, char **buffer)
 
 static int	is_forbidden_sequence(char *input, size_t i, t_shell *shell)
 {
+	// Solo verificar secuencias prohibidas si NO estamos dentro de comillas
+	if (shell->lexer_state.quote_state != QUOTE_NONE)
+		return (0);
+		
 	// Agregar detección para "<>"
 	if (input[i] == '<' && input[i + 1] == '>')
 	{

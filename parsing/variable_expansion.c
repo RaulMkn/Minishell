@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:56:53 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/16 18:59:40 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/17 02:31:54 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,13 @@ static char	*expand_complex_variables(char *str, char **env, int last_status)
 	
 	while (str[i])
 	{
-		// Solo rechazar wildcard *
+		// Dentro de comillas dobles, * NO se expande - se trata como literal
 		if (str[i] == '*')
 		{
-			free(result);
-			return (ft_strdup(""));
+			char temp[2] = {str[i], '\0'};
+			result = build_result(result, temp);
+			i++;
+			continue;
 		}
 		
 		// Manejar secuencias de $$ (PID)
