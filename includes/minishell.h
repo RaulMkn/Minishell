@@ -171,6 +171,8 @@ void						handle_operator(t_token **tokens, char **buffer,
 								size_t *i, char *input);
 void						handle_quote_char(char **buffer, char c, size_t *i,
 								t_shell *shell);
+void						handle_escape_char(char **buffer, char *input,
+								size_t *i, t_shell *shell);
 void						handle_regular_char(char **buffer, char c,
 								size_t *i, t_shell *shell);
 void						handle_final_buffer(t_token **tokens, char **buffer,

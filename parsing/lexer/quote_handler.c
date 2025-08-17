@@ -134,3 +134,37 @@ void	remove_quotes_copy(const char *str, char *res)
 	}
 	res[j] = '\0';
 }
+
+void	handle_escape_char(char **buffer, char *input, size_t *i, t_shell *shell)
+{
+	// En bash, el comportamiento de \ depende del contexto
+	if (shell->lexer_state.quote_state == QUOTE_SINGLE)
+	{
+		// Dentro de comillas simples, \ es literal
+		*buffer = ft_strjoin_char(*buffer, input[*i]);
+		(*i)++;
+	}
+	else
+	{
+		// Fuera de comillas o en comillas dobles
+		if (input[*i + 1] == '\\')
+		{
+			// \\ → \ (doble backslash se convierte en uno)
+			*buffer = ft_strjoin_char(*buffer, '\\');
+			*i += 2;
+		}
+		else if (input[*i + 1] == '"' && shell->lexer_state.quote_state == QUOTE_DOUBLE)
+		{
+			// \" dentro de comillas dobles → " literal
+			*buffer = ft_strjoin_char(*buffer, '"');
+			*i += 2;
+		}
+		else
+		{
+			// Otros casos: preservar el backslash tal como está
+			*buffer = ft_strjoin_char(*buffer, input[*i]);
+			(*i)++;
+			// No procesar automáticamente el siguiente carácter aquí
+		}
+	}
+}

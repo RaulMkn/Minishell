@@ -29,8 +29,14 @@ static int	handle_unclosed_quotes(t_shell *shell, char **buffer)
 {
 	if (shell->lexer_state.quote_state != QUOTE_NONE)
 	{
-		set_error(&shell->lexer_state, ERROR_SYNTAX, "Comillas sin cerrar");
-		free(*buffer);
+		if (shell->lexer_state.quote_state == QUOTE_DOUBLE)
+			set_error(&shell->lexer_state, ERROR_SYNTAX, 
+				"minishell: unexpected EOF while looking for matching `\"'");
+		else if (shell->lexer_state.quote_state == QUOTE_SINGLE)
+			set_error(&shell->lexer_state, ERROR_SYNTAX,
+				"minishell: unexpected EOF while looking for matching `''");
+		if (*buffer)
+			free(*buffer);
 		return (0);
 	}
 	return (1);
@@ -62,6 +68,8 @@ static void	process_character(t_tokenizer_ctx *ctx, t_shell *shell)
 {
 	if (ctx->input[*ctx->i] == '\'' || ctx->input[*ctx->i] == '\"')
 		handle_quote_char(ctx->buffer, ctx->input[*ctx->i], ctx->i, shell);
+	else if (ctx->input[*ctx->i] == '\\')
+		handle_escape_char(ctx->buffer, ctx->input, ctx->i, shell);
 	else if ((ctx->input[*ctx->i] >= 9 && ctx->input[*ctx->i] <= 13)
 		|| ctx->input[*ctx->i] == 32)
 	{

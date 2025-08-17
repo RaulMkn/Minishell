@@ -6,7 +6,7 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:45:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/15 18:47:08 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/17 02:47:22 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,10 @@ static void	process_input_line(t_shell *shell, char *line)
 			clear_tokens(&tokens);
 	}
 	else if (shell->lexer_state.error_msg)
+	{
 		ft_putendl_fd(shell->lexer_state.error_msg, 2);
+		shell->last_status = 2;  // Bash usa código 2 para errores de sintaxis
+	}
 }
 
 void	shell_loop(t_shell *shell)
