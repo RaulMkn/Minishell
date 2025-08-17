@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/11 20:04:24 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/16 20:31:36 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/17 15:47:47 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,6 @@ int	set_env_variable(char ***env, const char *key, const char *value)
 	return (0);
 }
 
-// ...existing code...
-
 int	is_valid_identifier(const char *str)
 {
 	int	i;
@@ -64,6 +62,7 @@ int	append_env(char ***env, const char *new_var)
 	int		i;
 	char	**new_env;
 	char	**old_env;
+	char	*new_var_copy;
 
 	i = 0;
 	old_env = *env;
@@ -72,28 +71,34 @@ int	append_env(char ***env, const char *new_var)
 	new_env = malloc(sizeof(char *) * (i + 2));
 	if (!new_env)
 		return (1);
+	new_var_copy = ft_strdup(new_var);
+	if (!new_var_copy)
+		return (free(new_env), 1);
 	i = 0;
 	while (old_env[i])
 	{
 		new_env[i] = old_env[i];
 		i++;
 	}
-	new_env[i++] = ft_strdup(new_var);
+	new_env[i++] = new_var_copy;
 	new_env[i] = NULL;
 	free(old_env);
-	*env = new_env;
-	return (0);
+	return (*env = new_env, 0);
 }
 
 int	replace_env(char **env, const char *key, const char *new_var)
 {
-	int	index;
+	int		index;
+	char	*new_var_copy;
 
 	index = get_env_index(env, key);
 	if (index < 0)
 		return (1);
+	new_var_copy = ft_strdup(new_var);
+	if (!new_var_copy)
+		return (1);
 	free(env[index]);
-	env[index] = ft_strdup(new_var);
+	env[index] = new_var_copy;
 	return (0);
 }
 

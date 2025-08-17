@@ -1,17 +1,12 @@
-# *******************************************		$(EXEC_DIR)/builtins/builtins.c \
-		$(EXEC_DIR)/builtins/builtins2.c \
-		$(EXEC_DIR)/builtins/builtins_utils.c \
-		$(EXEC_DIR)/builtins/builtins_cd.c \
-		$(EXEC_DIR)/builtins/builtins_cd_helpers.c \
-		$(EXEC_DIR)/builtins/builtins_exit.c \****************************** #
+# **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+         #
+#    By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/11 19:22:34 by rmakende          #+#    #+#              #
-#    Updated: 2025/08/15 18:41:15 by ruortiz-         ###   ########.fr        #
+#    Updated: 2025/08/17 15:33:32 by rmakende         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 

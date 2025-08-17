@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:45:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/16 16:56:20 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/17 15:47:04 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,12 @@ void	init_shell(t_shell *shell, char **envp)
 
 	shell->cmd_list = NULL;
 	shell->envp = clone_env(envp);
+	if (!shell->envp)
+	{
+		shell->envp = malloc(sizeof(char *));
+		if (shell->envp)
+			shell->envp[0] = NULL;
+	}
 	shell->last_status = 0;
 	shell->lexer_state.quote_state = QUOTE_NONE;
 	shell->lexer_state.error = ERROR_NONE;

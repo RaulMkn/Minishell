@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   buffer_handler.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:40:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/17 12:46:44 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/17 15:47:04 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,28 +14,18 @@
 
 void	handle_buffer_token(t_token **tokens, char **buffer)
 {
-	char	*temp;
 	t_token	*new_token;
 
 	if (!(*buffer && **buffer != '\0'))
 		return ;
-	temp = ft_strdup(*buffer);
-	if (!temp)
-	{
-		free(*buffer);
-		*buffer = NULL;
-		return ;
-	}
-	new_token = create_token(TOKEN_WORD, temp);
+	new_token = create_token(TOKEN_WORD, *buffer);
 	if (!new_token)
 	{
-		free(temp);
 		free(*buffer);
 		*buffer = NULL;
 		return ;
 	}
 	token_add_back(tokens, new_token);
-	free(temp);
 	free(*buffer);
 	*buffer = NULL;
 }

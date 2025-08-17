@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 19:05:39 by rmakende          #+#    #+#             */
-/*   Updated: 2025/07/21 23:47:36 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/17 15:47:04 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,19 @@ char	**clone_env(char **envp)
 	while (envp[i])
 		i++;
 	copy = malloc(sizeof(char *) * (i + 1));
+	if (!copy)
+		return (NULL);
 	i = 0;
 	while (envp[i])
 	{
 		copy[i] = ft_strdup(envp[i]);
+		if (!copy[i])
+		{
+			while (i > 0)
+				free(copy[--i]);
+			free(copy);
+			return (NULL);
+		}
 		i++;
 	}
 	copy[i] = NULL;
