@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_parser.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:35:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/17 03:27:25 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/17 14:09:58 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,14 +52,6 @@ static int	handle_word_token(t_token **curr_token, t_command **cmd_list,
 	return (1);
 }
 
-static int	handle_pipe_token(t_token **curr_token, t_command *current_cmd)
-{
-	if (!current_cmd || !(*curr_token)->next)
-		return (0);
-	*curr_token = (*curr_token)->next;
-	return (1);
-}
-
 static t_command	*parse_tokens_loop(t_token *curr_token,
 		t_command **cmd_list, t_command **current_cmd)
 {
@@ -80,44 +72,6 @@ static t_command	*parse_tokens_loop(t_token *curr_token,
 			curr_token = curr_token->next;
 	}
 	return (*cmd_list);
-}
-
-static t_token	*concatenate_consecutive_tokens(t_token *tokens)
-{
-	t_token	*current;
-	t_token	*next;
-	char	*new_value;
-
-	current = tokens;
-	while (current && current->next)
-	{
-		next = current->next;
-		if (current->type == TOKEN_WORD && next->type == TOKEN_WORD)
-		{
-			if ((ft_strchr(current->value, '\'') && next->value[0] == '$')
-						|| (current->value[ft_strlen(current->value)
-						- 1] == '\'' && next->value[0])
-					|| (ft_strchr(current->value, '"') && next->value[0] == '$')
-					|| (current->value[ft_strlen(current->value) - 1] == '"'
-						&& next->value[0]))
-			{
-				// Simplemente concatenar sin remover comillas aún
-				// La expansión de variables manejará las comillas correctamente
-				new_value = ft_strjoin(current->value, next->value);
-				if (new_value)
-				{
-					free(current->value);
-					current->value = new_value;
-					current->next = next->next;
-					free(next->value);
-					free(next);
-					continue ;
-				}
-			}
-		}
-		current = current->next;
-	}
-	return (tokens);
 }
 
 t_command	*parse_tokens(t_token *tokens)

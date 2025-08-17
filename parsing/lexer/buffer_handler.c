@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   buffer_handler.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:40:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/17 03:27:25 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/17 12:46:44 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,6 @@ static void	handle_word(t_token **tokens, char *word, t_shell *shell)
 	(void)shell;
 	if (!word || !*word)
 		return ;
-	
-	// Simplemente crear el token con el word tal como está
-	// La expansión de variables se manejará después en expand_and_filter_tokens
 	token_add_back(tokens, create_token(TOKEN_WORD, ft_strdup(word)));
 }
 
