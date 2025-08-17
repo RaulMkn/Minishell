@@ -12,16 +12,6 @@
 
 #include "../includes/minishell.h"
 
-static void	append_char(char **result, char *str, int *i)
-{
-	char	temp[2];
-
-	temp[0] = str[*i];
-	temp[1] = '\0';
-	*result = build_result(*result, temp);
-	(*i)++;
-}
-
 static char	*process_pid_expansion(char **result, int *i)
 {
 	char	*pid_str;

@@ -1,4 +1,9 @@
-# **************************************************************************** #
+# *******************************************		$(EXEC_DIR)/builtins/builtins.c \
+		$(EXEC_DIR)/builtins/builtins2.c \
+		$(EXEC_DIR)/builtins/builtins_utils.c \
+		$(EXEC_DIR)/builtins/builtins_cd.c \
+		$(EXEC_DIR)/builtins/builtins_cd_helpers.c \
+		$(EXEC_DIR)/builtins/builtins_exit.c \****************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
@@ -11,7 +16,7 @@
 # **************************************************************************** #
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g3 -I./includes #-fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer
+CFLAGS = -Wall -Wextra -Werror  -g3 -I./includes #-fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer
 RL_FLAGS = -lreadline
 
 LIBFT_DIR = ./libft
@@ -19,36 +24,50 @@ LIBFT = $(LIBFT_DIR)/libft.a
 EXEC_DIR = ./execution
 PARSING_DIR = ./parsing
 
-EXEC_SRCS =	$(EXEC_DIR)/src/main.c \
-		$(EXEC_DIR)/src/shell_init.c \
-		$(EXEC_DIR)/src/shell_loop.c \
-		$(EXEC_DIR)/src/signals.c \
-		$(EXEC_DIR)/src/signals-utils.c \
-		$(EXEC_DIR)/src/pipeline_executor/error_utils.c \
-		$(EXEC_DIR)/src/pipeline_executor/pipeline_executor.c \
-		$(EXEC_DIR)/src/pipeline_executor/pipeline_executor_utils.c \
-        $(EXEC_DIR)/src/multiple_redirections.c \
-		$(EXEC_DIR)/src/redirect_heredoc.c \
-		$(EXEC_DIR)/src/pipe_handler.c \
-		$(EXEC_DIR)/src/setup_pipes.c \
-		$(EXEC_DIR)/pipes/exec_dispatch.c \
-		$(EXEC_DIR)/pipes/exec_single.c \
-		$(EXEC_DIR)/pipes/child_process.c \
-		$(EXEC_DIR)/pipes/parent_process.c \
-		$(EXEC_DIR)/pipes/pipeline_main.c \
-		$(EXEC_DIR)/builtins/builtins.c \
-		$(EXEC_DIR)/builtins/builtins2.c \
-		$(EXEC_DIR)/builtins/builtins_utils.c \
-		$(EXEC_DIR)/path_utils.c \
-		$(EXEC_DIR)/redirect.c \
-		$(EXEC_DIR)/env/env.c \
-		$(EXEC_DIR)/env/env_utils.c
+EXEC_SRCS =	$(EXEC_DIR)/core/main.c \
+		$(EXEC_DIR)/core/shell_init.c \
+		$(EXEC_DIR)/core/shell_loop.c \
+		$(EXEC_DIR)/core/signals/signals.c \
+		$(EXEC_DIR)/core/signals/signals_utils.c \
+		$(EXEC_DIR)/exec_system/pipeline/pipeline_executor.c \
+		$(EXEC_DIR)/exec_system/pipeline/pipeline_helpers.c \
+		$(EXEC_DIR)/exec_system/pipeline/pipeline_loop.c \
+		$(EXEC_DIR)/exec_system/pipeline/pipeline_utils.c \
+		$(EXEC_DIR)/exec_system/utils/error_utils.c \
+		$(EXEC_DIR)/exec_system/utils/execution_wrappers.c \
+		$(EXEC_DIR)/exec_system/utils/execution_processes.c \
+		$(EXEC_DIR)/exec_system/processes/child_process.c \
+		$(EXEC_DIR)/exec_system/processes/parent_process.c \
+		$(EXEC_DIR)/exec_system/processes/exec_dispatch.c \
+		$(EXEC_DIR)/exec_system/processes/exec_single.c \
+		$(EXEC_DIR)/exec_system/commands/command_executor.c \
+		$(EXEC_DIR)/exec_system/commands/path_resolver.c \
+		$(EXEC_DIR)/redirection/redirect.c \
+		$(EXEC_DIR)/redirection/redirect_heredoc.c \
+		$(EXEC_DIR)/redirection/multiple_redirections.c \
+		$(EXEC_DIR)/redirection/validators/redirection_validator.c \
+		$(EXEC_DIR)/redirection/validators/validator_utils.c \
+		$(EXEC_DIR)/pipe_system/pipe_handler.c \
+		$(EXEC_DIR)/pipe_system/setup_pipes.c \
+		$(EXEC_DIR)/builtins/core/builtins.c \
+		$(EXEC_DIR)/builtins/core/builtins_utils.c \
+		$(EXEC_DIR)/builtins/core/env/env.c \
+		$(EXEC_DIR)/builtins/core/env/env_utils.c \
+		$(EXEC_DIR)/builtins/commands/cd/builtin_cd.c \
+		$(EXEC_DIR)/builtins/commands/cd/cd_helpers.c \
+		$(EXEC_DIR)/builtins/commands/echo_unset_env.c \
+		$(EXEC_DIR)/builtins/commands/exit.c
 
 PARSING_SRCS = $(PARSING_DIR)/parsing_utils.c \
 		$(PARSING_DIR)/expand_tokens.c \
 		$(PARSING_DIR)/token_validation.c \
 		$(PARSING_DIR)/variable_expansion.c \
+		$(PARSING_DIR)/variable_expansion_complex.c \
+		$(PARSING_DIR)/variable_expansion_core.c \
+		$(PARSING_DIR)/variable_expansion_helpers.c \
+		$(PARSING_DIR)/variable_expansion_utils.c \
 		$(PARSING_DIR)/tokens/token_parser.c \
+		$(PARSING_DIR)/tokens/token_parser_utils.c \
 		$(PARSING_DIR)/tokens/argv_parser.c \
 		$(PARSING_DIR)/tokens/redirection_parser.c \
 		$(PARSING_DIR)/tokens/unified_parser/unified_parser.c \
@@ -60,7 +79,10 @@ PARSING_SRCS = $(PARSING_DIR)/parsing_utils.c \
 		$(PARSING_DIR)/lexer/buffer_handler.c \
 		$(PARSING_DIR)/lexer/operator_handler.c \
 		$(PARSING_DIR)/lexer/quote_handler.c \
-		$(PARSING_DIR)/lexer/tokenizer_main.c
+		$(PARSING_DIR)/lexer/handler_helper.c \
+		$(PARSING_DIR)/lexer/tokenizer_main.c \
+		$(PARSING_DIR)/lexer/tokenizer_context.c \
+		$(PARSING_DIR)/lexer/tokenizer_utils.c
 
 SRCS = $(EXEC_SRCS) $(PARSING_SRCS)
 
@@ -92,9 +114,9 @@ $(OBJ_DIR)/%.o: %.c
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJS): | $(OBJ_DIR)/execution $(OBJ_DIR)/parsing $(OBJ_DIR)/execution/src $(OBJ_DIR)/execution/pipes $(OBJ_DIR)/execution/builtins $(OBJ_DIR)/execution/env $(OBJ_DIR)/parsing/tokens $(OBJ_DIR)/parsing/lexer
+$(OBJS): | $(OBJ_DIR)/execution $(OBJ_DIR)/parsing $(OBJ_DIR)/execution/core $(OBJ_DIR)/execution/core/signals $(OBJ_DIR)/execution/exec_system $(OBJ_DIR)/execution/exec_system/pipeline $(OBJ_DIR)/execution/exec_system/utils $(OBJ_DIR)/execution/exec_system/processes $(OBJ_DIR)/execution/exec_system/commands $(OBJ_DIR)/execution/redirection $(OBJ_DIR)/execution/redirection/validators $(OBJ_DIR)/execution/pipe_system $(OBJ_DIR)/execution/builtins $(OBJ_DIR)/execution/builtins/core $(OBJ_DIR)/execution/builtins/core/env $(OBJ_DIR)/execution/builtins/commands $(OBJ_DIR)/execution/builtins/commands/cd $(OBJ_DIR)/parsing/tokens $(OBJ_DIR)/parsing/tokens/unified_parser $(OBJ_DIR)/parsing/lexer
 
-$(OBJ_DIR)/execution $(OBJ_DIR)/parsing $(OBJ_DIR)/execution/src $(OBJ_DIR)/execution/pipes $(OBJ_DIR)/execution/builtins $(OBJ_DIR)/execution/env $(OBJ_DIR)/parsing/tokens $(OBJ_DIR)/parsing/lexer:
+$(OBJ_DIR)/execution $(OBJ_DIR)/parsing $(OBJ_DIR)/execution/core $(OBJ_DIR)/execution/core/signals $(OBJ_DIR)/execution/exec_system $(OBJ_DIR)/execution/exec_system/pipeline $(OBJ_DIR)/execution/exec_system/utils $(OBJ_DIR)/execution/exec_system/processes $(OBJ_DIR)/execution/exec_system/commands $(OBJ_DIR)/execution/redirection $(OBJ_DIR)/execution/redirection/validators $(OBJ_DIR)/execution/pipe_system $(OBJ_DIR)/execution/builtins $(OBJ_DIR)/execution/builtins/core $(OBJ_DIR)/execution/builtins/core/env $(OBJ_DIR)/execution/builtins/commands $(OBJ_DIR)/execution/builtins/commands/cd $(OBJ_DIR)/parsing/tokens $(OBJ_DIR)/parsing/tokens/unified_parser $(OBJ_DIR)/parsing/lexer:
 	@mkdir -p $@
 
 clean:

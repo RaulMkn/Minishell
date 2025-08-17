@@ -6,11 +6,11 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 18:51:40 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/16 13:13:13 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/17 13:26:14 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/minishell.h"
+#include "../../../includes/minishell.h"
 
 int	is_builtin(const char *cmd)
 {
@@ -32,7 +32,7 @@ int	run_builtin(char **argv, char ***env, char *line)
 	else if (!ft_strcmp(argv[0], "cd"))
 		return (builtin_cd(argv, env));
 	else if (!ft_strcmp(argv[0], "pwd"))
-        return (builtin_pwd(*env));
+		return (builtin_pwd(*env));
 	else if (!ft_strcmp(argv[0], "export"))
 		return (builtin_export(argv, env));
 	else if (!ft_strcmp(argv[0], "unset"))

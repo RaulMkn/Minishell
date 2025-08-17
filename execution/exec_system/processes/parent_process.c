@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/minishell.h"
+#include "../../../includes/minishell.h"
 
 int	handle_pipe_parent_process(int in_fd, int *pipe_fd, t_cmd *curr)
 {
