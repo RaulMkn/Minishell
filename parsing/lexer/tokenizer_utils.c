@@ -5,12 +5,24 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/17 16:00:00 by ruortiz-         #+#    #+#             */
-/*   Updated: 2025/08/17 16:00:00 by ruortiz-         ###   ########.fr       */
+/*   Created: 2025/08/17 15:56:37 by ruortiz-          #+#    #+#             */
+/*   Updated: 2025/08/17 15:57:27 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+static volatile sig_atomic_t	interrupted = 0;
+
+static void	sigint_handler(int sig)
+{
+	(void)sig;
+	interrupted = 1;
+	ioctl(STDIN_FILENO, TIOCSTI, "\n");
+	rl_replace_line("", 0);
+	rl_on_new_line();
+	rl_redisplay();
+}
 
 static int	update_quote_state(char c, int state)
 {
@@ -76,12 +88,32 @@ int	is_forbidden_sequence(char *input, size_t i, t_shell *shell)
 
 int	handle_unclosed_quotes(t_shell *shell, char **buffer)
 {
-	if (shell->lexer_state.quote_state != QUOTE_NONE)
+	void	(*old_handler)(int);
+	char	*extra;
+	char	*tmp;
+
+	old_handler = signal(SIGINT, sigint_handler);
+	interrupted = 0;
+	while (shell->lexer_state.quote_state != QUOTE_NONE)
 	{
-		set_error(&shell->lexer_state,
-			ERROR_SYNTAX, "Unclosed quotation marks");
+		extra = readline("> ");
+		if (!extra || interrupted)
+		{
+			free(*buffer);
+			*buffer = NULL;
+			signal(SIGINT, old_handler);
+			interrupted = 0;
+			if (extra)
+				free(extra);
+			return (0);
+		}
+		tmp = ft_strjoin(*buffer, extra);
 		free(*buffer);
-		return (0);
+		*buffer = tmp;
+		free(extra);
+		shell->lexer_state.quote_state = check_quote_state_at_position(*buffer,
+				ft_strlen(*buffer));
 	}
+	signal(SIGINT, old_handler);
 	return (1);
 }
