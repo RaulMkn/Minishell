@@ -6,11 +6,37 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:45:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/15 18:47:08 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/17 21:40:57 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
+
+static void	handle_redirections_only(t_command *new, t_shell *shell)
+{
+	t_redir	*r;
+	int		flags;
+	int		fd;
+
+	r = new->redir;
+	while (r)
+	{
+		if (r->type == REDIR_OUT || r->type == REDIR_APPEND)
+		{
+			flags = O_WRONLY | O_CREAT;
+			if (r->type == REDIR_APPEND)
+				flags |= O_APPEND;
+			else
+				flags |= O_TRUNC;
+			fd = open(r->file, flags, 0644);
+			if (fd != -1)
+				close(fd);
+		}
+		r = r->next;
+	}
+	shell->last_status = 0;
+	clear_command(new);
+}
 
 static void	process_valid_tokens(t_shell *shell, t_token *tokens)
 {
@@ -18,26 +44,19 @@ static void	process_valid_tokens(t_shell *shell, t_token *tokens)
 
 	if (!tokens)
 		return (shell->last_status = 0, (void)0);
-	if (is_valid_operator_sequence(tokens))
-	{
-		new = parse_tokens(tokens);
-		if (new)
-		{
-			if (!new->argv || !new->argv[0])
-				return (shell->last_status = 0, clear_command(new), (void)0);
-			if (new->argv[0][0] == '\0')
-				return (shell->last_status = 0, clear_command(new), (void)0);
-			if (shell->cmd_list)
-				clear_command(shell->cmd_list);
-			shell->cmd_list = new;
-			shell->last_status = execute_pipeline(shell->cmd_list,
-					&shell->envp, shell);
-		}
-		else
-			shell->last_status = 0;
-	}
-	else
-		ft_putendl_fd("Error de sintaxis", 2);
+	if (!is_valid_operator_sequence(tokens))
+		return (ft_putendl_fd("Error de sintaxis", 2), (void)0);
+	new = parse_tokens(tokens);
+	if (!new)
+		return (shell->last_status = 0, (void)0);
+	if ((!new->argv || !new->argv[0]) && new->redir)
+		return (handle_redirections_only(new, shell), (void)0);
+	if (!new->argv || !new->argv[0] || new->argv[0][0] == '\0')
+		return (shell->last_status = 0, clear_command(new), (void)0);
+	if (shell->cmd_list)
+		clear_command(shell->cmd_list);
+	shell->cmd_list = new;
+	shell->last_status = execute_pipeline(shell->cmd_list, &shell->envp, shell);
 }
 
 static void	process_input_line(t_shell *shell, char *line)
