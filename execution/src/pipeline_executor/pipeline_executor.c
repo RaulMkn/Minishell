@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline_executor.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:45:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/15 18:41:15 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/17 02:59:53 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,9 @@
 static int	execute_builtin_in_fork(t_command *cmd, char ***mini_env,
 		t_shell *shell)
 {
-	pid_t	pid;
-	int		status;
+	pid_t		pid;
+	int			status;
+	void		(*old_sigint)(int);
 
 	pid = fork();
 	if (pid == 0)
@@ -29,15 +30,22 @@ static int	execute_builtin_in_fork(t_command *cmd, char ***mini_env,
 		}
 		exit(run_builtin(cmd->argv, mini_env, NULL));
 	}
+	old_sigint = signal(SIGINT, SIG_IGN);
 	waitpid(pid, &status, 0);
-	return (WEXITSTATUS(status));
+	signal(SIGINT, old_sigint);
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+	else if (WIFSIGNALED(status))
+		return (128 + WTERMSIG(status));
+	return (1);
 }
 
 static int	execute_external_command(t_command *cmd, char *command_path,
 		char ***mini_env, t_shell *shell)
 {
-	pid_t	pid;
-	int		status;
+	pid_t		pid;
+	int			status;
+	void		(*old_sigint)(int);
 
 	pid = fork();
 	if (pid == 0)
@@ -52,8 +60,14 @@ static int	execute_external_command(t_command *cmd, char *command_path,
 		perror("execve");
 		exit(1);
 	}
+	old_sigint = signal(SIGINT, SIG_IGN);
 	waitpid(pid, &status, 0);
-	return (WEXITSTATUS(status));
+	signal(SIGINT, old_sigint);
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+	else if (WIFSIGNALED(status))
+		return (128 + WTERMSIG(status));
+	return (1);
 }
 
 int	has_heredoc(t_redir *redirs)
@@ -197,25 +211,33 @@ static int	handle_pipeline_loop(t_command *cmd_list, char ***mini_env,
 
 int	execute_pipeline(t_command *cmd_list, char ***mini_env, t_shell *shell)
 {
-	pid_t	last_pid;
-	int		status;
-	int		final_status;
+	pid_t		last_pid;
+	int			status;
+	int			final_status;
+	void		(*old_sigint)(int);
 
 	if (!cmd_list || !mini_env || !*mini_env)
 		return (1);
 	if (is_single_command(cmd_list))
 		return (execute_single_command(cmd_list, mini_env, shell));
+	old_sigint = signal(SIGINT, SIG_IGN);
 	last_pid = handle_pipeline_loop(cmd_list, mini_env, shell);
 	if (last_pid == 1)
+	{
+		signal(SIGINT, old_sigint);
 		return (1);
+	}
 	final_status = 0;
 	if (last_pid > 0)
 	{
 		waitpid(last_pid, &status, 0);
 		if (WIFEXITED(status))
 			final_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			final_status = 128 + WTERMSIG(status);
 	}
 	while (wait(NULL) > 0)
 		;
+	signal(SIGINT, old_sigint);
 	return (final_status);
 }

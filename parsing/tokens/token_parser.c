@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:35:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/16 20:32:15 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/17 03:27:25 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,8 +87,6 @@ static t_token	*concatenate_consecutive_tokens(t_token *tokens)
 	t_token	*current;
 	t_token	*next;
 	char	*new_value;
-	int		has_single_quotes;
-	char	*unquoted;
 
 	current = tokens;
 	while (current && current->next)
@@ -96,9 +94,6 @@ static t_token	*concatenate_consecutive_tokens(t_token *tokens)
 		next = current->next;
 		if (current->type == TOKEN_WORD && next->type == TOKEN_WORD)
 		{
-			// Detectar si el token actual tiene comillas simples
-			has_single_quotes = ft_strchr(current->value, '\'') != NULL;
-
 			if ((ft_strchr(current->value, '\'') && next->value[0] == '$')
 						|| (current->value[ft_strlen(current->value)
 						- 1] == '\'' && next->value[0])
@@ -106,18 +101,9 @@ static t_token	*concatenate_consecutive_tokens(t_token *tokens)
 					|| (current->value[ft_strlen(current->value) - 1] == '"'
 						&& next->value[0]))
 			{
-
-				if (has_single_quotes && next->value[0] == '$')
-				{
-					// Eliminar las comillas del primer token para obtener su contenido literal
-					unquoted = remove_quotes(current->value);
-					new_value = ft_strjoin(unquoted, next->value);
-					free(unquoted);
-				}
-				else
-				{
-					new_value = ft_strjoin(current->value, next->value);
-				}
+				// Simplemente concatenar sin remover comillas aún
+				// La expansión de variables manejará las comillas correctamente
+				new_value = ft_strjoin(current->value, next->value);
 				if (new_value)
 				{
 					free(current->value);

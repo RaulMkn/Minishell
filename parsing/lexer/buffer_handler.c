@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:40:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/16 20:32:33 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/17 03:27:25 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,41 +42,13 @@ void	handle_buffer_token(t_token **tokens, char **buffer)
 
 static void	handle_word(t_token **tokens, char *word, t_shell *shell)
 {
-	char	*expanded;
-	char	*cmd_name;
-	t_token	*current;
-
+	(void)shell;
 	if (!word || !*word)
 		return ;
-	// Identificar si este token es parte del comando 'echo'
-	cmd_name = NULL;
-	current = *tokens;
-	// Buscar el primer token (que sería el comando)
-	while (current)
-	{
-		if (current->type == TOKEN_WORD)
-		{
-			cmd_name = current->value;
-			break ;
-		}
-		current = current->next;
-	}
-
-	if (cmd_name && ft_strcmp(cmd_name, "echo") == 0 && word[0] == '\''
-		&& word[ft_strlen(word) - 1] == '\'')
-	{
-
-		token_add_back(tokens, create_token(TOKEN_WORD, ft_strdup(word)));
-		return ;
-	}
-	// Comportamiento estándar para otros comandos o sin comillas simples
-	if (shell->lexer_state.quote_state == QUOTE_SINGLE)
-		return (token_add_back(tokens, create_token(TOKEN_WORD, word)));
-	expanded = expand_variables(word, shell->envp, shell->last_status, 1);
-	if (!expanded)
-		expanded = ft_strdup("");
-	token_add_back(tokens, create_token(TOKEN_WORD, expanded));
-	free(expanded);
+	
+	// Simplemente crear el token con el word tal como está
+	// La expansión de variables se manejará después en expand_and_filter_tokens
+	token_add_back(tokens, create_token(TOKEN_WORD, ft_strdup(word)));
 }
 
 void	handle_final_buffer(t_token **tokens, char **buffer, t_shell *shell)

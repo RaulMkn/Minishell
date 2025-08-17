@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:56:53 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/17 02:05:50 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/17 03:27:25 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,137 +29,128 @@ static char	*process_variable_expansion(char *str, int *i, char **env,
 	return (var_value);
 }
 
+// ...existing code...
 static char	*expand_complex_variables(char *str, char **env, int last_status)
 {
-	char	*result;
-	char	*var_value;
-	char    *pid_str;
-	int		i;
+    char	*result;
+    char	*var_value;
+    char    *pid_str;
+    int		i;
 
-	result = NULL;
-	i = 0;
-	
-	while (str[i])
-	{
-		// Solo rechazar wildcard *
-		if (str[i] == '*')
-		{
-			free(result);
-			return (ft_strdup(""));
-		}
-		
-		// Manejar secuencias de $$ (PID)
-		if (str[i] == '$' && str[i + 1] == '$')
-		{
-			pid_str = ft_itoa(getpid());
-			result = build_result(result, pid_str);
-			free(pid_str);
-			i += 2;  // Avanzar más allá de los dos $
-			continue;
-		}
-		
-		// Manejar variables normales
-		if (str[i] == '$' && str[i + 1] && str[i + 1] != ' ')
-		{
-			var_value = process_variable_expansion(str, &i, env, last_status);
-			result = build_result(result, var_value);
-			if (var_value)
-				free(var_value);
-			continue;  // i ya se actualizó en process_variable_expansion
-		}
-		else
-			append_char(&result, str, &i);
-	}
-	if (result)
-		return (result);
-	return (ft_strdup(""));
+    result = NULL;
+    i = 0;
+    
+    while (str[i])
+    {
+        // Mantener '*' dentro de comillas dobles como literal (no rechazar)
+        
+        // Manejar secuencias de $$ (PID)
+        if (str[i] == '$' && str[i + 1] == '$')
+        {
+            pid_str = ft_itoa(getpid());
+            result = build_result(result, pid_str);
+            free(pid_str);
+            i += 2;  // Avanzar más allá de los dos $
+            continue;
+        }
+        
+        // Manejar variables normales
+        if (str[i] == '$' && str[i + 1] && str[i + 1] != ' ')
+        {
+            var_value = process_variable_expansion(str, &i, env, last_status);
+            result = build_result(result, var_value);
+            if (var_value)
+                free(var_value);
+            continue;  // i ya se actualizó en process_variable_expansion
+        }
+        else
+            append_char(&result, str, &i);
+    }
+    if (result)
+        return (result);
+    return (ft_strdup(""));
 }
-
+// ...existing code...
 char	*expand_variables(char *str, char **env, int last_status, int len)
 {
-	char	*result;
-	char    *pid_str;
-	char    *var_value;
-	int     i;
-	int     inside_single_quotes = 0;
+    char	*result;
+    char    *pid_str;
+    char    *var_value;
+    int     i;
+    int     inside_single_quotes = 0;
 
-	if (!str || !env)
-		return (NULL);
-	
-	len = ft_strlen(str);
-	
-	// Si la cadena entera está entre comillas simples, retornar el contenido literal
-	if (len >= 2 && str[0] == '\'' && str[len - 1] == '\'')
-		return (ft_strdup(str)); // Devolver con comillas para preservar literalidad
-	
-	// Las comillas dobles permiten expansión de variables
-	if (len >= 2 && str[0] == '"' && str[len - 1] == '"')
-	{
-		char *inner = ft_substr(str, 1, len - 2);
-		char *expanded = expand_complex_variables(inner, env, last_status);
-		free(inner);
-		return (expanded);
-	}
-	
-	// Para secuencias de $ fuera de comillas y manejo de comillas simples
-	result = NULL;
-	i = 0;
-	while (i < len)
-	{
-		// Manejo de comillas simples - entrar/salir del modo literal
-		if (str[i] == '\'')
-		{
-			inside_single_quotes = !inside_single_quotes;
-			char temp[2] = {str[i], '\0'};
-			result = build_result(result, temp);
-			i++;
-			continue;
-		}
-		
-		// Si estamos dentro de comillas simples, todo es literal
-		if (inside_single_quotes)
-		{
-			char temp[2] = {str[i], '\0'};
-			result = build_result(result, temp);
-			i++;
-			continue;
-		}
-		
-		// Detectar y expandir $$ (PID)
-		if (i < len - 1 && str[i] == '$' && str[i + 1] == '$')
-		{
-			pid_str = ft_itoa(getpid());
-			result = build_result(result, pid_str);
-			free(pid_str);
-			i += 2;
-			continue;
-		}
-		
-		// Detectar y expandir variables
-		if (i < len - 1 && str[i] == '$' && str[i + 1] != ' ' && str[i + 1] != '\0')
-		{
-			int j = i;
-			var_value = process_variable_expansion(str, &j, env, last_status);
-			if (var_value)
-			{
-				result = build_result(result, var_value);
-				free(var_value);
-			}
-			i = j;
-			continue;
-		}
-		
-		// Caracteres normales
-		if (i < len)
-		{
-			char temp[2] = {str[i], '\0'};
-			result = build_result(result, temp);
-			i++;
-		}
-	}
-	
-	return (result ? result : ft_strdup(""));
+    if (!str || !env)
+        return (NULL);
+    
+    len = ft_strlen(str);
+    
+    // Las comillas dobles permiten expansión de variables
+    if (len >= 2 && str[0] == '"' && str[len - 1] == '"')
+    {
+        char *inner = ft_substr(str, 1, len - 2);
+        char *expanded = expand_complex_variables(inner, env, last_status);
+        free(inner);
+        return (expanded);
+    }
+    
+    // Para secuencias de $ fuera de comillas y manejo de comillas simples
+    result = NULL;
+    i = 0;
+    while (i < len)
+    {
+        // Manejo de comillas simples - entrar/salir del modo literal (no emitir la comilla)
+        if (str[i] == '\'')
+        {
+            inside_single_quotes = !inside_single_quotes;
+            i++;
+            continue;
+        }
+        
+        // Si estamos dentro de comillas simples, todo es literal (sin expansión)
+        if (inside_single_quotes)
+        {
+            char temp[2] = {str[i], '\0'};
+            result = build_result(result, temp);
+            i++;
+            continue;
+        }
+        
+        // Detectar y expandir $$ (PID)
+        if (i < len - 1 && str[i] == '$' && str[i + 1] == '$')
+        {
+            pid_str = ft_itoa(getpid());
+            result = build_result(result, pid_str);
+            free(pid_str);
+            i += 2;
+            continue;
+        }
+        
+        // Detectar y expandir variables
+        if (i < len - 1 && str[i] == '$' && str[i + 1] != ' ' && str[i + 1] != '\0')
+        {
+            int j = i;
+            var_value = process_variable_expansion(str, &j, env, last_status);
+            if (var_value)
+            {
+                result = build_result(result, var_value);
+                free(var_value);
+            }
+            i = j;
+            continue;
+        }
+        
+        // Caracteres normales
+        if (i < len)
+        {
+            char temp[2] = {str[i], '\0'};
+            result = build_result(result, temp);
+            i++;
+        }
+    }
+    
+    return (result ? result : ft_strdup(""));
 }
+// ...existing code...
 
 // ...existing code...
 void	expand_and_filter_tokens(t_token **tokens, t_shell *shell)
@@ -176,8 +167,11 @@ void	expand_and_filter_tokens(t_token **tokens, t_shell *shell)
     {
         if (current->type == TOKEN_WORD)
         {
+            // Debug: mostrar el token antes de expansión
+            // printf("DEBUG: Token antes: '%s'\n", current->value);
             expanded_value = expand_variables(current->value, shell->envp,
                     shell->last_status, len);
+            // printf("DEBUG: Token después: '%s'\n", expanded_value ? expanded_value : "NULL");
             if (!expanded_value)
             {
                 current = remove_empty_token(tokens, prev, current);
