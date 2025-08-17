@@ -6,30 +6,45 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:45:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/17 21:40:57 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/17 23:32:53 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
+static void	handle_output_redir(t_redir *r)
+{
+	int	fd;
+	int	flags;
+
+	flags = O_WRONLY | O_CREAT;
+	if (r->type == REDIR_APPEND)
+		flags |= O_APPEND;
+	else
+		flags |= O_TRUNC;
+	fd = open(r->file, flags, 0644);
+	if (fd != -1)
+		close(fd);
+	else
+		perror(r->file);
+}
+
 static void	handle_redirections_only(t_command *new, t_shell *shell)
 {
 	t_redir	*r;
-	int		flags;
 	int		fd;
 
 	r = new->redir;
 	while (r)
 	{
 		if (r->type == REDIR_OUT || r->type == REDIR_APPEND)
+			handle_output_redir(r);
+		else if (r->type == REDIR_IN)
 		{
-			flags = O_WRONLY | O_CREAT;
-			if (r->type == REDIR_APPEND)
-				flags |= O_APPEND;
+			fd = open(r->file, O_RDONLY);
+			if (fd == -1)
+				perror(r->file);
 			else
-				flags |= O_TRUNC;
-			fd = open(r->file, flags, 0644);
-			if (fd != -1)
 				close(fd);
 		}
 		r = r->next;
