@@ -1,28 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   variable_expansion_core.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/22 00:45:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/14 17:25:54 by ruortiz-         ###   ########.fr       */
+/*   Created: 2025/08/17 15:00:00 by ruortiz-         #+#    #+#             */
+/*   Updated: 2025/08/17 15:00:00 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../minishell.h"
 
-int	main(int argc, char **argv, char **envp)
+char	*handle_quoted_expansion(char *str, char **env, int last_status)
 {
-	t_shell	shell;
+	char	*inner;
+	char	*expanded;
+	int		len;
 
-	if (argc != 1)
-		return (1);
-	(void)argv;
-	init_shell(&shell, envp);
-	setup_interactive_signals();
-	shell_loop(&shell);
-	cleanup_shell(&shell);
-	rl_clear_history();
-	return (shell.last_status);
+	len = ft_strlen(str);
+	if (len >= 2 && str[0] == '"' && str[len - 1] == '"')
+	{
+		inner = ft_substr(str, 1, len - 2);
+		expanded = expand_complex_variables(inner, env, last_status);
+		free(inner);
+		return (expanded);
+	}
+	return (NULL);
 }

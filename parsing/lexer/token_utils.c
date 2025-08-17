@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/minishell.h"
+#include "../../minishell.h"
 
 void	token_add_back(t_token **tokens, t_token *new)
 {

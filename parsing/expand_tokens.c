@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../minishell.h"
 
 t_token	*remove_empty_token(t_token **tokens, t_token *prev,
 		t_token *current)

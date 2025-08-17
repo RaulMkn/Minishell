@@ -6,11 +6,11 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 22:47:23 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/17 02:27:44 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/15 18:10:56 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/minishell.h"
+#include "../../../minishell.h"
 
 t_redir	*create_redirection_tn(t_token *redir_token,
 		t_token *file_token)

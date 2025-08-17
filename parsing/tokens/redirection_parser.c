@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/minishell.h"
+#include "../../minishell.h"
 
 static t_redir_type	get_redir_type(t_token_type token_type)
 {

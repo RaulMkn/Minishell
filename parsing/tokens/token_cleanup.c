@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/minishell.h"
+#include "../../minishell.h"
 
 void	clear_tokens(t_token **tokens)
 {

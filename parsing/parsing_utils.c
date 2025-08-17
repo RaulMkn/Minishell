@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 18:30:00 by ruortiz-          #+#    #+#             */
-/*   Updated: 2025/08/13 16:49:54 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/17 15:47:04 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../minishell.h"
 
 void	clear_command(t_command *cmd)
 {
@@ -38,10 +38,15 @@ void	clear_command(t_command *cmd)
 
 void	set_error(t_lexer_state *state, t_error_type error, char *msg)
 {
+	char	*new_msg;
+
+	new_msg = ft_strdup(msg);
+	if (!new_msg)
+		return ;
 	if (state->error_msg)
 		free(state->error_msg);
 	state->error = error;
-	state->error_msg = ft_strdup(msg);
+	state->error_msg = new_msg;
 }
 
 char	*get_var_value(char *var_name, char **env, int last_status)

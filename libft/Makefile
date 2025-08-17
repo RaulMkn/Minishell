@@ -6,20 +6,16 @@
 #    By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/17 19:11:54 by rmakende          #+#    #+#              #
-#    Updated: 2025/08/13 17:21:51 by ruortiz-         ###   ########.fr        #
+#    Updated: 2025/08/17 19:10:51 by ruortiz-         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = libft.a
 
 CC = cc
-
 AR = ar
-
 ARFLAGS = -rc
-
 CFLAGS = -Wall -Wextra -Werror
-
 RM = rm -f
 
 SRCS = ft_isalpha.c\
@@ -78,7 +74,6 @@ BONUS = ft_lstnew_bonus.c\
 		ft_lstmap_bonus.c
 
 OBJS = $(SRCS:.c=.o)
-
 BNS = $(BONUS:.c=.o)
 
 all: $(NAME)
@@ -90,7 +85,8 @@ clean:
 	@$(RM) $(OBJS) $(BNS)
 
 fclean: clean
-	@$(RM) $(NAME) $(BNS)
+	@$(RM) $(NAME)
 
 re: fclean all
+
 .PHONY: all fclean re clean

@@ -6,11 +6,11 @@
 /*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:40:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/17 02:13:56 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/17 14:02:41 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../includes/minishell.h"
+#include "../../minishell.h"
 
 static void	init_lexer_state(t_shell *shell)
 {
@@ -25,51 +25,10 @@ static int	is_operator_char(char c, t_shell *shell)
 		&& shell->lexer_state.quote_state == QUOTE_NONE);
 }
 
-static int	handle_unclosed_quotes(t_shell *shell, char **buffer)
-{
-	if (shell->lexer_state.quote_state != QUOTE_NONE)
-	{
-		if (shell->lexer_state.quote_state == QUOTE_DOUBLE)
-			set_error(&shell->lexer_state, ERROR_SYNTAX, 
-				"minishell: unexpected EOF while looking for matching `\"'");
-		else if (shell->lexer_state.quote_state == QUOTE_SINGLE)
-			set_error(&shell->lexer_state, ERROR_SYNTAX,
-				"minishell: unexpected EOF while looking for matching `''");
-		if (*buffer)
-			free(*buffer);
-		return (0);
-	}
-	return (1);
-}
-
-static int	is_forbidden_sequence(char *input, size_t i, t_shell *shell)
-{
-	// Solo verificar secuencias prohibidas si NO estamos dentro de comillas
-	if (shell->lexer_state.quote_state != QUOTE_NONE)
-		return (0);
-		
-	// Agregar detección para "<>"
-	if (input[i] == '<' && input[i + 1] == '>')
-	{
-		set_error(&shell->lexer_state, ERROR_SYNTAX,
-			"syntax error near unexpected token `newline'");
-		return (1);
-	}
-	if (input[i] == '&' && input[i + 1] == '&')
-		return (1);
-	if (input[i] == '|' && input[i + 1] == '|')
-		return (1);
-	if (input[i] == '*')
-		return (1);
-	return (0);
-}
-
 static void	process_character(t_tokenizer_ctx *ctx, t_shell *shell)
 {
 	if (ctx->input[*ctx->i] == '\'' || ctx->input[*ctx->i] == '\"')
 		handle_quote_char(ctx->buffer, ctx->input[*ctx->i], ctx->i, shell);
-	else if (ctx->input[*ctx->i] == '\\')
-		handle_escape_char(ctx->buffer, ctx->input, ctx->i, shell);
 	else if ((ctx->input[*ctx->i] >= 9 && ctx->input[*ctx->i] <= 13)
 		|| ctx->input[*ctx->i] == 32)
 	{
@@ -88,6 +47,23 @@ static void	process_character(t_tokenizer_ctx *ctx, t_shell *shell)
 		handle_regular_char(ctx->buffer, ctx->input[*ctx->i], ctx->i, shell);
 }
 
+static t_token	*process_input_loop(t_tokenizer_ctx *ctx, t_shell *shell,
+		char **buffer, t_token **tokens)
+{
+	while (ctx->input[*ctx->i])
+	{
+		if (handle_forbidden_sequence_error(ctx->input, *ctx->i, shell,
+				tokens))
+		{
+			if (*buffer)
+				free(*buffer);
+			return (NULL);
+		}
+		process_character(ctx, shell);
+	}
+	return (finalize_tokenization(shell, buffer, tokens));
+}
+
 t_token	*tokenize_input(char *input, t_shell *shell)
 {
 	t_token			*tokens;
@@ -95,34 +71,10 @@ t_token	*tokenize_input(char *input, t_shell *shell)
 	char			*buffer;
 	t_tokenizer_ctx	ctx;
 
-	tokens = NULL;
-	i = 0;
-	buffer = NULL;
 	if (!input || !shell)
 		return (NULL);
 	init_lexer_state(shell);
-	ctx.tokens = &tokens;
-	ctx.buffer = &buffer;
-	ctx.i = &i;
-	ctx.input = input;
-	while (input[i])
-	{
-		// Detectar secuencias prohibidas
-		if (is_forbidden_sequence(input, i, shell))
-		{
-			if (shell->lexer_state.error == ERROR_NONE)
-				set_error(&shell->lexer_state, ERROR_SYNTAX,
-					"Operador no soportado");
-			if (buffer)
-				free(buffer);
-			clear_tokens(&tokens);
-			return (NULL);
-		}
-		process_character(&ctx, shell);
-	}
-	if (!handle_unclosed_quotes(shell, &buffer))
-		return (NULL);
-	if (buffer)
-		handle_final_buffer(&tokens, &buffer, shell);
-	return (tokens);
+	init_tokenizer_context(&ctx, &tokens, &buffer, &i);
+	set_tokenizer_input(&ctx, input);
+	return (process_input_loop(&ctx, shell, &buffer, &tokens));
 }

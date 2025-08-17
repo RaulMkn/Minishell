@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../includes/minishell.h"
+#include "../../../minishell.h"
 
 static int	parse_tokens_to_command(t_command *cmd, t_token **tokens,
 		char ***argv, int *argc)
