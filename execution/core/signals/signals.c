@@ -21,13 +21,6 @@ void	reset_signal_state(void)
 static void	sigquit_handler_interactive(int sig)
 {
 	(void)sig;
-	if (rl_line_buffer && *rl_line_buffer)
-	{
-		write(STDOUT_FILENO, "\nQuit\n", 6);
-		rl_replace_line("", 0);
-		rl_on_new_line();
-		rl_redisplay();
-	}
 }
 
 static void	sigint_handler_interactive(int sig)

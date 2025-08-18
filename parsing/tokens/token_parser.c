@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:35:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/17 23:50:26 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/18 17:30:25 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,43 +14,30 @@
 
 static t_command	*init_new_command(t_token **curr_token)
 {
-	t_command	*new_cmd;
+	t_command	*cmd;
 	t_token		*start_token;
 
-	new_cmd = malloc(sizeof(t_command));
-	if (!new_cmd)
+	cmd = malloc(sizeof(t_command));
+	if (!cmd)
 		return (NULL);
 	start_token = *curr_token;
-	new_cmd->argv = pars_argv_redirections(curr_token);
-	if (!new_cmd->argv)
-	{
-		free(new_cmd);
-		return (NULL);
-	}
+	cmd->argv = pars_argv_redirections(curr_token);
+	if (!cmd->argv)
+		return (free(cmd), NULL);
 	*curr_token = start_token;
-	new_cmd->redir = parse_redirections_mixed(curr_token);
-	if (!new_cmd->argv[0] && new_cmd->redir)
+	cmd->redir = parse_redirections_mixed(curr_token);
+	if (!cmd->argv[0] && cmd->redir)
 	{
-		free(new_cmd->argv);
-		new_cmd->argv = malloc(sizeof(char*) * 2);
-		if (!new_cmd->argv)
-		{
-			clear_redir_list(new_cmd->redir);
-			free(new_cmd);
-			return (NULL);
-		}
-		new_cmd->argv[0] = ft_strdup(":");
-		if (!new_cmd->argv[0])
-		{
-			free(new_cmd->argv);
-			clear_redir_list(new_cmd->redir);
-			free(new_cmd);
-			return (NULL);
-		}
-		new_cmd->argv[1] = NULL;
+		free(cmd->argv);
+		cmd->argv = malloc(sizeof(char *) * 2);
+		if (!cmd->argv)
+			return (c_redir(cmd->redir), free(cmd), (NULL));
+		cmd->argv[0] = ft_strdup(":");
+		if (!cmd->argv[0])
+			return (free(cmd->argv), c_redir(cmd->redir), free(cmd), NULL);
+		cmd->argv[1] = NULL;
 	}
-	new_cmd->next = NULL;
-	return (new_cmd);
+	return (cmd->next = NULL, cmd);
 }
 
 static int	handle_word_token(t_token **curr_token, t_command **cmd_list,

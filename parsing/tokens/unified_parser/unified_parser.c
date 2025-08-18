@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/28 21:30:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/13 02:11:50 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/18 17:29:29 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ t_command	*parse_command_unified(t_token **tokens)
 	if (!parse_tokens_to_command(cmd, tokens, &argv, &argc))
 	{
 		free_split(argv);
-		clear_redir_list(cmd->redir);
+		c_redir(cmd->redir);
 		free(cmd);
 		return (NULL);
 	}

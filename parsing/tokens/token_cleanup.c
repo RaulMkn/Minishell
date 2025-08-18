@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_cleanup.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:35:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/12 21:05:55 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/18 17:28:25 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	clear_tokens(t_token **tokens)
 	*tokens = NULL;
 }
 
-void	clear_redir_list(t_redir *redir)
+void	c_redir(t_redir *redir)
 {
 	t_redir	*current;
 	t_redir	*next;

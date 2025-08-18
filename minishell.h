@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 01:34:05 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/17 15:03:04 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/18 17:28:54 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,7 +225,7 @@ int							handle_unclosed_quotes(t_shell *shell,
 int							is_valid_operator_sequence(t_token *tokens);
 int							is_valid_operator_syntax(char *input, size_t i);
 void						clear_tokens(t_token **tokens);
-void						clear_redir_list(t_redir *redir);
+void						c_redir(t_redir *redir);
 void						clear_command(t_command *cmd);
 void						set_error(t_lexer_state *state, t_error_type error,
 								char *msg);

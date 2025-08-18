@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection_parser.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:35:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/13 21:01:04 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/18 17:29:29 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ t_redir	*parse_redirections_mixed(t_token **tokens)
 		if (is_redirection_token(token->type))
 		{
 			if (!token->next || token->next->type != TOKEN_WORD)
-				return (clear_redir_list(redir), NULL);
+				return (c_redir(redir), NULL);
 			redir = add_new_redirection(redir, token);
 			if (!redir)
 				return (NULL);
