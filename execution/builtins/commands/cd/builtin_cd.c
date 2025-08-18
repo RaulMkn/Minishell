@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtins_cd.c                                      :+:      :+:    :+:   */
+/*   builtin_cd.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 14:00:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/17 14:00:00 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/18 20:37:01 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,19 +21,7 @@ static int	handle_cd_home(char ***env)
 		return (write(2, "minishell: cd: HOME not set\n", 29), 1);
 	if (chdir(home) == -1)
 		return (perror("minishell: cd"), 1);
-	return (0);
-}
-
-static int	handle_cd_oldpwd(char ***env)
-{
-	char	*oldpwd;
-
-	oldpwd = get_env_value(*env, "OLDPWD");
-	if (!oldpwd)
-		return (write(2, "minishell: cd: OLDPWD not set\n", 31), 1);
-	if (chdir(oldpwd) == -1)
-		return (perror("minishell: cd"), 1);
-	ft_printf("%s\n", oldpwd);
+	set_env_variable(env, "PWD", home);
 	return (0);
 }
 
@@ -42,7 +30,7 @@ static int	cd_change_directory(char **argv, char ***env)
 	if (argv[1] == NULL || (argv[1][0] == '\0'))
 		return (handle_cd_home(env));
 	else if (!ft_strcmp(argv[1], "-"))
-		return (handle_cd_oldpwd(env));
+		return (write(2, "minishell: cd: option not supported\n", 37), 1);
 	else if (!ft_strcmp(argv[1], ".."))
 		return (handle_cd_dotdot(env));
 	else
@@ -57,8 +45,8 @@ static void	update_pwd_after_cd(char **argv, char *current_pwd, char ***env)
 {
 	char	*new_pwd;
 
-	if (current_pwd)
-		set_env_variable(env, "OLDPWD", current_pwd);
+	if (!argv[1] || !ft_strcmp(argv[1], ".."))
+		return ;
 	new_pwd = getcwd(NULL, 0);
 	if (new_pwd)
 	{

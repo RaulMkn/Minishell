@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 01:34:05 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/18 17:28:54 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/18 21:23:52 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -325,6 +325,7 @@ int							builtin_env(char **env);
 int							handle_cd_dotdot(char ***env);
 void						update_pwd_fallback(char **argv, char *current_pwd,
 								char ***env);
+int							handle_cd_dotdot_simple(void);
 
 /* Environment management */
 char						**clone_env(char **envp);
@@ -375,7 +376,6 @@ t_signal_state				*get_signal_state(void);
 void						set_signal_received(int signal);
 void						set_heredoc_state(int state);
 int							get_signal_received(void);
-int							get_heredoc_state(void);
 void						reset_signal_state(void);
 
 // ========================================================================== //

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handler_helper.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 13:43:19 by ruortiz-          #+#    #+#             */
-/*   Updated: 2025/08/17 13:49:49 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/18 21:24:33 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,9 @@ static void	handle_single_quote(char **buffer, size_t *i, t_shell *shell)
 		return ;
 	if (shell->lexer_state.quote_state == QUOTE_DOUBLE)
 	{
-		(*i)++;
+		*buffer = ft_strjoin_char(*buffer, '\'');
+		if (*buffer)
+			(*i)++;
 		return ;
 	}
 	if (shell->lexer_state.quote_state == QUOTE_SINGLE)
@@ -41,12 +43,11 @@ static void	handle_single_quote(char **buffer, size_t *i, t_shell *shell)
 
 static void	handle_double_quote(char **buffer, size_t *i, t_shell *shell)
 {
-	*buffer = ft_strjoin_char(*buffer, '\"');
-	if (!*buffer)
-		return ;
 	if (shell->lexer_state.quote_state == QUOTE_SINGLE)
 	{
-		(*i)++;
+		*buffer = ft_strjoin_char(*buffer, '"');
+		if (*buffer)
+			(*i)++;
 		return ;
 	}
 	if (shell->lexer_state.quote_state == QUOTE_DOUBLE)

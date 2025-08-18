@@ -6,7 +6,7 @@
 #    By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/11 19:22:34 by rmakende          #+#    #+#              #
-#    Updated: 2025/08/18 16:58:54 by rmakende         ###   ########.fr        #
+#    Updated: 2025/08/18 21:24:11 by rmakende         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,6 +50,7 @@ EXEC_SRCS =	$(EXEC_DIR)/core/main.c \
 		$(EXEC_DIR)/builtins/core/env/env_utils.c \
 		$(EXEC_DIR)/builtins/commands/cd/builtin_cd.c \
 		$(EXEC_DIR)/builtins/commands/cd/cd_helpers.c \
+		$(EXEC_DIR)/builtins/commands/cd/cd_utils.c \
 		$(EXEC_DIR)/builtins/commands/echo_unset_env.c \
 		$(EXEC_DIR)/builtins/commands/exit.c
 
