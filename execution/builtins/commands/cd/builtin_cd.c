@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 14:00:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/18 20:37:01 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/19 18:56:16 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ static int	handle_cd_home(char ***env)
 		return (write(2, "minishell: cd: HOME not set\n", 29), 1);
 	if (chdir(home) == -1)
 		return (perror("minishell: cd"), 1);
-	set_env_variable(env, "PWD", home);
 	return (0);
 }
 
@@ -44,9 +43,8 @@ static int	cd_change_directory(char **argv, char ***env)
 static void	update_pwd_after_cd(char **argv, char *current_pwd, char ***env)
 {
 	char	*new_pwd;
+	char	*home;
 
-	if (!argv[1] || !ft_strcmp(argv[1], ".."))
-		return ;
 	new_pwd = getcwd(NULL, 0);
 	if (new_pwd)
 	{
@@ -55,11 +53,24 @@ static void	update_pwd_after_cd(char **argv, char *current_pwd, char ***env)
 	}
 	else if (argv[1] && current_pwd)
 		update_pwd_fallback(argv, current_pwd, env);
+	else if (!argv[1])
+	{
+		home = get_env_value(*env, "HOME");
+		if (home)
+			set_env_variable(env, "PWD", home);
+	}
 }
 
+void	set_env_variable_and_free(char ***env, const char *key,
+		char *value)
+{
+	set_env_variable(env, key, value);
+	free(value);
+}
 int	builtin_cd(char **argv, char ***env)
 {
 	char	*current_pwd;
+	char	*current_pwd_copy;
 
 	if (argv[1] && argv[2])
 		return (write(2, "minishell: cd: too many arguments\n", 34), 1);
@@ -69,13 +80,18 @@ int	builtin_cd(char **argv, char ***env)
 		current_pwd = getcwd(NULL, 0);
 		if (current_pwd)
 		{
-			set_env_variable(env, "PWD", current_pwd);
-			free(current_pwd);
+			set_env_variable_and_free(env, "PWD", current_pwd);
 			current_pwd = get_env_value(*env, "PWD");
 		}
 	}
 	if (cd_change_directory(argv, env) != 0)
 		return (1);
+	if (current_pwd)
+	{
+		current_pwd_copy = ft_strdup(current_pwd);
+		if (current_pwd_copy)
+			set_env_variable_and_free(env, "OLDPWD", current_pwd_copy);
+	}
 	update_pwd_after_cd(argv, current_pwd, env);
 	return (0);
 }

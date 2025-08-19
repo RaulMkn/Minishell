@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/17 13:43:19 by ruortiz-          #+#    #+#             */
-/*   Updated: 2025/08/18 21:24:33 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/19 18:20:39 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,6 @@ void	handle_regular_char(char **buffer, char c, size_t *i, t_shell *shell)
 
 static void	handle_single_quote(char **buffer, size_t *i, t_shell *shell)
 {
-	*buffer = ft_strjoin_char(*buffer, '\'');
-	if (!*buffer)
-		return ;
 	if (shell->lexer_state.quote_state == QUOTE_DOUBLE)
 	{
 		*buffer = ft_strjoin_char(*buffer, '\'');
@@ -34,6 +31,9 @@ static void	handle_single_quote(char **buffer, size_t *i, t_shell *shell)
 			(*i)++;
 		return ;
 	}
+	*buffer = ft_strjoin_char(*buffer, '\'');
+	if (!*buffer)
+		return ;
 	if (shell->lexer_state.quote_state == QUOTE_SINGLE)
 		shell->lexer_state.quote_state = QUOTE_NONE;
 	else if (shell->lexer_state.quote_state == QUOTE_NONE)
@@ -50,6 +50,9 @@ static void	handle_double_quote(char **buffer, size_t *i, t_shell *shell)
 			(*i)++;
 		return ;
 	}
+	*buffer = ft_strjoin_char(*buffer, '"');
+	if (!*buffer)
+		return ;
 	if (shell->lexer_state.quote_state == QUOTE_DOUBLE)
 		shell->lexer_state.quote_state = QUOTE_NONE;
 	else if (shell->lexer_state.quote_state == QUOTE_NONE)
