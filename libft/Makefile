@@ -61,7 +61,12 @@ SRCS = ft_isalpha.c\
 	   get_next_line.c\
 	   get_next_line_utils.c\
 	   ft_printf.c\
-	   ft_printf_utils.c
+	   ft_printf_utils.c\
+	   ft_strjoin_char.c\
+	   ft_str_array_extend.c\
+	   ft_str_array_dup.c\
+	   ft_path_join.c\
+	   ft_strjoin_free.c
 
 BONUS = ft_lstnew_bonus.c\
 		ft_lstadd_front_bonus.c\

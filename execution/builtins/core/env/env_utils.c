@@ -12,34 +12,6 @@
 
 #include "../../../../minishell.h"
 
-char	**clone_env(char **envp)
-{
-	int		i;
-	char	**copy;
-
-	i = 0;
-	while (envp[i])
-		i++;
-	copy = malloc(sizeof(char *) * (i + 1));
-	if (!copy)
-		return (NULL);
-	i = 0;
-	while (envp[i])
-	{
-		copy[i] = ft_strdup(envp[i]);
-		if (!copy[i])
-		{
-			while (i > 0)
-				free(copy[--i]);
-			free(copy);
-			return (NULL);
-		}
-		i++;
-	}
-	copy[i] = NULL;
-	return (copy);
-}
-
 int	get_env_index(char **env, const char *key)
 {
 	int	i;

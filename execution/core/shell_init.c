@@ -18,7 +18,7 @@ void	init_shell(t_shell *shell, char **envp)
 	char	*env_pwd;
 
 	shell->cmd_list = NULL;
-	shell->envp = clone_env(envp);
+	shell->envp = ft_str_array_dup(envp);
 	if (!shell->envp)
 	{
 		shell->envp = malloc(sizeof(char *));

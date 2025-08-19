@@ -158,7 +158,6 @@ t_command					*parse_tokens(t_token *tokens);
 t_token						*concatenate_consecutive_tokens(t_token *tokens);
 int							handle_pipe_token(t_token **curr_token,
 								t_command *current_cmd);
-char						**extend_argv_array(char **argv, int new_size);
 int							process_word_token(t_token **current, char ***argv,
 								int *argc);
 int							process_redirection_token(t_token **current,
@@ -182,7 +181,6 @@ void						expand_and_filter_tokens(t_token **tokens,
 								t_shell *shell);
 char						*get_var_value(char *var_name, char **env,
 								int last_status);
-char						*build_result(char *current, char *to_add);
 int							get_var_name_length(char *str, int start);
 t_token						*remove_empty_token(t_token **tokens, t_token *prev,
 								t_token *current);
@@ -194,7 +192,6 @@ t_token						*tokenize_input(char *in, t_shell *shell);
 t_token						*create_token(t_token_type type, char *value);
 void						token_add_back(t_token **tokens, t_token *new);
 t_token						*create_operator_token(char c, int len);
-char						*ft_strjoin_char(char *str, char c);
 char						*remove_quotes(const char *str);
 void						handle_buffer_token(t_token **tokens,
 								char **buffer);
@@ -328,7 +325,6 @@ void						update_pwd_fallback(char **argv, char *current_pwd,
 int							handle_cd_dotdot_simple(void);
 
 /* Environment management */
-char						**clone_env(char **envp);
 int							replace_env(char **env, const char *key,
 								const char *new_var);
 int							append_env(char ***env, const char *new_var);

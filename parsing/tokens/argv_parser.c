@@ -12,23 +12,7 @@
 
 #include "../../minishell.h"
 
-static char	**extend_argv(char **argv, int size)
-{
-	char	**new_argv;
-	int		i;
 
-	new_argv = malloc(sizeof(char *) * (size + 1));
-	if (!new_argv)
-		return (NULL);
-	i = 0;
-	while (i < size - 1)
-	{
-		new_argv[i] = argv[i];
-		i++;
-	}
-	free(argv);
-	return (new_argv);
-}
 
 static int	add_cleaned_arg(char **argv, t_token *token, int argc)
 {
@@ -54,7 +38,7 @@ static int	process_token(t_token **token_ptr, char ***argv, int *argc)
 
 	if ((*token_ptr)->type == TOKEN_WORD)
 	{
-		*argv = extend_argv(*argv, *argc + 2);
+		*argv = ft_str_array_extend(*argv, *argc + 2);
 		if (!*argv)
 			return (0);
 		result = add_cleaned_arg(*argv, *token_ptr, *argc);
@@ -116,7 +100,7 @@ char	**parse_argv(t_token **tokens)
 		return (NULL);
 	while (token && token->type == TOKEN_WORD)
 	{
-		argv = extend_argv(argv, argc + 2);
+		argv = ft_str_array_extend(argv, argc + 2);
 		if (!argv)
 			return (NULL);
 		result = add_cleaned_arg(argv, token, argc);
@@ -126,7 +110,6 @@ char	**parse_argv(t_token **tokens)
 			argc++;
 		token = token->next;
 	}
-	argv[argc] = NULL;
 	*tokens = token;
 	return (argv);
 }

@@ -1,10 +1,4 @@
 *.o
-a.out
 *.a
+.*
 minishell
-*.pdf
-TODO
-minishell_tester
-*.txt
-*.sh
-prueba

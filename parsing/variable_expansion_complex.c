@@ -17,7 +17,7 @@ static char	*process_pid_expansion(char **result, int *i)
 	char	*pid_str;
 
 	pid_str = ft_itoa(42);
-	*result = build_result(*result, pid_str);
+	*result = ft_strjoin_free(*result, pid_str);
 	free(pid_str);
 	*i += 2;
 	return (*result);
@@ -37,7 +37,7 @@ static char	*process_var_expansion(char *str, char **result, int *i,
 	var_name = ft_substr(str, start, len);
 	var_value = get_var_value(var_name, ctx->env, ctx->last_status);
 	if (var_value)
-		*result = build_result(*result, var_value);
+		*result = ft_strjoin_free(*result, var_value);
 	free(var_name);
 	if (var_value)
 		free(var_value);

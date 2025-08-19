@@ -12,29 +12,6 @@
 
 #include "../../../minishell.h"
 
-char	*join_paths(const char *dir, const char *cmd)
-{
-	char	*joined_path;
-	size_t	len_dir;
-	char	*slash;
-	char	*final_path;
-
-	slash = "";
-	if (!dir || !cmd)
-		return (NULL);
-	len_dir = ft_strlen(dir);
-	if (dir[len_dir - 1] != '/')
-		slash = "/";
-	joined_path = ft_strjoin(dir, slash);
-	if (!joined_path)
-		return (NULL);
-	final_path = ft_strjoin(joined_path, cmd);
-	free(joined_path);
-	if (!final_path)
-		return (NULL);
-	return (final_path);
-}
-
 char	*get_path_env(char **envp)
 {
 	int	i;
@@ -58,7 +35,7 @@ static char	*search_in_path_dirs(char *cmd, char **path_dirs)
 	i = -1;
 	while (path_dirs[++i])
 	{
-		full_path = join_paths(path_dirs[i], cmd);
+		full_path = ft_path_join(path_dirs[i], cmd);
 		if (!full_path)
 			return (NULL);
 		if (access(full_path, X_OK) == 0)

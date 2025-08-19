@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   buffer_handler.c                                   :+:      :+:    :+:   */
+/*   ft_str_array_dup.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,35 +10,34 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../minishell.h"
+#include "libft.h"
 
-void	handle_buffer_token(t_token **tokens, char **buffer)
+char	**ft_str_array_dup(char **array)
 {
-	if (*buffer && (*buffer)[0] != '\0')
-	{
-		create_word_token(tokens, buffer);
-		*buffer = NULL;
-	}
-}
+	int		i;
+	char	**copy;
 
-static void	handle_word(t_token **tokens, char *word, t_shell *shell)
-{
-	t_token	*token;
-
-	token = create_token(TOKEN_WORD, word);
-	if (!token)
+	if (!array)
+		return (NULL);
+	i = 0;
+	while (array[i])
+		i++;
+	copy = malloc(sizeof(char *) * (i + 1));
+	if (!copy)
+		return (NULL);
+	i = 0;
+	while (array[i])
 	{
-		shell->lexer_state.error = ERROR_MEMORY;
-		return ;
+		copy[i] = ft_strdup(array[i]);
+		if (!copy[i])
+		{
+			while (i > 0)
+				free(copy[--i]);
+			free(copy);
+			return (NULL);
+		}
+		i++;
 	}
-	token_add_back(tokens, token);
-}
-
-void	handle_final_buffer(t_token **tokens, char **buffer, t_shell *shell)
-{
-	if (*buffer && (*buffer)[0] != '\0')
-	{
-		handle_word(tokens, *buffer, shell);
-		*buffer = NULL;
-	}
+	copy[i] = NULL;
+	return (copy);
 }

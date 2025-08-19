@@ -70,19 +70,6 @@ char	*get_var_value(char *var_name, char **env, int last_status)
 	return (ft_strdup(""));
 }
 
-char	*build_result(char *current, char *to_add)
-{
-	char	*result;
-
-	if (!current)
-		return (ft_strdup(to_add));
-	if (!to_add)
-		return (current);
-	result = ft_strjoin(current, to_add);
-	free(current);
-	return (result);
-}
-
 int	get_var_name_length(char *str, int start)
 {
 	int	i;

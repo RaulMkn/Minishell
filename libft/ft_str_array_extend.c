@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   buffer_handler.c                                   :+:      :+:    :+:   */
+/*   ft_str_array_extend.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,35 +10,30 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../minishell.h"
+#include "libft.h"
 
-void	handle_buffer_token(t_token **tokens, char **buffer)
+char	**ft_str_array_extend(char **array, int new_size)
 {
-	if (*buffer && (*buffer)[0] != '\0')
-	{
-		create_word_token(tokens, buffer);
-		*buffer = NULL;
-	}
-}
+	char	**new_array;
+	int		i;
 
-static void	handle_word(t_token **tokens, char *word, t_shell *shell)
-{
-	t_token	*token;
-
-	token = create_token(TOKEN_WORD, word);
-	if (!token)
+	new_array = malloc(sizeof(char *) * new_size);
+	if (!new_array)
+		return (NULL);
+	i = 0;
+	if (array)
 	{
-		shell->lexer_state.error = ERROR_MEMORY;
-		return ;
+		while (array[i] && i < new_size - 1)
+		{
+			new_array[i] = array[i];
+			i++;
+		}
+		free(array);
 	}
-	token_add_back(tokens, token);
-}
-
-void	handle_final_buffer(t_token **tokens, char **buffer, t_shell *shell)
-{
-	if (*buffer && (*buffer)[0] != '\0')
+	while (i < new_size)
 	{
-		handle_word(tokens, *buffer, shell);
-		*buffer = NULL;
+		new_array[i] = NULL;
+		i++;
 	}
+	return (new_array);
 }

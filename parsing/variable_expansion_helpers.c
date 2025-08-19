@@ -18,7 +18,7 @@ static void	append_char_to_result(char **result, char c)
 
 	temp[0] = c;
 	temp[1] = '\0';
-	*result = build_result(*result, temp);
+	*result = ft_strjoin_free(*result, temp);
 }
 
 static char	*handle_quote_character(char *str, char **result, int *i,

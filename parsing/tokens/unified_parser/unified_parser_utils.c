@@ -53,35 +53,9 @@ void	add_redir_to_list(t_redir **redir_list, t_redir *new_redir)
 	}
 }
 
-char	**extend_argv_array(char **argv, int new_size)
-{
-	char	**new_argv;
-	int		i;
-
-	new_argv = malloc(sizeof(char *) * new_size);
-	if (!new_argv)
-		return (NULL);
-	i = 0;
-	if (argv)
-	{
-		while (argv[i] && i < new_size - 1)
-		{
-			new_argv[i] = argv[i];
-			i++;
-		}
-		free(argv);
-	}
-	while (i < new_size)
-	{
-		new_argv[i] = NULL;
-		i++;
-	}
-	return (new_argv);
-}
-
 int	process_word_token(t_token **current, char ***argv, int *argc)
 {
-	*argv = extend_argv_array(*argv, *argc + 2);
+	*argv = ft_str_array_extend(*argv, *argc + 2);
 	if (!*argv)
 		return (0);
 	(*argv)[*argc] = remove_quotes((*current)->value);

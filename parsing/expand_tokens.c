@@ -38,7 +38,7 @@ void	append_char(char **result, char *str, int *i)
 	char	*temp;
 
 	temp = ft_substr(str, *i, 1);
-	*result = build_result(*result, temp);
+	*result = ft_strjoin_free(*result, temp);
 	free(temp);
 	(*i)++;
 }

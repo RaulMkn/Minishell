@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   buffer_handler.c                                   :+:      :+:    :+:   */
+/*   ft_path_join.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,35 +10,27 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../minishell.h"
+#include "libft.h"
 
-void	handle_buffer_token(t_token **tokens, char **buffer)
+char	*ft_path_join(const char *dir, const char *file)
 {
-	if (*buffer && (*buffer)[0] != '\0')
-	{
-		create_word_token(tokens, buffer);
-		*buffer = NULL;
-	}
-}
+	char	*joined_path;
+	size_t	len_dir;
+	char	*slash;
+	char	*final_path;
 
-static void	handle_word(t_token **tokens, char *word, t_shell *shell)
-{
-	t_token	*token;
-
-	token = create_token(TOKEN_WORD, word);
-	if (!token)
-	{
-		shell->lexer_state.error = ERROR_MEMORY;
-		return ;
-	}
-	token_add_back(tokens, token);
-}
-
-void	handle_final_buffer(t_token **tokens, char **buffer, t_shell *shell)
-{
-	if (*buffer && (*buffer)[0] != '\0')
-	{
-		handle_word(tokens, *buffer, shell);
-		*buffer = NULL;
-	}
+	slash = "";
+	if (!dir || !file)
+		return (NULL);
+	len_dir = ft_strlen(dir);
+	if (len_dir > 0 && dir[len_dir - 1] != '/')
+		slash = "/";
+	joined_path = ft_strjoin(dir, slash);
+	if (!joined_path)
+		return (NULL);
+	final_path = ft_strjoin(joined_path, file);
+	free(joined_path);
+	if (!final_path)
+		return (NULL);
+	return (final_path);
 }
