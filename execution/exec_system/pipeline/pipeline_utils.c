@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipeline_executor_utils.c                          :+:      :+:    :+:   */
+/*   pipeline_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/12 19:51:51 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/14 17:11:45 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/19 15:18:35 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,5 +53,3 @@ int	execute_parent_builtin(t_command *cmd, char ***mini_env, t_shell *shell)
 	close(original_stdout);
 	return (result);
 }
-
-

@@ -6,13 +6,11 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:40:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/17 03:16:10 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/19 15:18:45 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-
-
 
 size_t	handle_whitespaces(const char *input, size_t i)
 {

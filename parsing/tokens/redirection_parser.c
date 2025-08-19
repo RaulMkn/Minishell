@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:35:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/18 17:29:29 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/19 15:18:54 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ static t_redir	*add_new_redirection(t_redir *redir, t_token *token)
 		return (redir);
 	}
 }
-
 
 t_redir	*parse_redirections_mixed(t_token **tokens)
 {

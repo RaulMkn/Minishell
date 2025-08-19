@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 01:34:05 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/19 15:01:57 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/19 15:18:09 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,8 +128,6 @@ typedef struct s_tokenizer_ctx
 	char					*input;
 }							t_tokenizer_ctx;
 
-
-
 typedef struct s_expansion_context
 {
 	char					**env;
@@ -142,7 +140,6 @@ typedef struct s_expansion_context
 // ========================================================================== //
 
 /* Token parsing */
-
 
 char						**pars_argv_redirections(t_token **tokens);
 t_redir						*parse_redirections_mixed(t_token **tokens);
@@ -255,7 +252,6 @@ int							check_command_path(char *command_path,
 								char *cmd_name);
 int							check_file_permissions(char *command_path,
 								char *cmd_name);
-
 
 int							create_pipe_if_needed(t_command *current,
 								int *pipe_fd);
