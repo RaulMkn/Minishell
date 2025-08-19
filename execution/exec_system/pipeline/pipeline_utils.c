@@ -54,8 +54,4 @@ int	execute_parent_builtin(t_command *cmd, char ***mini_env, t_shell *shell)
 	return (result);
 }
 
-void	wait_for_children(void)
-{
-	while (wait(NULL) > 0)
-		;
-}
+

@@ -31,11 +31,6 @@ EXEC_SRCS =	$(EXEC_DIR)/core/main.c \
 		$(EXEC_DIR)/exec_system/utils/error_utils.c \
 		$(EXEC_DIR)/exec_system/utils/execution_wrappers.c \
 		$(EXEC_DIR)/exec_system/utils/execution_processes.c \
-		$(EXEC_DIR)/exec_system/processes/child_process.c \
-		$(EXEC_DIR)/exec_system/processes/parent_process.c \
-		$(EXEC_DIR)/exec_system/processes/exec_dispatch.c \
-		$(EXEC_DIR)/exec_system/processes/exec_single.c \
-		$(EXEC_DIR)/exec_system/commands/command_executor.c \
 		$(EXEC_DIR)/exec_system/commands/path_resolver.c \
 		$(EXEC_DIR)/redirection/redirect.c \
 		$(EXEC_DIR)/redirection/redirect_heredoc.c \
@@ -66,7 +61,6 @@ PARSING_SRCS = $(PARSING_DIR)/parsing_utils.c \
 		$(PARSING_DIR)/tokens/token_parser_utils.c \
 		$(PARSING_DIR)/tokens/argv_parser.c \
 		$(PARSING_DIR)/tokens/redirection_parser.c \
-		$(PARSING_DIR)/tokens/unified_parser/unified_parser.c \
 		$(PARSING_DIR)/tokens/unified_parser/unified_parser_utils.c \
 		$(PARSING_DIR)/tokens/token_cleanup.c \
 		$(PARSING_DIR)/tokens/token_creation.c \

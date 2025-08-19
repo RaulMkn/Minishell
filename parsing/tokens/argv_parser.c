@@ -3,16 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   argv_parser.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:35:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/15 18:10:10 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/08/19 15:03:12 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-
-
 
 static int	add_cleaned_arg(char **argv, t_token *token, int argc)
 {
@@ -86,30 +84,4 @@ char	**pars_argv_redirections(t_token **tokens)
 	return (argv);
 }
 
-char	**parse_argv(t_token **tokens)
-{
-	int		argc;
-	char	**argv;
-	t_token	*token;
-	int		result;
 
-	argc = 0;
-	token = *tokens;
-	argv = malloc(sizeof(char *) * 1);
-	if (!argv)
-		return (NULL);
-	while (token && token->type == TOKEN_WORD)
-	{
-		argv = ft_str_array_extend(argv, argc + 2);
-		if (!argv)
-			return (NULL);
-		result = add_cleaned_arg(argv, token, argc);
-		if (result == 0)
-			return (free_split(argv), NULL);
-		if (result == 1)
-			argc++;
-		token = token->next;
-	}
-	*tokens = token;
-	return (argv);
-}

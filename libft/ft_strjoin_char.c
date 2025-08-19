@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/19 00:00:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/19 00:00:00 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/19 15:04:00 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,5 @@ char	*ft_strjoin_char(char *str, char c)
 		free(str);
 	}
 	new[len] = c;
-	new[len + 1] = '\0';
-	return (new);
+	return (new[len + 1] = '\0', new);
 }

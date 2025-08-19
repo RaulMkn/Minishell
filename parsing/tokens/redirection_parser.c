@@ -67,25 +67,6 @@ static t_redir	*add_new_redirection(t_redir *redir, t_token *token)
 	}
 }
 
-t_redir	*parse_redirections(t_token **tokens)
-{
-	t_redir	*redir;
-	t_token	*token;
-
-	redir = NULL;
-	token = *tokens;
-	while (token && is_redirection_token(token->type))
-	{
-		if (!token->next || token->next->type != TOKEN_WORD)
-			return (NULL);
-		redir = add_new_redirection(redir, token);
-		if (!redir)
-			return (NULL);
-		token = token->next->next;
-	}
-	*tokens = token;
-	return (redir);
-}
 
 t_redir	*parse_redirections_mixed(t_token **tokens)
 {

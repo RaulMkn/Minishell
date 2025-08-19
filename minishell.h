@@ -6,7 +6,7 @@
 /*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 01:34:05 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/18 21:23:52 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/08/19 15:01:57 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,14 +128,7 @@ typedef struct s_tokenizer_ctx
 	char					*input;
 }							t_tokenizer_ctx;
 
-typedef struct s_cmd
-{
-	char					**argv;
-	char					*infile;
-	char					*outfile;
-	int						append;
-	struct s_cmd			*next;
-}							t_cmd;
+
 
 typedef struct s_expansion_context
 {
@@ -149,11 +142,11 @@ typedef struct s_expansion_context
 // ========================================================================== //
 
 /* Token parsing */
-char						**parse_argv(t_token **tokens);
-t_redir						*parse_redirections(t_token **tokens);
+
+
 char						**pars_argv_redirections(t_token **tokens);
 t_redir						*parse_redirections_mixed(t_token **tokens);
-t_command					*parse_command_unified(t_token **tokens);
+
 t_command					*parse_tokens(t_token *tokens);
 t_token						*concatenate_consecutive_tokens(t_token *tokens);
 int							handle_pipe_token(t_token **curr_token,
@@ -226,7 +219,7 @@ void						c_redir(t_redir *redir);
 void						clear_command(t_command *cmd);
 void						set_error(t_lexer_state *state, t_error_type error,
 								char *msg);
-void						copy_string_chars(char *new, char *str, int len);
+
 void						create_word_token(t_token **tokens, char **buffer);
 size_t						handle_whitespaces(const char *input, size_t i);
 void						remove_quotes_copy(const char *str, char *res);
@@ -253,9 +246,7 @@ void						execute_child_process(t_command *cmd,
 								t_shell *shell);
 void						handle_parent_process(int *prev_fd, int *pipe_fd,
 								t_command *current);
-int							exec_dispatch(t_cmd *cmd, char ***mini_env);
-int							exec_single(t_cmd *cmd, char ***mini_env);
-int							exec_pipeline(t_cmd *cmd, char ***mini_env);
+
 char						*find_command_path(char *cmd, char **envp);
 int							validate_command_args(t_command *cmd);
 int							execute_parent_builtin(t_command *cmd,
@@ -265,15 +256,7 @@ int							check_command_path(char *command_path,
 int							check_file_permissions(char *command_path,
 								char *cmd_name);
 
-/* Pipeline execution */
-void						setup_child_input(t_cmd *curr, int in_fd);
-void						setup_child_output(t_cmd *curr, int *pipe_fd);
-void						execute_child_command(t_cmd *curr,
-								char ***mini_env);
-void						handle_child_process(t_cmd *curr, char ***mini_env,
-								int in_fd, int *pipe_fd);
-int							handle_pipe_parent_process(int in_fd, int *pipe_fd,
-								t_cmd *curr);
+
 int							create_pipe_if_needed(t_command *current,
 								int *pipe_fd);
 int							is_single_command(t_command *cmd_list);

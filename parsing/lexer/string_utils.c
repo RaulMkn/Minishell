@@ -12,17 +12,7 @@
 
 #include "../../minishell.h"
 
-void	copy_string_chars(char *new, char *str, int len)
-{
-	int	i;
 
-	i = 0;
-	while (i < len)
-	{
-		new[i] = str[i];
-		i++;
-	}
-}
 
 size_t	handle_whitespaces(const char *input, size_t i)
 {
