@@ -61,7 +61,10 @@ void	execute_child_process(t_command *cmd, char ***mini_env,
 	setup_execution_signals();
 	setup_input_pipe(p_data->prev_fd);
 	if (cmd->next)
+	{
 		setup_output_pipe(p_data->pipe_fd);
+		close(p_data->pipe_fd[0]);
+	}
 	if (cmd->redir)
 	{
 		if (!handle_multiple_redirections(cmd->redir, shell))

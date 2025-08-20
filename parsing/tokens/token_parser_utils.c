@@ -17,11 +17,7 @@ static int	should_concatenate_tokens(t_token *current, t_token *next)
 	if (current->type != TOKEN_WORD || next->type != TOKEN_WORD)
 		return (0);
 	if ((ft_strchr(current->value, '\'') && next->value[0] == '$')
-		|| (current->value[ft_strlen(current->value) - 1] == '\''
-			&& next->value[0])
-		|| (ft_strchr(current->value, '"') && next->value[0] == '$')
-		|| (current->value[ft_strlen(current->value) - 1] == '"'
-			&& next->value[0]))
+		|| (ft_strchr(current->value, '"') && next->value[0] == '$'))
 		return (1);
 	return (0);
 }
@@ -40,6 +36,7 @@ static int	merge_token_values(t_token *current, t_token *next)
 	free(next);
 	return (1);
 }
+
 
 t_token	*concatenate_consecutive_tokens(t_token *tokens)
 {

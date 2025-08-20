@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror  -I./includes #-fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer
+CFLAGS = -Wall -Wextra -Werror
 RL_FLAGS = -lreadline
 
 LIBFT_DIR = ./libft

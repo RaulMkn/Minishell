@@ -40,9 +40,19 @@ void	set_error(t_lexer_state *state, t_error_type error, char *msg)
 {
 	char	*new_msg;
 
+	if (!state || !msg)
+		return ;
 	new_msg = ft_strdup(msg);
 	if (!new_msg)
+	{
+		if (state->error_msg)
+		{
+			free(state->error_msg);
+			state->error_msg = NULL;
+		}
+		state->error = ERROR_MEMORY;
 		return ;
+	}
 	if (state->error_msg)
 		free(state->error_msg);
 	state->error = error;

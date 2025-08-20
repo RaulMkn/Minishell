@@ -25,6 +25,7 @@ static int	is_operator_char(char c, t_shell *shell)
 		&& shell->lexer_state.quote_state == QUOTE_NONE);
 }
 
+
 static void	process_character(t_tokenizer_ctx *ctx, t_shell *shell)
 {
 	if (ctx->input[*ctx->i] == '\'' || ctx->input[*ctx->i] == '\"')

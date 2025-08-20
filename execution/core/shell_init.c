@@ -22,8 +22,12 @@ void	init_shell(t_shell *shell, char **envp)
 	if (!shell->envp)
 	{
 		shell->envp = malloc(sizeof(char *));
-		if (shell->envp)
-			shell->envp[0] = NULL;
+		if (!shell->envp)
+		{
+			shell->last_status = 1;
+			return ;
+		}
+		shell->envp[0] = NULL;
 	}
 	shell->last_status = 0;
 	shell->lexer_state.quote_state = QUOTE_NONE;
@@ -34,11 +38,21 @@ void	init_shell(t_shell *shell, char **envp)
 	{
 		env_pwd = get_env_value(shell->envp, "PWD");
 		if (!env_pwd || ft_strcmp(env_pwd, cwd) != 0)
-			set_env_variable(&shell->envp, "PWD", cwd);
+		{
+			if (set_env_variable(&shell->envp, "PWD", cwd) != 0)
+			{
+				free(cwd);
+				return ;
+			}
+		}
 		free(cwd);
 	}
-	if (!get_env_value(shell->envp, "OLDPWD"))
-		set_env_variable(&shell->envp, "OLDPWD", "");
+	env_pwd = get_env_value(shell->envp, "OLDPWD");
+	if (!env_pwd)
+	{
+		if (set_env_variable(&shell->envp, "OLDPWD", "") != 0)
+			return ;
+	}
 }
 
 void	cleanup_shell(t_shell *shell)

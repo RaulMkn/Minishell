@@ -36,9 +36,22 @@ void	update_token_value(t_token *current, char *expanded_value)
 void	append_char(char **result, char *str, int *i)
 {
 	char	*temp;
+	char	*new_result;
 
 	temp = ft_substr(str, *i, 1);
-	*result = ft_strjoin_free(*result, temp);
+	if (!temp)
+		return ;
+	new_result = ft_strjoin_free(*result, temp);
 	free(temp);
+	if (!new_result)
+	{
+		if (*result)
+		{
+			free(*result);
+			*result = NULL;
+		}
+		return ;
+	}
+	*result = new_result;
 	(*i)++;
 }

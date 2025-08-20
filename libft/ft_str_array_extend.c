@@ -17,7 +17,7 @@ char	**ft_str_array_extend(char **array, int new_size)
 	char	**new_array;
 	int		i;
 
-	new_array = malloc(sizeof(char *) * new_size);
+	new_array = ft_calloc(new_size, sizeof(char *));
 	if (!new_array)
 		return (NULL);
 	i = 0;

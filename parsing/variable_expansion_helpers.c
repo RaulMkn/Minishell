@@ -15,10 +15,21 @@
 static void	append_char_to_result(char **result, char c)
 {
 	char	temp[2];
+	char	*new_result;
 
 	temp[0] = c;
 	temp[1] = '\0';
-	*result = ft_strjoin_free(*result, temp);
+	new_result = ft_strjoin_free(*result, temp);
+	if (!new_result)
+	{
+		if (*result)
+		{
+			free(*result);
+			*result = NULL;
+		}
+		return ;
+	}
+	*result = new_result;
 }
 
 static char	*handle_quote_character(char *str, char **result, int *i,

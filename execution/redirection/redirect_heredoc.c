@@ -111,6 +111,11 @@ int	handle_heredoc(char *delimiter, t_shell *shell)
 	if (!delimiter)
 		return (-1);
 	original_stdin = dup(STDIN_FILENO);
+	if (original_stdin == -1)
+	{
+		perror("dup");
+		return (-1);
+	}
 	set_signal_received(0);
 	temp_filename = NULL;
 	if (write_heredoc_to_temp(delimiter, shell, original_stdin,

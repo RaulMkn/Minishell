@@ -15,13 +15,18 @@
 static int	handle_cd_home(char ***env)
 {
 	char	*home;
+	int		result;
 
 	home = get_env_value(*env, "HOME");
 	if (!home)
 		return (write(2, "minishell: cd: HOME not set\n", 29), 1);
+	result = 0;
 	if (chdir(home) == -1)
-		return (perror("minishell: cd"), 1);
-	return (0);
+	{
+		perror("minishell: cd");
+		result = 1;
+	}
+	return (result);
 }
 
 static int	cd_change_directory(char **argv, char ***env)
@@ -57,7 +62,9 @@ static void	update_pwd_after_cd(char **argv, char *current_pwd, char ***env)
 	{
 		home = get_env_value(*env, "HOME");
 		if (home)
+		{
 			set_env_variable(env, "PWD", home);
+		}
 	}
 }
 
@@ -71,6 +78,7 @@ int	builtin_cd(char **argv, char ***env)
 {
 	char	*current_pwd;
 	char	*current_pwd_copy;
+	int		result;
 
 	if (argv[1] && argv[2])
 		return (write(2, "minishell: cd: too many arguments\n", 34), 1);
@@ -84,8 +92,11 @@ int	builtin_cd(char **argv, char ***env)
 			current_pwd = get_env_value(*env, "PWD");
 		}
 	}
-	if (cd_change_directory(argv, env) != 0)
+	result = cd_change_directory(argv, env);
+	if (result != 0)
+	{
 		return (1);
+	}
 	if (current_pwd)
 	{
 		current_pwd_copy = ft_strdup(current_pwd);

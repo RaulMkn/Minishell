@@ -22,7 +22,10 @@ int	builtin_pwd(char **env)
 	{
 		env_pwd = get_env_value(env, "PWD");
 		if (env_pwd)
-			return (ft_printf("%s\n", env_pwd), 0);
+		{
+			ft_printf("%s\n", env_pwd);
+			return (0);
+		}
 		else
 		{
 			write(2, "pwd: error retrieving current directory: getcwd: "
@@ -33,7 +36,9 @@ int	builtin_pwd(char **env)
 	}
 	env_pwd = get_env_value(env, "PWD");
 	if (!env_pwd || ft_strcmp(env_pwd, cwd) != 0)
+	{
 		set_env_variable(&env, "PWD", cwd);
+	}
 	ft_printf("%s\n", cwd);
 	free(cwd);
 	return (0);

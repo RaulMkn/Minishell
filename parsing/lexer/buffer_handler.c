@@ -17,7 +17,6 @@ void	handle_buffer_token(t_token **tokens, char **buffer)
 	if (*buffer && (*buffer)[0] != '\0')
 	{
 		create_word_token(tokens, buffer);
-		*buffer = NULL;
 	}
 }
 
@@ -39,6 +38,7 @@ void	handle_final_buffer(t_token **tokens, char **buffer, t_shell *shell)
 	if (*buffer && (*buffer)[0] != '\0')
 	{
 		handle_word(tokens, *buffer, shell);
+		free(*buffer);
 		*buffer = NULL;
 	}
 }

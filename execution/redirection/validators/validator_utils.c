@@ -77,7 +77,13 @@ t_redir	*create_effective_redir(t_redir *source, t_redir *list)
 	new_redir = malloc(sizeof(t_redir));
 	if (!new_redir)
 		return (list);
-	*new_redir = *source;
+	new_redir->type = source->type;
+	new_redir->file = ft_strdup(source->file);
+	if (!new_redir->file)
+	{
+		free(new_redir);
+		return (list);
+	}
 	new_redir->next = list;
 	return (new_redir);
 }

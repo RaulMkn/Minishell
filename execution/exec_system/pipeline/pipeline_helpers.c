@@ -26,6 +26,11 @@ int	setup_heredocs(t_command *cmd, t_shell *shell, int *original_stdin)
 	if (cmd->redir && has_heredoc(cmd->redir))
 	{
 		*original_stdin = dup(STDIN_FILENO);
+		if (*original_stdin == -1)
+		{
+			perror("dup");
+			return (1);
+		}
 		if (process_all_heredocs(cmd->redir, shell) == -1)
 		{
 			restore_stdin(*original_stdin);

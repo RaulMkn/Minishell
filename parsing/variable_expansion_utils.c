@@ -15,10 +15,23 @@
 char	*handle_pid_expansion_ext(char **result, int *i)
 {
 	char	*pid_str;
+	char	*new_result;
 
 	pid_str = ft_itoa(42);
-	*result = ft_strjoin_free(*result, pid_str);
+	if (!pid_str)
+		return (*result);
+	new_result = ft_strjoin_free(*result, pid_str);
 	free(pid_str);
+	if (!new_result)
+	{
+		if (*result)
+		{
+			free(*result);
+			*result = NULL;
+		}
+		return (NULL);
+	}
+	*result = new_result;
 	*i += 2;
 	return (*result);
 }
@@ -28,6 +41,7 @@ char	*handle_variable_expansion_ext(char *str, char **result, int *i,
 {
 	char	*var_name;
 	char	*var_value;
+	char	*new_result;
 	int		start;
 	int		len;
 	int		j;
@@ -37,11 +51,24 @@ char	*handle_variable_expansion_ext(char *str, char **result, int *i,
 	len = get_var_name_length(str, start);
 	j = start + len;
 	var_name = ft_substr(str, start, len);
+	if (!var_name)
+		return (*result);
 	var_value = get_var_value(var_name, ctx->env, ctx->last_status);
 	if (var_value)
 	{
-		*result = ft_strjoin_free(*result, var_value);
+		new_result = ft_strjoin_free(*result, var_value);
 		free(var_value);
+		if (!new_result)
+		{
+			free(var_name);
+			if (*result)
+			{
+				free(*result);
+				*result = NULL;
+			}
+			return (NULL);
+		}
+		*result = new_result;
 	}
 	*i = j;
 	free(var_name);

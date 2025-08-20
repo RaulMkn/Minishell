@@ -31,13 +31,23 @@ static t_command	*init_new_command(t_token **curr_token)
 		free(cmd->argv);
 		cmd->argv = malloc(sizeof(char *) * 2);
 		if (!cmd->argv)
-			return (c_redir(cmd->redir), free(cmd), (NULL));
+		{
+			c_redir(cmd->redir);
+			free(cmd);
+			return (NULL);
+		}
 		cmd->argv[0] = ft_strdup(":");
 		if (!cmd->argv[0])
-			return (free(cmd->argv), c_redir(cmd->redir), free(cmd), NULL);
+		{
+			free(cmd->argv);
+			c_redir(cmd->redir);
+			free(cmd);
+			return (NULL);
+		}
 		cmd->argv[1] = NULL;
 	}
-	return (cmd->next = NULL, cmd);
+	cmd->next = NULL;
+	return (cmd);
 }
 
 static int	handle_word_token(t_token **curr_token, t_command **cmd_list,

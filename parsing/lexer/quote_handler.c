@@ -28,11 +28,11 @@ static int	has_matching_quote(const char *s, int start, char q)
 
 static int	copy_single_quote(const char *str, char *res, int i, int *j)
 {
-	res[(*j)++] = str[i++];
+	i++;
 	while (str[i] && str[i] != '\'')
 		res[(*j)++] = str[i++];
 	if (str[i] == '\'')
-		res[(*j)++] = str[i++];
+		i++;
 	return (i);
 }
 
