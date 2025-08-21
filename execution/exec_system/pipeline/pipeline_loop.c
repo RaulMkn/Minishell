@@ -49,6 +49,11 @@ pid_t	handle_pipeline_loop(t_command *cmd_list, char ***mini_env,
 	pid = -1;
 	while (current)
 	{
+		if (current->redir && has_heredoc(current->redir))
+		{
+			if (process_all_heredocs(current->redir, shell) == -1)
+				return (1);
+		}
 		if (!create_pipe_if_needed(current, pipe_fd))
 			return (1);
 		setup_pipe_data(&p_data, prev_fd, pipe_fd);

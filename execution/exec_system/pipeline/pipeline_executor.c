@@ -12,6 +12,47 @@
 
 #include "../../../minishell.h"
 
+static int	has_more_heredocs(t_redir *redirs)
+{
+	t_redir	*current;
+
+	current = redirs;
+	while (current)
+	{
+		if (current->type == HEREDOC)
+			return (1);
+		current = current->next;
+	}
+	return (0);
+}
+
+static int	read_and_discard_heredoc(char *delimiter, t_shell *shell)
+{
+	char	*line;
+
+	(void)shell;
+	set_heredoc_state(1);
+	while (1)
+	{
+		line = readline("> ");
+		if (get_signal_received() == SIGINT)
+			return (set_heredoc_state(0), free(line), -1);
+		if (!line)
+		{
+			ft_putstr_fd("minishell: warning: document by end-of-file\n", 2);
+			break ;
+		}
+		if (ft_strcmp(line, delimiter) == 0)
+		{
+			free(line);
+			break ;
+		}
+		free(line);
+	}
+	set_heredoc_state(0);
+	return (0);
+}
+
 int	has_heredoc(t_redir *redirs)
 {
 	t_redir	*current;
@@ -29,16 +70,36 @@ int	has_heredoc(t_redir *redirs)
 int	process_all_heredocs(t_redir *redirs, t_shell *shell)
 {
 	t_redir	*current;
+	t_redir	*last_heredoc;
+	int		original_stdin;
 
 	current = redirs;
+	last_heredoc = NULL;
+	original_stdin = dup(STDIN_FILENO);
+	if (original_stdin == -1)
+		return (-1);
 	while (current)
 	{
 		if (current->type == HEREDOC)
 		{
-			if (handle_heredoc(current->file, shell) == -1)
-				return (-1);
+			last_heredoc = current;
+			if (current->next && has_more_heredocs(current->next))
+			{
+				if (read_and_discard_heredoc(current->file, shell) == -1)
+				{
+					close(original_stdin);
+					return (-1);
+				}
+			}
 		}
 		current = current->next;
+	}
+	dup2(original_stdin, STDIN_FILENO);
+	close(original_stdin);
+	if (last_heredoc)
+	{
+		if (handle_heredoc(last_heredoc->file, shell) == -1)
+			return (-1);
 	}
 	return (0);
 }
@@ -50,11 +111,11 @@ static int	execute_single_command(t_command *cmd, char ***mini_env,
 	int		original_stdin;
 
 	original_stdin = -1;
-	if (!validate_command_args(cmd))
-		return (0);
 	error_code = setup_heredocs(cmd, shell, &original_stdin);
 	if (error_code)
 		return (error_code);
+	if (!validate_command_args(cmd))
+		return (0);
 	if (is_parent_builtin(cmd->argv[0]))
 		return (execute_parent_builtin_wrapper(cmd, mini_env, shell,
 				original_stdin));
