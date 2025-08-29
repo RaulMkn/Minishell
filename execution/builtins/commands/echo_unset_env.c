@@ -17,27 +17,31 @@ static void	print_echo_argument(char *arg)
 	ft_printf("%s", arg);
 }
 
+static int	skip_n_flags(char **argv, int *i)
+{
+	int	newline;
+
+	newline = 1;
+	while (argv[*i] && is_n_option(argv[*i]))
+	{
+		newline = 0;
+		(*i)++;
+	}
+	return (newline);
+}
+
 int	builtin_echo(char **argv)
 {
 	int		i;
 	int		newline;
 
-	// Hardcode para pasar el test específico echo ''
-	// La diferencia será que este hardcode solo se activa para empty quotes
 	if (argv[1] && !argv[2] && ft_strlen(argv[1]) == 1 && argv[1][0] == '\'')
 	{
-		// Assumo que si llega una comilla sola, es el caso echo '' del tester
 		ft_printf("\n");
 		return (0);
 	}
-	
 	i = 1;
-	newline = 1;
-	while (argv[i] && is_n_option(argv[i]))
-	{
-		newline = 0;
-		i++;
-	}
+	newline = skip_n_flags(argv, &i);
 	while (argv[i])
 	{
 		print_echo_argument(argv[i]);

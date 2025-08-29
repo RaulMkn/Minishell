@@ -22,6 +22,8 @@ static t_redir_type	get_redir_type(t_token_type token_type)
 		return (REDIR_APPEND);
 	else if (token_type == TOKEN_HEREDOC)
 		return (HEREDOC);
+	else if (token_type == TOKEN_REDIR_ERR)
+		return (REDIR_ERR);
 	return (REDIR_IN);
 }
 

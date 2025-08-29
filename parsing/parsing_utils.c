@@ -14,26 +14,30 @@
 
 void	clear_command(t_command *cmd)
 {
-	int		i;
-	t_redir	*tmp;
+	int			i;
+	t_redir		*tmp;
+	t_command	*next_cmd;
 
-	if (!cmd)
-		return ;
-	if (cmd->argv)
+	while (cmd)
 	{
-		i = 0;
-		while (cmd->argv[i])
-			free(cmd->argv[i++]);
-		free(cmd->argv);
+		next_cmd = cmd->next;
+		if (cmd->argv)
+		{
+			i = 0;
+			while (cmd->argv[i])
+				free(cmd->argv[i++]);
+			free(cmd->argv);
+		}
+		while (cmd->redir)
+		{
+			tmp = cmd->redir->next;
+			free(cmd->redir->file);
+			free(cmd->redir);
+			cmd->redir = tmp;
+		}
+		free(cmd);
+		cmd = next_cmd;
 	}
-	while (cmd->redir)
-	{
-		tmp = cmd->redir->next;
-		free(cmd->redir->file);
-		free(cmd->redir);
-		cmd->redir = tmp;
-	}
-	free(cmd);
 }
 
 void	set_error(t_lexer_state *state, t_error_type error, char *msg)

@@ -96,7 +96,8 @@ void	shell_loop(t_shell *shell)
 		line = readline("minishell$ ");
 		if (!line)
 		{
-			ft_printf("exit\n");
+			if (isatty(STDIN_FILENO))
+				ft_printf("exit\n");
 			break ;
 		}
 		if (*line)

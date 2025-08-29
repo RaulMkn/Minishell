@@ -68,12 +68,24 @@ static void	update_pwd_after_cd(char **argv, char *current_pwd, char ***env)
 	}
 }
 
-void	set_env_variable_and_free(char ***env, const char *key,
-		char *value)
+static char	*get_current_pwd(char ***env)
 {
-	set_env_variable(env, key, value);
-	free(value);
+	char	*current_pwd;
+
+	current_pwd = get_env_value(*env, "PWD");
+	if (!current_pwd)
+	{
+		current_pwd = getcwd(NULL, 0);
+		if (current_pwd)
+		{
+			set_env_variable(env, "PWD", current_pwd);
+			free(current_pwd);
+			current_pwd = get_env_value(*env, "PWD");
+		}
+	}
+	return (current_pwd);
 }
+
 int	builtin_cd(char **argv, char ***env)
 {
 	char	*current_pwd;
@@ -82,26 +94,18 @@ int	builtin_cd(char **argv, char ***env)
 
 	if (argv[1] && argv[2])
 		return (write(2, "minishell: cd: too many arguments\n", 34), 1);
-	current_pwd = get_env_value(*env, "PWD");
-	if (!current_pwd)
-	{
-		current_pwd = getcwd(NULL, 0);
-		if (current_pwd)
-		{
-			set_env_variable_and_free(env, "PWD", current_pwd);
-			current_pwd = get_env_value(*env, "PWD");
-		}
-	}
+	current_pwd = get_current_pwd(env);
 	result = cd_change_directory(argv, env);
 	if (result != 0)
-	{
 		return (1);
-	}
 	if (current_pwd)
 	{
 		current_pwd_copy = ft_strdup(current_pwd);
 		if (current_pwd_copy)
-			set_env_variable_and_free(env, "OLDPWD", current_pwd_copy);
+		{
+			set_env_variable(env, "OLDPWD", current_pwd_copy);
+			free(current_pwd_copy);
+		}
 	}
 	update_pwd_after_cd(argv, current_pwd, env);
 	return (0);

@@ -29,37 +29,49 @@ static pid_t	create_child_process(t_command *current, char ***mini_env,
 	return (pid);
 }
 
-static void	cleanup_pipeline(int prev_fd)
+static int	process_command_heredocs(t_command *current, t_shell *shell)
 {
-	if (prev_fd != -1)
-		close(prev_fd);
+	if (current->redir && has_heredoc(current->redir))
+	{
+		if (process_all_heredocs(current->redir, shell) == -1)
+			return (-1);
+	}
+	return (0);
+}
+
+static pid_t	process_single_command(t_command *current, char ***mini_env,
+		t_shell *shell, int *prev_fd)
+{
+	int			pipe_fd[2];
+	pid_t		pid;
+	t_pipe_data	p_data;
+
+	if (!create_pipe_if_needed(current, pipe_fd))
+		return (-1);
+	setup_pipe_data(&p_data, *prev_fd, pipe_fd);
+	pid = create_child_process(current, mini_env, shell, &p_data);
+	if (pid > 0)
+		handle_parent_process(prev_fd, pipe_fd, current);
+	return (pid);
 }
 
 pid_t	handle_pipeline_loop(t_command *cmd_list, char ***mini_env,
 		t_shell *shell)
 {
 	t_command	*current;
-	int			pipe_fd[2];
 	int			prev_fd;
 	pid_t		pid;
-	t_pipe_data	p_data;
 
 	current = cmd_list;
 	prev_fd = -1;
 	pid = -1;
 	while (current)
 	{
-		if (current->redir && has_heredoc(current->redir))
-		{
-			if (process_all_heredocs(current->redir, shell) == -1)
-				return (1);
-		}
-		if (!create_pipe_if_needed(current, pipe_fd))
+		if (process_command_heredocs(current, shell) == -1)
 			return (1);
-		setup_pipe_data(&p_data, prev_fd, pipe_fd);
-		pid = create_child_process(current, mini_env, shell, &p_data);
-		if (pid > 0)
-			handle_parent_process(&prev_fd, pipe_fd, current);
+		pid = process_single_command(current, mini_env, shell, &prev_fd);
+		if (pid == -1)
+			return (1);
 		current = current->next;
 	}
 	cleanup_pipeline(prev_fd);

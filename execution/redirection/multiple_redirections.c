@@ -62,6 +62,28 @@ static int	handle_output_redirection(char *filename, int append)
 	return (0);
 }
 
+static int	handle_stderr_redirection(char *filename)
+{
+	int	fd;
+
+	if (!filename)
+		return (-1);
+	fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (fd == -1)
+	{
+		perror(filename);
+		return (-1);
+	}
+	if (dup2(fd, STDERR_FILENO) == -1)
+	{
+		perror("dup2 stderr");
+		close(fd);
+		return (-1);
+	}
+	close(fd);
+	return (0);
+}
+
 int	handle_multiple_redirections(t_redir *redirs, t_shell *shell)
 {
 	t_redir	*current;
@@ -78,6 +100,9 @@ int	handle_multiple_redirections(t_redir *redirs, t_shell *shell)
 		if ((current->type == REDIR_OUT || current->type == REDIR_APPEND)
 			&& handle_output_redirection(current->file,
 				current->type == REDIR_APPEND) == -1)
+			return (0);
+		if (current->type == REDIR_ERR
+			&& handle_stderr_redirection(current->file) == -1)
 			return (0);
 		current = current->next;
 	}

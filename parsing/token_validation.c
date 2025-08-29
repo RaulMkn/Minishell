@@ -54,7 +54,8 @@ int	is_valid_operator_sequence(t_token *tokens)
 		if (curr->type == TOKEN_PIPE && !check_pipe_syntax(curr))
 			return (0);
 		if ((curr->type == TOKEN_REDIR_IN || curr->type == TOKEN_REDIR_OUT
-				|| curr->type == TOKEN_APPEND || curr->type == TOKEN_HEREDOC)
+				|| curr->type == TOKEN_APPEND || curr->type == TOKEN_HEREDOC
+				|| curr->type == TOKEN_REDIR_ERR)
 			&& !check_redirection_file(curr))
 			return (0);
 		curr = curr->next;

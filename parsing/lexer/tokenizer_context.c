@@ -35,6 +35,7 @@ t_token	*finalize_tokenization(t_shell *shell, char **buffer,
 		return (NULL);
 	if (*buffer)
 		handle_final_buffer(tokens, buffer, shell);
+	*tokens = postprocess_fd_redirects(*tokens);
 	return (*tokens);
 }
 

@@ -42,6 +42,7 @@ typedef enum e_token_type
 	TOKEN_REDIR_IN,
 	TOKEN_REDIR_OUT,
 	TOKEN_APPEND,
+	TOKEN_REDIR_ERR,
 	TOKEN_HEREDOC
 }							t_token_type;
 
@@ -50,6 +51,7 @@ typedef enum e_redir_type
 	REDIR_IN,
 	REDIR_OUT,
 	REDIR_APPEND,
+	REDIR_ERR,
 	HEREDOC
 }							t_redir_type;
 
@@ -145,6 +147,9 @@ char						**pars_argv_redirections(t_token **tokens);
 t_redir						*parse_redirections_mixed(t_token **tokens);
 
 t_command					*parse_tokens(t_token *tokens);
+int							setup_empty_command(t_command *cmd);
+int							parse_command_parts(t_command *cmd,
+								t_token **curr_token);
 t_token						*concatenate_consecutive_tokens(t_token *tokens);
 int							handle_pipe_token(t_token **curr_token,
 								t_command *current_cmd);
@@ -176,6 +181,7 @@ t_token						*remove_empty_token(t_token **tokens, t_token *prev,
 								t_token *current);
 void						update_token_value(t_token *current,
 								char *expanded_value);
+t_token						*postprocess_fd_redirects(t_token *tokens);
 
 /* Lexer */
 t_token						*tokenize_input(char *in, t_shell *shell);
@@ -329,8 +335,19 @@ int							handle_multiple_redirections(t_redir *redirs,
 								t_shell *shell);
 int							handle_heredoc(char *delimiter, t_shell *shell);
 int							has_heredoc(t_redir *redirs);
+int							has_more_heredocs(t_redir *redirs);
+int							read_and_discard_heredoc(char *delimiter,
+								t_shell *shell);
 int							process_all_heredocs(t_redir *redirs,
 								t_shell *shell);
+char						*read_heredoc_line(void);
+int							process_heredoc_input_line(int fd, char *line,
+								char *delimiter);
+int							check_signal_interrupt(char *line, t_shell *shell);
+int							handle_eof_or_signal(char *line, t_shell *shell);
+int							wait_for_pipeline_completion(pid_t last_pid);
+void						restore_stdin(int original_stdin);
+void						cleanup_pipeline(int prev_fd);
 
 /* Redirection validation */
 int							validate_input_file(const char *filename);

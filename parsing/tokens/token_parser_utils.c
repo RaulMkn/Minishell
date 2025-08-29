@@ -37,7 +37,6 @@ static int	merge_token_values(t_token *current, t_token *next)
 	return (1);
 }
 
-
 t_token	*concatenate_consecutive_tokens(t_token *tokens)
 {
 	t_token	*current;

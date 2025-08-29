@@ -29,8 +29,7 @@ static void	sigint_handler_interactive(int sig)
 	set_signal_received(SIGINT);
 	if (get_signal_state()->in_heredoc)
 	{
-		ioctl(STDIN_FILENO, TIOCSTI, "\n");
-		rl_on_new_line();
+		write(STDOUT_FILENO, "\n", 1);
 	}
 	else
 	{

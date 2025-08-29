@@ -15,37 +15,12 @@
 static t_command	*init_new_command(t_token **curr_token)
 {
 	t_command	*cmd;
-	t_token		*start_token;
 
 	cmd = malloc(sizeof(t_command));
 	if (!cmd)
 		return (NULL);
-	start_token = *curr_token;
-	cmd->argv = pars_argv_redirections(curr_token);
-	if (!cmd->argv)
+	if (!parse_command_parts(cmd, curr_token))
 		return (free(cmd), NULL);
-	*curr_token = start_token;
-	cmd->redir = parse_redirections_mixed(curr_token);
-	if (!cmd->argv[0] && cmd->redir)
-	{
-		free(cmd->argv);
-		cmd->argv = malloc(sizeof(char *) * 2);
-		if (!cmd->argv)
-		{
-			c_redir(cmd->redir);
-			free(cmd);
-			return (NULL);
-		}
-		cmd->argv[0] = ft_strdup(":");
-		if (!cmd->argv[0])
-		{
-			free(cmd->argv);
-			c_redir(cmd->redir);
-			free(cmd);
-			return (NULL);
-		}
-		cmd->argv[1] = NULL;
-	}
 	cmd->next = NULL;
 	return (cmd);
 }

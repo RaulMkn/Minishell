@@ -84,7 +84,10 @@ void	execute_child_process(t_command *cmd, char ***mini_env,
 void	handle_parent_process(int *prev_fd, int *pipe_fd, t_command *current)
 {
 	if (*prev_fd != -1)
+	{
 		close(*prev_fd);
+		*prev_fd = -1;
+	}
 	if (current->next)
 	{
 		close(pipe_fd[1]);

@@ -67,7 +67,7 @@ char	**pars_argv_redirections(t_token **tokens)
 
 	argc = 0;
 	token = *tokens;
-	argv = malloc(sizeof(char *));
+	argv = ft_calloc(1, sizeof(char *));
 	if (!argv)
 		return (NULL);
 	while (token && token->type != TOKEN_PIPE)

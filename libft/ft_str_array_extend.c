@@ -17,23 +17,20 @@ char	**ft_str_array_extend(char **array, int new_size)
 	char	**new_array;
 	int		i;
 
+	if (new_size <= 0)
+		return (NULL);
 	new_array = ft_calloc(new_size, sizeof(char *));
 	if (!new_array)
 		return (NULL);
 	i = 0;
 	if (array)
 	{
-		while (array[i] && i < new_size - 1)
+		while (i < new_size - 1 && array[i] != NULL)
 		{
 			new_array[i] = array[i];
 			i++;
 		}
 		free(array);
-	}
-	while (i < new_size)
-	{
-		new_array[i] = NULL;
-		i++;
 	}
 	return (new_array);
 }

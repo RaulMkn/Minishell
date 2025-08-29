@@ -34,26 +34,28 @@ static int	create_temp_file(char **filename)
 static int	read_heredoc_input(int fd, char *delimiter, t_shell *shell)
 {
 	char	*line;
+	int		eof_status;
+	int		process_result;
 
-	(void)shell;
 	set_heredoc_state(1);
 	while (1)
 	{
-		line = readline("> ");
-		if (get_signal_received() == SIGINT)
-			return (set_heredoc_state(0), free(line), -1);
-		if (!line)
-		{
-			ft_putstr_fd("minishell: warning: document by end-of-file\n", 2);
+		if (check_signal_interrupt(NULL, shell) == -1)
+			return (-1);
+		line = read_heredoc_line();
+		if (check_signal_interrupt(line, shell) == -1)
+			return (-1);
+		eof_status = handle_eof_or_signal(line, shell);
+		if (eof_status == -1)
+			return (-1);
+		if (eof_status == 1)
 			break ;
-		}
-		if (ft_strcmp(line, delimiter) == 0)
-			return (free(line), set_heredoc_state(0), 0);
-		write(fd, line, ft_strlen(line));
-		write(fd, "\n", 1);
-		free(line);
+		process_result = process_heredoc_input_line(fd, line, delimiter);
+		if (process_result == 0)
+			return (0);
 	}
-	return (set_heredoc_state(0), 0);
+	set_heredoc_state(0);
+	return (0);
 }
 
 static int	open_temp_for_reading(char *filename, int original_stdin)
@@ -96,7 +98,6 @@ static int	write_heredoc_to_temp(char *delimiter, t_shell *shell,
 		free(*filename);
 		dup2(original_stdin, STDIN_FILENO);
 		close(original_stdin);
-		shell->last_status = 130;
 		return (-1);
 	}
 	close(temp_fd);
@@ -120,7 +121,11 @@ int	handle_heredoc(char *delimiter, t_shell *shell)
 	temp_filename = NULL;
 	if (write_heredoc_to_temp(delimiter, shell, original_stdin,
 			&temp_filename) == -1)
+	{
+		close(original_stdin);
+		set_signal_received(0);
 		return (-1);
+	}
 	if (open_temp_for_reading(temp_filename, original_stdin) == -1)
 		return (-1);
 	return (0);

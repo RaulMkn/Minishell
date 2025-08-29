@@ -26,6 +26,7 @@ EXEC_SRCS =	$(EXEC_DIR)/core/main.c \
 		$(EXEC_DIR)/core/signals/signals_utils.c \
 		$(EXEC_DIR)/exec_system/pipeline/pipeline_executor.c \
 		$(EXEC_DIR)/exec_system/pipeline/pipeline_helpers.c \
+		$(EXEC_DIR)/exec_system/pipeline/pipeline_process_utils.c \
 		$(EXEC_DIR)/exec_system/pipeline/pipeline_loop.c \
 		$(EXEC_DIR)/exec_system/pipeline/pipeline_utils.c \
 		$(EXEC_DIR)/exec_system/utils/error_utils.c \
@@ -34,12 +35,14 @@ EXEC_SRCS =	$(EXEC_DIR)/core/main.c \
 		$(EXEC_DIR)/exec_system/commands/path_resolver.c \
 		$(EXEC_DIR)/redirection/redirect.c \
 		$(EXEC_DIR)/redirection/redirect_heredoc.c \
+		$(EXEC_DIR)/redirection/heredoc_utils.c \
 		$(EXEC_DIR)/redirection/multiple_redirections.c \
 		$(EXEC_DIR)/redirection/validators/redirection_validator.c \
 		$(EXEC_DIR)/redirection/validators/validator_utils.c \
 		$(EXEC_DIR)/pipe_system/pipe_handler.c \
 		$(EXEC_DIR)/pipe_system/setup_pipes.c \
 		$(EXEC_DIR)/builtins/core/builtins.c \
+		$(EXEC_DIR)/builtins/core/export.c \
 		$(EXEC_DIR)/builtins/core/builtins_utils.c \
 		$(EXEC_DIR)/builtins/core/env/env.c \
 		$(EXEC_DIR)/builtins/core/env/env_utils.c \
@@ -58,12 +61,14 @@ PARSING_SRCS = $(PARSING_DIR)/parsing_utils.c \
 		$(PARSING_DIR)/variable_expansion_helpers.c \
 		$(PARSING_DIR)/variable_expansion_utils.c \
 		$(PARSING_DIR)/tokens/token_parser.c \
+		$(PARSING_DIR)/tokens/token_parser_helpers.c \
 		$(PARSING_DIR)/tokens/token_parser_utils.c \
 		$(PARSING_DIR)/tokens/argv_parser.c \
 		$(PARSING_DIR)/tokens/redirection_parser.c \
 		$(PARSING_DIR)/tokens/unified_parser/unified_parser_utils.c \
 		$(PARSING_DIR)/tokens/token_cleanup.c \
 		$(PARSING_DIR)/tokens/token_creation.c \
+		$(PARSING_DIR)/tokens/token_postprocess.c \
 		$(PARSING_DIR)/lexer/token_utils.c \
 		$(PARSING_DIR)/lexer/string_utils.c \
 		$(PARSING_DIR)/lexer/buffer_handler.c \
