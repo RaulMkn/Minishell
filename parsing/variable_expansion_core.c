@@ -12,6 +12,20 @@
 
 #include "../minishell.h"
 
+static int	has_variables(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == '$' && str[i + 1] && str[i + 1] != ' ')
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
 char	*handle_quoted_expansion(char *str, char **env, int last_status)
 {
 	char	*inner;
@@ -22,6 +36,10 @@ char	*handle_quoted_expansion(char *str, char **env, int last_status)
 	if (len >= 2 && str[0] == '"' && str[len - 1] == '"')
 	{
 		inner = ft_substr(str, 1, len - 2);
+		if (!inner)
+			return (NULL);
+		if (!has_variables(inner))
+			return (inner);
 		expanded = expand_complex_variables(inner, env, last_status);
 		free(inner);
 		return (expanded);

@@ -21,6 +21,7 @@ PARSING_DIR = ./parsing
 
 EXEC_SRCS =	$(EXEC_DIR)/core/main.c \
 		$(EXEC_DIR)/core/shell_init.c \
+		$(EXEC_DIR)/core/shell_shlvl.c \
 		$(EXEC_DIR)/core/shell_loop.c \
 		$(EXEC_DIR)/core/signals/signals.c \
 		$(EXEC_DIR)/core/signals/signals_utils.c \
@@ -74,6 +75,7 @@ PARSING_SRCS = $(PARSING_DIR)/parsing_utils.c \
 		$(PARSING_DIR)/lexer/buffer_handler.c \
 		$(PARSING_DIR)/lexer/operator_handler.c \
 		$(PARSING_DIR)/lexer/quote_handler.c \
+		$(PARSING_DIR)/lexer/quote_removal.c \
 		$(PARSING_DIR)/lexer/handler_helper.c \
 		$(PARSING_DIR)/lexer/tokenizer_main.c \
 		$(PARSING_DIR)/lexer/tokenizer_context.c \

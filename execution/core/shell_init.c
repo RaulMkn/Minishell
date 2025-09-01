@@ -12,33 +12,6 @@
 
 #include "../../minishell.h"
 
-static void	init_shell_shlvl(t_shell *shell)
-{
-	char	*shlvl_str;
-	int		shlvl;
-	char	*shlvl_new;
-	int		flag;
-
-	shlvl_str = get_env_value(shell->envp, "MINISHELL_SHLVL");
-	if (shlvl_str)
-	{
-		shlvl = ft_atoi(shlvl_str, &flag);
-		if (flag != 0)
-			shlvl = 1;
-		else
-			shlvl++;
-	}
-	else
-		shlvl = 1;
-	shlvl_new = ft_itoa(shlvl);
-	if (shlvl_new)
-	{
-		set_env_variable(&shell->envp, "SHLVL", shlvl_new);
-		set_env_variable(&shell->envp, "MINISHELL_SHLVL", shlvl_new);
-		free(shlvl_new);
-	}
-}
-
 static void	init_shell_pwd(t_shell *shell)
 {
 	char	*cwd;

@@ -31,32 +31,49 @@ static int	check_spaces(const char *str)
 	return (i);
 }
 
+static int	process_sign(const char *str, int i, int *mult)
+{
+	if (str[i] == '-' || str[i] == '+')
+	{
+		if (str[i] == '-')
+			*mult = -1;
+		i++;
+	}
+	return (i);
+}
+
+static int	convert_digits(const char *str, int i, long *sum, int *flag)
+{
+	while (str[i] != '\0')
+	{
+		if (!ft_isdigit(str[i]))
+			return (*flag = 1, 0);
+		*sum = (*sum * 10) + (str[i] - '0');
+		if (*sum > 2147483647 || *sum > 2147483648)
+			return (*flag = 1, 0);
+		i++;
+	}
+	return (i);
+}
+
 int	ft_atoi(const char *str, int *flag)
 {
 	int		i;
 	long	sum;
 	int		mult;
 
+	*flag = 0;
 	i = check_spaces(str);
 	sum = 0;
 	mult = 1;
-	if (str[i] == '-' || str[i] == '+')
-	{
-		if (str[i] == '-')
-			mult = -1;
-		i++;
-	}
+	i = process_sign(str, i, &mult);
 	if (str[i] == '+' || str[i] == '-')
 		return (0);
-	while (str[i] != '\0')
-	{
-		if (!ft_isdigit(str[i]))
-			return (0);
-		sum = (sum * 10) + (str[i] - '0');
-		if ((sum > 2147483647 && mult == 1) || (sum > 2147483648 && mult == -1))
-			return (*flag = 1, 0);
-		i++;
-	}
+	convert_digits(str, i, &sum, flag);
+	if (*flag)
+		return (0);
+	if ((sum > 2147483647 && mult == 1) || (sum > 2147483648 && mult == -1))
+		return (*flag = 1, 0);
 	return (sum * mult);
 }
 /*

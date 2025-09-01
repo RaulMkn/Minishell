@@ -38,6 +38,8 @@ void	append_char(char **result, char *str, int *i)
 	char	*temp;
 	char	*new_result;
 
+	if (!str || str[*i] == '\0')
+		return ;
 	temp = ft_substr(str, *i, 1);
 	if (!temp)
 		return ;

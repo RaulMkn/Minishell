@@ -44,28 +44,34 @@ static char	*process_var_expansion(char *str, char **result, int *i,
 	return (*result);
 }
 
+static void	handle_dollar_expansion_local(char *str, char **result, int *i,
+	t_expansion_context *ctx)
+{
+	if (str[*i] == '$' && str[*i + 1] == '$')
+	{
+		process_pid_expansion(result, i);
+		return ;
+	}
+	if (str[*i] == '$' && str[*i + 1] && str[*i + 1] != ' ')
+	{
+		process_var_expansion(str, result, i, ctx);
+		return ;
+	}
+	append_char(result, str, i);
+}
+
 static char	*process_complex_loop(char *str, t_expansion_context *ctx)
 {
 	char	*result;
 	int		i;
+	int		len;
 
-	result = NULL;
+	result = init_complex_expansion(str, &len);
+	if (!result)
+		return (NULL);
 	i = 0;
-	while (str[i])
-	{
-		if (str[i] == '$' && str[i + 1] == '$')
-		{
-			process_pid_expansion(&result, &i);
-			continue ;
-		}
-		if (str[i] == '$' && str[i + 1] && str[i + 1] != ' ')
-		{
-			process_var_expansion(str, &result, &i, ctx);
-			continue ;
-		}
-		else
-			append_char(&result, str, &i);
-	}
+	while (i < len && str[i])
+		handle_dollar_expansion_local(str, &result, &i, ctx);
 	return (result);
 }
 
@@ -74,10 +80,12 @@ char	*expand_complex_variables(char *str, char **env, int last_status)
 	char				*result;
 	t_expansion_context	ctx;
 
+	if (!str)
+		return (ft_strdup(""));
 	ctx.env = env;
 	ctx.last_status = last_status;
 	result = process_complex_loop(str, &ctx);
 	if (result)
 		return (result);
-	return (ft_strdup(""));
+	return (ft_strdup(str));
 }

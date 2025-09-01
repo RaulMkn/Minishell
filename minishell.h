@@ -165,6 +165,7 @@ char						*expand_complex_variables(char *str, char **env,
 								int last_status);
 char						*handle_quoted_expansion(char *str, char **env,
 								int last_status);
+char						*init_complex_expansion(char *str, int *len);
 char						*handle_pid_expansion_ext(char **result, int *i);
 char						*handle_variable_expansion_ext(char *str,
 								char **result, int *i,
@@ -189,6 +190,7 @@ t_token						*create_token(t_token_type type, char *value);
 void						token_add_back(t_token **tokens, t_token *new);
 t_token						*create_operator_token(char c, int len);
 char						*remove_quotes(const char *str);
+char						*remove_quotes_export(const char *str);
 void						handle_buffer_token(t_token **tokens,
 								char **buffer);
 void						handle_whitespace(t_token **tokens, char **buffer,
@@ -239,6 +241,7 @@ void						add_redir_to_list(t_redir **redir_list,
 /* Core shell functions */
 void						init_shell(t_shell *shell, char **envp);
 void						cleanup_shell(t_shell *shell);
+void						init_shell_shlvl(t_shell *shell);
 void						shell_loop(t_shell *shell);
 
 /* Command execution */

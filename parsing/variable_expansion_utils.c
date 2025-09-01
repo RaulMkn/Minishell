@@ -81,3 +81,14 @@ char	*handle_variable_expansion_ext(char *str, char **result, int *i,
 	free(var_name);
 	return (*result);
 }
+
+char	*init_complex_expansion(char *str, int *len)
+{
+	char	*result;
+
+	if (!str)
+		return (ft_strdup(""));
+	*len = ft_strlen(str);
+	result = ft_strdup("");
+	return (result);
+}
