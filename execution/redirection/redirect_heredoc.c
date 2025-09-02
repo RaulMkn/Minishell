@@ -50,7 +50,7 @@ static int	read_heredoc_input(int fd, char *delimiter, t_shell *shell)
 			return (-1);
 		if (eof_status == 1)
 			break ;
-		process_result = process_heredoc_input_line(fd, line, delimiter);
+		process_result = process_heredoc_input_line(fd, line, delimiter, shell);
 		if (process_result == 0)
 			return (0);
 	}

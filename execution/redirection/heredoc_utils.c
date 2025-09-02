@@ -20,8 +20,11 @@ char	*read_heredoc_line(void)
 		return (get_next_line(STDIN_FILENO));
 }
 
-int	process_heredoc_input_line(int fd, char *line, char *delimiter)
+int	process_heredoc_input_line(int fd, char *line, char *delimiter, 
+		t_shell *shell)
 {
+	char	*expanded_line;
+
 	if (line[ft_strlen(line) - 1] == '\n')
 		line[ft_strlen(line) - 1] = '\0';
 	if (ft_strcmp(line, delimiter) == 0)
@@ -30,8 +33,12 @@ int	process_heredoc_input_line(int fd, char *line, char *delimiter)
 		set_heredoc_state(0);
 		return (0);
 	}
-	write(fd, line, ft_strlen(line));
+	expanded_line = expand_variables(line, shell->envp, shell->last_status, 0);
+	if (!expanded_line)
+		expanded_line = ft_strdup("");
+	write(fd, expanded_line, ft_strlen(expanded_line));
 	write(fd, "\n", 1);
+	free(expanded_line);
 	free(line);
 	return (1);
 }

@@ -345,7 +345,7 @@ int							process_all_heredocs(t_redir *redirs,
 								t_shell *shell);
 char						*read_heredoc_line(void);
 int							process_heredoc_input_line(int fd, char *line,
-								char *delimiter);
+								char *delimiter, t_shell *shell);
 int							check_signal_interrupt(char *line, t_shell *shell);
 int							handle_eof_or_signal(char *line, t_shell *shell);
 int							wait_for_pipeline_completion(pid_t last_pid);
