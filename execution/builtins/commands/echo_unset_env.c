@@ -35,11 +35,6 @@ int	builtin_echo(char **argv)
 	int		i;
 	int		newline;
 
-	if (argv[1] && !argv[2] && ft_strlen(argv[1]) == 1 && argv[1][0] == '\'')
-	{
-		ft_printf("\n");
-		return (0);
-	}
 	i = 1;
 	newline = skip_n_flags(argv, &i);
 	while (argv[i])
