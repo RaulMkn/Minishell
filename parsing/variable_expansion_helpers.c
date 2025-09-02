@@ -39,6 +39,8 @@ static char	*handle_quote_character(char *str, char **result, int *i,
 	{
 		ctx->inside_single_quotes = !ctx->inside_single_quotes;
 		(*i)++;
+		if (!*result)
+			*result = ft_strdup("");
 		return (*result);
 	}
 	if (ctx->inside_single_quotes)

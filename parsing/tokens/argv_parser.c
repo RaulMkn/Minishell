@@ -21,11 +21,6 @@ static int	add_cleaned_arg(char **argv, t_token *token, int argc)
 	cleaned = remove_quotes(token->value);
 	if (!cleaned)
 		return (0);
-	if (cleaned[0] == '\0')
-	{
-		free(cleaned);
-		return (-1);
-	}
 	argv[argc] = cleaned;
 	return (1);
 }

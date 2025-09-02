@@ -1,2 +1,0 @@
-export TEST_VAR=hello
-env | grep TEST_VAR
