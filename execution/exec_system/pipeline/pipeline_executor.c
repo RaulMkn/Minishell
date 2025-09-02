@@ -101,19 +101,25 @@ int	execute_pipeline(t_command *cmd_list, char ***mini_env, t_shell *shell)
 	pid_t		last_pid;
 	int			final_status;
 	void		(*old_sigint)(int);
+	int			original_stdin;
 
 	if (!cmd_list || !mini_env || !*mini_env)
 		return (1);
 	if (is_single_command(cmd_list))
 		return (execute_single_command(cmd_list, mini_env, shell));
+	original_stdin = dup(STDIN_FILENO);
+	if (original_stdin == -1)
+		return (1);
 	old_sigint = signal(SIGINT, SIG_IGN);
 	last_pid = handle_pipeline_loop(cmd_list, mini_env, shell);
 	if (last_pid == 1)
 	{
 		signal(SIGINT, old_sigint);
+		restore_stdin(original_stdin);
 		return (1);
 	}
 	final_status = wait_for_pipeline_completion(last_pid);
 	signal(SIGINT, old_sigint);
+	restore_stdin(original_stdin);
 	return (final_status);
 }

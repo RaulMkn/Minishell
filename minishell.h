@@ -311,6 +311,7 @@ int							handle_cd_dotdot(char ***env);
 void						update_pwd_fallback(char **argv, char *current_pwd,
 								char ***env);
 int							handle_cd_dotdot_simple(void);
+char						*resolve_dotdots(char *path);
 
 /* Environment management */
 int							replace_env(char **env, const char *key,

@@ -74,7 +74,6 @@ static int	open_temp_for_reading(char *filename, int original_stdin)
 	}
 	dup2(read_fd, STDIN_FILENO);
 	close(read_fd);
-	close(original_stdin);
 	unlink(filename);
 	free(filename);
 	return (0);

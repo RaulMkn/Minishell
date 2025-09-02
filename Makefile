@@ -50,6 +50,7 @@ EXEC_SRCS =	$(EXEC_DIR)/core/main.c \
 		$(EXEC_DIR)/builtins/commands/cd/builtin_cd.c \
 		$(EXEC_DIR)/builtins/commands/cd/cd_helpers.c \
 		$(EXEC_DIR)/builtins/commands/cd/cd_utils.c \
+		$(EXEC_DIR)/builtins/commands/cd/path_resolution.c \
 		$(EXEC_DIR)/builtins/commands/echo_unset_env.c \
 		$(EXEC_DIR)/builtins/commands/exit.c
 

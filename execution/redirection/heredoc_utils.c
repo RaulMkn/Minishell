@@ -20,7 +20,7 @@ char	*read_heredoc_line(void)
 		return (get_next_line(STDIN_FILENO));
 }
 
-int	process_heredoc_input_line(int fd, char *line, char *delimiter, 
+int	process_heredoc_input_line(int fd, char *line, char *delimiter,
 		t_shell *shell)
 {
 	char	*expanded_line;

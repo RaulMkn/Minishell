@@ -12,53 +12,22 @@
 
 #include "../../../../minishell.h"
 
-
-static char	*resolve_dotdots(char *path)
+static int	handle_valid_dotdot_path(char ***env, char *resolved_pwd,
+		char *with_dotdot)
 {
-	char	**parts;
-	char	**resolved;
-	int		i;
-	int		j;
-	char	*result;
+	char	*real_pwd;
 
-	parts = ft_split(path, '/');
-	if (!parts)
-		return (ft_strdup(path));
-	i = 0;
-	while (parts[i])
-		i++;
-	resolved = malloc(sizeof(char *) * (i + 1));
-	if (!resolved)
-		return (free_split(parts), ft_strdup(path));
-	i = 0;
-	j = 0;
-	while (parts[i])
+	real_pwd = getcwd(NULL, 0);
+	if (real_pwd)
 	{
-		if (ft_strcmp(parts[i], "..") == 0 && j > 0)
-			j--;
-		else if (ft_strcmp(parts[i], "..") != 0 && ft_strlen(parts[i]) > 0)
-			resolved[j++] = parts[i];
-		i++;
+		set_env_variable(env, "PWD", real_pwd);
+		free(real_pwd);
 	}
-	resolved[j] = NULL;
-	if (j == 0)
-		result = ft_strdup("/");
 	else
-	{
-		result = ft_strdup("");
-		i = 0;
-		while (i < j)
-		{
-			result = ft_strjoin_free(result, "/");
-			result = ft_strjoin_free(result, resolved[i]);
-			i++;
-		}
-	}
-	free(resolved);
-	free_split(parts);
-	if (!result || ft_strlen(result) == 0)
-		return (free(result), ft_strdup("/"));
-	return (result);
+		set_env_variable(env, "PWD", resolved_pwd);
+	free(resolved_pwd);
+	free(with_dotdot);
+	return (0);
 }
 
 static int	handle_cd_dotdot_complex(char ***env)
@@ -66,7 +35,6 @@ static int	handle_cd_dotdot_complex(char ***env)
 	char	*current_pwd;
 	char	*with_dotdot;
 	char	*resolved_pwd;
-	char	*real_pwd;
 
 	current_pwd = get_env_value(*env, "PWD");
 	if (!current_pwd)
@@ -80,28 +48,13 @@ static int	handle_cd_dotdot_complex(char ***env)
 		return (1);
 	resolved_pwd = resolve_dotdots(with_dotdot);
 	if (resolved_pwd && access(resolved_pwd, F_OK) == 0)
-	{
-		real_pwd = getcwd(NULL, 0);
-		if (real_pwd)
-		{
-			set_env_variable(env, "PWD", real_pwd);
-			free(real_pwd);
-		}
-		else
-			set_env_variable(env, "PWD", resolved_pwd);
-		free(resolved_pwd);
-		free(with_dotdot);
-		return (0);
-	}
+		return (handle_valid_dotdot_path(env, resolved_pwd, with_dotdot));
 	set_env_variable(env, "PWD", with_dotdot);
 	free(with_dotdot);
 	if (resolved_pwd)
 		free(resolved_pwd);
-	write(2,
-		"cd: error retrieving current directory: getcwd: "
-		"cannot access parent directories: No such file or "
-		"directory\n",
-		108);
+	write(2, "cd: error retrieving current directory: getcwd: "
+		"cannot access parent directories: No such file or directory\n", 108);
 	return (0);
 }
 
