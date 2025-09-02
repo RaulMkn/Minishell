@@ -12,63 +12,61 @@
 
 #include "../../../../minishell.h"
 
-static char	*prepare_parent_dir(char *current_pwd)
-{
-	char	*parent_dir;
-	char	*last_slash;
 
-	parent_dir = ft_strdup(current_pwd);
-	if (parent_dir)
+static char	*resolve_dotdots(char *path)
+{
+	char	**parts;
+	char	**resolved;
+	int		i;
+	int		j;
+	char	*result;
+
+	parts = ft_split(path, '/');
+	if (!parts)
+		return (ft_strdup(path));
+	i = 0;
+	while (parts[i])
+		i++;
+	resolved = malloc(sizeof(char *) * (i + 1));
+	if (!resolved)
+		return (free_split(parts), ft_strdup(path));
+	i = 0;
+	j = 0;
+	while (parts[i])
 	{
-		last_slash = ft_strrchr(parent_dir, '/');
-		if (last_slash && last_slash != parent_dir)
-			*last_slash = '\0';
-		else if (last_slash == parent_dir)
-			parent_dir[1] = '\0';
+		if (ft_strcmp(parts[i], "..") == 0 && j > 0)
+			j--;
+		else if (ft_strcmp(parts[i], "..") != 0 && ft_strlen(parts[i]) > 0)
+			resolved[j++] = parts[i];
+		i++;
 	}
-	return (parent_dir);
-}
-
-static void	search_accessible_parent(char **parent_dir)
-{
-	char	*last_slash;
-
-	while (*parent_dir && access(*parent_dir, F_OK) == -1)
+	resolved[j] = NULL;
+	if (j == 0)
+		result = ft_strdup("/");
+	else
 	{
-		last_slash = ft_strrchr(*parent_dir, '/');
-		if (last_slash && last_slash != *parent_dir)
-			*last_slash = '\0';
-		else if (last_slash == *parent_dir)
+		result = ft_strdup("");
+		i = 0;
+		while (i < j)
 		{
-			(*parent_dir)[1] = '\0';
-			break ;
-		}
-		else
-		{
-			free(*parent_dir);
-			*parent_dir = ft_strdup("/");
-			break ;
+			result = ft_strjoin_free(result, "/");
+			result = ft_strjoin_free(result, resolved[i]);
+			i++;
 		}
 	}
-}
-
-static void	find_accessible_parent(char *current_pwd)
-{
-	char	*parent_dir;
-
-	parent_dir = prepare_parent_dir(current_pwd);
-	if (parent_dir)
-	{
-		search_accessible_parent(&parent_dir);
-		if (parent_dir)
-			(chdir(parent_dir), free(parent_dir));
-	}
+	free(resolved);
+	free_split(parts);
+	if (!result || ft_strlen(result) == 0)
+		return (free(result), ft_strdup("/"));
+	return (result);
 }
 
 static int	handle_cd_dotdot_complex(char ***env)
 {
 	char	*current_pwd;
 	char	*with_dotdot;
+	char	*resolved_pwd;
+	char	*real_pwd;
 
 	current_pwd = get_env_value(*env, "PWD");
 	if (!current_pwd)
@@ -78,12 +76,27 @@ static int	handle_cd_dotdot_complex(char ***env)
 		with_dotdot = ft_strjoin(current_pwd, "..");
 	else
 		with_dotdot = ft_strjoin(current_pwd, "/..");
-	if (with_dotdot)
+	if (!with_dotdot)
+		return (1);
+	resolved_pwd = resolve_dotdots(with_dotdot);
+	if (resolved_pwd && access(resolved_pwd, F_OK) == 0)
 	{
-		set_env_variable(env, "PWD", with_dotdot);
+		real_pwd = getcwd(NULL, 0);
+		if (real_pwd)
+		{
+			set_env_variable(env, "PWD", real_pwd);
+			free(real_pwd);
+		}
+		else
+			set_env_variable(env, "PWD", resolved_pwd);
+		free(resolved_pwd);
 		free(with_dotdot);
+		return (0);
 	}
-	find_accessible_parent(current_pwd);
+	set_env_variable(env, "PWD", with_dotdot);
+	free(with_dotdot);
+	if (resolved_pwd)
+		free(resolved_pwd);
 	write(2,
 		"cd: error retrieving current directory: getcwd: "
 		"cannot access parent directories: No such file or "

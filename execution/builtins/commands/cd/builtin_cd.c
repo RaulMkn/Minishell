@@ -56,7 +56,7 @@ static void	update_pwd_after_cd(char **argv, char *current_pwd, char ***env)
 		set_env_variable(env, "PWD", new_pwd);
 		free(new_pwd);
 	}
-	else if (argv[1] && current_pwd)
+	else if (argv[1] && current_pwd && ft_strcmp(argv[1], ".."))
 		update_pwd_fallback(argv, current_pwd, env);
 	else if (!argv[1])
 	{
