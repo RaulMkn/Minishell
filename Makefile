@@ -83,13 +83,12 @@ PARSING_SRCS = $(PARSING_DIR)/parsing_utils.c \
 		$(PARSING_DIR)/lexer/tokenizer_context.c \
 		$(PARSING_DIR)/lexer/tokenizer_utils.c
 
-SRCS = $(EXEC_SRCS) $(PARSING_SRCS) globals.c
+SRCS = $(EXEC_SRCS) $(PARSING_SRCS)
 
 OBJ_DIR = obj
 EXEC_OBJS = $(EXEC_SRCS:$(EXEC_DIR)/%.c=$(OBJ_DIR)/execution/%.o)
 PARSING_OBJS = $(PARSING_SRCS:$(PARSING_DIR)/%.c=$(OBJ_DIR)/parsing/%.o)
-GLOBALS_OBJ = $(OBJ_DIR)/globals.o
-OBJS = $(EXEC_OBJS) $(PARSING_OBJS) $(GLOBALS_OBJ)
+OBJS = $(EXEC_OBJS) $(PARSING_OBJS)
 
 NAME = minishell
 
