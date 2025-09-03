@@ -14,10 +14,13 @@
 
 char	*read_heredoc_line(void)
 {
+	char	*line;
+
 	if (isatty(STDIN_FILENO))
-		return (readline("> "));
+		line = readline("> ");
 	else
-		return (get_next_line(STDIN_FILENO));
+		line = get_next_line(STDIN_FILENO);
+	return (line);
 }
 
 int	process_heredoc_input_line(int fd, char *line, char *delimiter,
@@ -25,7 +28,7 @@ int	process_heredoc_input_line(int fd, char *line, char *delimiter,
 {
 	char	*expanded_line;
 
-	if (line[ft_strlen(line) - 1] == '\n')
+	if (ft_strlen(line) > 0 && line[ft_strlen(line) - 1] == '\n')
 		line[ft_strlen(line) - 1] = '\0';
 	if (ft_strcmp(line, delimiter) == 0)
 	{

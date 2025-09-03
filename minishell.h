@@ -32,6 +32,12 @@
 # include <unistd.h>
 
 // ========================================================================== //
+//                               GLOBAL VARIABLE                             //
+// ========================================================================== //
+
+extern int	g_signal_exit_status;
+
+// ========================================================================== //
 //                                 ENUMS                                      //
 // ========================================================================== //
 
@@ -120,6 +126,7 @@ typedef struct s_shell
 	char					**envp;
 	int						last_status;
 	t_lexer_state			lexer_state;
+	int						heredoc_counter;
 }							t_shell;
 
 typedef struct s_tokenizer_ctx
@@ -135,6 +142,7 @@ typedef struct s_expansion_context
 	char					**env;
 	int						last_status;
 	int						inside_single_quotes;
+	int						inside_double_quotes;
 }							t_expansion_context;
 
 // ========================================================================== //
@@ -243,6 +251,7 @@ void						init_shell(t_shell *shell, char **envp);
 void						cleanup_shell(t_shell *shell);
 void						init_shell_shlvl(t_shell *shell);
 void						shell_loop(t_shell *shell);
+char						*handle_line_continuation(char *line);
 
 /* Command execution */
 int							execute_pipeline(t_command *cmd_list,

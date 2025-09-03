@@ -88,11 +88,6 @@ void	shell_loop(t_shell *shell)
 
 	while (1)
 	{
-		if (get_signal_received() == SIGINT)
-		{
-			shell->last_status = 130;
-			set_signal_received(0);
-		}
 		line = readline("minishell$ ");
 		if (!line)
 		{
@@ -100,8 +95,46 @@ void	shell_loop(t_shell *shell)
 				ft_printf("exit\n");
 			break ;
 		}
+		if (g_signal_exit_status != 0)
+		{
+			shell->last_status = g_signal_exit_status;
+			g_signal_exit_status = 0;
+		}
 		if (*line)
-			process_input_line(shell, line);
+		{
+			line = handle_line_continuation(line);
+			if (line)
+				process_input_line(shell, line);
+		}
 		free(line);
 	}
+}
+
+char	*handle_line_continuation(char *line)
+{
+	char	*next_line;
+	char	*combined;
+	int		len;
+
+	if (!line)
+		return (NULL);
+	len = ft_strlen(line);
+	while (len > 0 && line[len - 1] == '\\')
+	{
+		line[len - 1] = '\0';
+		if (isatty(STDIN_FILENO))
+			next_line = readline("> ");
+		else
+			next_line = get_next_line(STDIN_FILENO);
+		if (!next_line)
+			break ;
+		combined = ft_strjoin(line, next_line);
+		free(line);
+		free(next_line);
+		if (!combined)
+			return (NULL);
+		line = combined;
+		len = ft_strlen(line);
+	}
+	return (line);
 }

@@ -78,6 +78,7 @@ char	*expand_variables(char *str, char **env, int last_status, int len)
 	ctx.env = env;
 	ctx.last_status = last_status;
 	ctx.inside_single_quotes = 0;
+	ctx.inside_double_quotes = 0;
 	result = process_expansion_loop(str, len, &ctx);
 	if (result)
 		return (result);

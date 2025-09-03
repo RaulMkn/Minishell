@@ -35,9 +35,17 @@ static void	append_char_to_result(char **result, char c)
 static char	*handle_quote_character(char *str, char **result, int *i,
 		t_expansion_context *ctx)
 {
-	if (str[*i] == '\'')
+	if (str[*i] == '\'' && !ctx->inside_double_quotes)
 	{
 		ctx->inside_single_quotes = !ctx->inside_single_quotes;
+		(*i)++;
+		if (!*result)
+			*result = ft_strdup("");
+		return (*result);
+	}
+	if (str[*i] == '"' && !ctx->inside_single_quotes)
+	{
+		ctx->inside_double_quotes = !ctx->inside_double_quotes;
 		(*i)++;
 		if (!*result)
 			*result = ft_strdup("");

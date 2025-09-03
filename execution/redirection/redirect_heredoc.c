@@ -12,14 +12,15 @@
 
 #include "../../minishell.h"
 
-static int	create_temp_file(char **filename)
+static int	create_temp_file(char **filename, t_shell *shell)
 {
-	char	*pid_str;
-	int		fd;
+	char		*counter_str;
+	int			fd;
 
-	pid_str = ft_itoa(getpid());
-	*filename = ft_strjoin("/tmp/heredoc_", pid_str);
-	free(pid_str);
+	shell->heredoc_counter++;
+	counter_str = ft_itoa(shell->heredoc_counter);
+	*filename = ft_strjoin("/tmp/heredoc_", counter_str);
+	free(counter_str);
 	fd = open(*filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (fd == -1)
 	{
@@ -30,7 +31,6 @@ static int	create_temp_file(char **filename)
 	}
 	return (fd);
 }
-
 static int	read_heredoc_input(int fd, char *delimiter, t_shell *shell)
 {
 	char	*line;
@@ -74,6 +74,7 @@ static int	open_temp_for_reading(char *filename, int original_stdin)
 	}
 	dup2(read_fd, STDIN_FILENO);
 	close(read_fd);
+	close(original_stdin);
 	unlink(filename);
 	free(filename);
 	return (0);
@@ -84,7 +85,7 @@ static int	write_heredoc_to_temp(char *delimiter, t_shell *shell,
 {
 	int	temp_fd;
 
-	temp_fd = create_temp_file(filename);
+	temp_fd = create_temp_file(filename, shell);
 	if (temp_fd == -1)
 	{
 		close(original_stdin);

@@ -45,6 +45,7 @@ void	init_shell(t_shell *shell, char **envp)
 	shell->lexer_state.quote_state = QUOTE_NONE;
 	shell->lexer_state.error = ERROR_NONE;
 	shell->lexer_state.error_msg = NULL;
+	shell->heredoc_counter = 0;
 	init_shell_shlvl(shell);
 	init_shell_pwd(shell);
 }

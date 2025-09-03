@@ -84,6 +84,8 @@ char	*expand_complex_variables(char *str, char **env, int last_status)
 		return (ft_strdup(""));
 	ctx.env = env;
 	ctx.last_status = last_status;
+	ctx.inside_single_quotes = 0;
+	ctx.inside_double_quotes = 0;
 	result = process_complex_loop(str, &ctx);
 	if (result)
 		return (result);

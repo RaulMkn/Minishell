@@ -26,6 +26,7 @@ static void	sigquit_handler_interactive(int sig)
 static void	sigint_handler_interactive(int sig)
 {
 	(void)sig;
+	g_signal_exit_status = 130;
 	set_signal_received(SIGINT);
 	if (get_signal_state()->in_heredoc)
 	{

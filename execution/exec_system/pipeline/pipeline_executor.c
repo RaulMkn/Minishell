@@ -43,7 +43,7 @@ static t_redir	*process_heredoc_loop(t_redir *redirs, t_shell *shell,
 			{
 				if (read_and_discard_heredoc(current->file, shell) == -1)
 				{
-					close(original_stdin);
+					restore_stdin(original_stdin);
 					return (NULL);
 				}
 			}
