@@ -12,15 +12,15 @@
 
 #include "../../minishell.h"
 
-void	init_tokenizer_context(t_tokenizer_ctx *ctx, t_token **tokens,
-		char **buffer, size_t *i)
+void	init_tokenizer_context(t_tokenizer_ctx *ctx, t_tokenizer_init *init)
 {
-	*tokens = NULL;
-	*i = 0;
-	*buffer = NULL;
-	ctx->tokens = tokens;
-	ctx->buffer = buffer;
-	ctx->i = i;
+	*init->tokens = NULL;
+	*init->i = 0;
+	*init->buffer = NULL;
+	ctx->tokens = init->tokens;
+	ctx->buffer = init->buffer;
+	ctx->i = init->i;
+	ctx->shell = init->shell;
 }
 
 void	set_tokenizer_input(t_tokenizer_ctx *ctx, char *input)

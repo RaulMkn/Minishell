@@ -62,6 +62,7 @@ PARSING_SRCS = $(PARSING_DIR)/parsing_utils.c \
 		$(PARSING_DIR)/variable_expansion_core.c \
 		$(PARSING_DIR)/variable_expansion_helpers.c \
 		$(PARSING_DIR)/variable_expansion_utils.c \
+		$(PARSING_DIR)/quote_detection.c \
 		$(PARSING_DIR)/tokens/token_parser.c \
 		$(PARSING_DIR)/tokens/token_parser_helpers.c \
 		$(PARSING_DIR)/tokens/token_parser_utils.c \

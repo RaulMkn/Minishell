@@ -28,6 +28,10 @@ t_redir	*create_redirection_tn(t_token *redir_token,
 		new_redir->type = REDIR_APPEND;
 	else if (redir_token->type == TOKEN_HEREDOC)
 		new_redir->type = HEREDOC;
+	if (redir_token->type == TOKEN_HEREDOC)
+		new_redir->no_expand = file_token->was_quoted;
+	else
+		new_redir->no_expand = 0;
 	new_redir->file = remove_quotes(file_token->value);
 	if (!new_redir->file)
 	{

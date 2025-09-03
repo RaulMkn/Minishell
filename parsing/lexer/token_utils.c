@@ -43,6 +43,7 @@ t_token	*create_token(t_token_type type, char *value)
 		free(new);
 		return (NULL);
 	}
+	new->was_quoted = 0;
 	new->next = NULL;
 	return (new);
 }

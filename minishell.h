@@ -35,7 +35,7 @@
 //                               GLOBAL VARIABLE                             //
 // ========================================================================== //
 
-extern int	g_signal_exit_status;
+int	g_signal_exit_status;
 
 // ========================================================================== //
 //                                 ENUMS                                      //
@@ -90,6 +90,7 @@ typedef struct s_token
 {
 	t_token_type			type;
 	char					*value;
+	int						was_quoted;
 	struct s_token			*next;
 }							t_token;
 
@@ -97,6 +98,7 @@ typedef struct s_redir
 {
 	t_redir_type			type;
 	char					*file;
+	int						no_expand;
 	struct s_redir			*next;
 }							t_redir;
 
@@ -105,6 +107,7 @@ typedef struct s_lexer_state
 	t_quote_state			quote_state;
 	t_error_type			error;
 	char					*error_msg;
+	int						current_token_quoted;
 }							t_lexer_state;
 
 typedef struct s_command
@@ -129,13 +132,31 @@ typedef struct s_shell
 	int						heredoc_counter;
 }							t_shell;
 
+typedef struct s_heredoc_ctx
+{
+	int						fd;
+	char					*line;
+	char					*delimiter;
+	t_shell					*shell;
+	int						no_expand;
+}							t_heredoc_ctx;
+
 typedef struct s_tokenizer_ctx
 {
 	t_token					**tokens;
 	char					**buffer;
 	size_t					*i;
 	char					*input;
+	t_shell					*shell;
 }							t_tokenizer_ctx;
+
+typedef struct s_tokenizer_init
+{
+	t_token		**tokens;
+	char		**buffer;
+	size_t		*i;
+	t_shell		*shell;
+}							t_tokenizer_init;
 
 typedef struct s_expansion_context
 {
@@ -200,11 +221,9 @@ t_token						*create_operator_token(char c, int len);
 char						*remove_quotes(const char *str);
 char						*remove_quotes_export(const char *str);
 void						handle_buffer_token(t_token **tokens,
-								char **buffer);
-void						handle_whitespace(t_token **tokens, char **buffer,
-								size_t *i, char *input);
-void						handle_operator(t_token **tokens, char **buffer,
-								size_t *i, char *input);
+								char **buffer, t_shell *shell);
+void						handle_whitespace(t_tokenizer_ctx *ctx);
+void						handle_operator(t_tokenizer_ctx *ctx);
 void						handle_quote_char(char **buffer, char c, size_t *i,
 								t_shell *shell);
 void						handle_regular_char(char **buffer, char c,
@@ -212,7 +231,7 @@ void						handle_regular_char(char **buffer, char c,
 void						handle_final_buffer(t_token **tokens, char **buffer,
 								t_shell *shell);
 void						init_tokenizer_context(t_tokenizer_ctx *ctx,
-								t_token **tokens, char **buffer, size_t *i);
+								t_tokenizer_init *init);
 void						set_tokenizer_input(t_tokenizer_ctx *ctx,
 								char *input);
 t_token						*finalize_tokenization(t_shell *shell,
@@ -233,7 +252,8 @@ void						clear_command(t_command *cmd);
 void						set_error(t_lexer_state *state, t_error_type error,
 								char *msg);
 
-void						create_word_token(t_token **tokens, char **buffer);
+void						create_word_token(t_token **tokens, char **buffer,
+								t_shell *shell);
 size_t						handle_whitespaces(const char *input, size_t i);
 void						remove_quotes_copy(const char *str, char *res);
 int							is_redirection_token(t_token_type type);
@@ -241,6 +261,7 @@ t_redir						*create_redirection_tn(t_token *redir_token,
 								t_token *file_token);
 void						add_redir_to_list(t_redir **redir_list,
 								t_redir *new_redir);
+int							is_delimiter_quoted(char *delimiter_token);
 
 // ========================================================================== //
 //                          EXECUTION FUNCTIONS                              //
@@ -346,16 +367,18 @@ void						redirect_input(const char *infile);
 void						redirect_output(const char *outfile, int append);
 int							handle_multiple_redirections(t_redir *redirs,
 								t_shell *shell);
-int							handle_heredoc(char *delimiter, t_shell *shell);
+int							handle_heredoc(char *delimiter, t_shell *shell,
+								int no_expand);
 int							has_heredoc(t_redir *redirs);
 int							has_more_heredocs(t_redir *redirs);
 int							read_and_discard_heredoc(char *delimiter,
-								t_shell *shell);
+								t_shell *shell, int no_expand);
 int							process_all_heredocs(t_redir *redirs,
 								t_shell *shell);
 char						*read_heredoc_line(void);
-int							process_heredoc_input_line(int fd, char *line,
-								char *delimiter, t_shell *shell);
+int							process_heredoc_input_line(t_heredoc_ctx *ctx);
+int							process_single_line(int fd, char *delimiter,
+								t_shell *shell, int no_expand);
 int							check_signal_interrupt(char *line, t_shell *shell);
 int							handle_eof_or_signal(char *line, t_shell *shell);
 int							wait_for_pipeline_completion(pid_t last_pid);

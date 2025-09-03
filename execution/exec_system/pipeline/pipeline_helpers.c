@@ -54,12 +54,13 @@ static int	process_heredoc_line(char *line, char *delimiter)
 	return (0);
 }
 
-int	read_and_discard_heredoc(char *delimiter, t_shell *shell)
+int	read_and_discard_heredoc(char *delimiter, t_shell *shell, int no_expand)
 {
 	char	*line;
 	int		status;
 
 	(void)shell;
+	(void)no_expand;
 	set_heredoc_state(1);
 	while (1)
 	{

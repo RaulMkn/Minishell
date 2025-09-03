@@ -20,9 +20,10 @@ size_t	handle_whitespaces(const char *input, size_t i)
 	return (i);
 }
 
-void	create_word_token(t_token **tokens, char **buffer)
+void	create_word_token(t_token **tokens, char **buffer, t_shell *shell)
 {
 	char	*temp;
+	t_token	*new_token;
 
 	if (!(*buffer && **buffer != '\0'))
 		return ;
@@ -33,17 +34,22 @@ void	create_word_token(t_token **tokens, char **buffer)
 		*buffer = NULL;
 		return ;
 	}
-	token_add_back(tokens, create_token(TOKEN_WORD, temp));
+	new_token = create_token(TOKEN_WORD, temp);
+	if (new_token)
+	{
+		new_token->was_quoted = shell->lexer_state.current_token_quoted;
+		shell->lexer_state.current_token_quoted = 0;
+	}
+	token_add_back(tokens, new_token);
 	free(temp);
 	free(*buffer);
 	*buffer = NULL;
 }
 
-void	handle_whitespace(t_token **tokens, char **buffer, size_t *i,
-		char *input)
+void	handle_whitespace(t_tokenizer_ctx *ctx)
 {
-	create_word_token(tokens, buffer);
-	*i = handle_whitespaces(input, *i);
+	create_word_token(ctx->tokens, ctx->buffer, ctx->shell);
+	*ctx->i = handle_whitespaces(ctx->input, *ctx->i);
 }
 
 char	*remove_quotes(const char *str)

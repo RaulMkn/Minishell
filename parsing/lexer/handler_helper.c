@@ -37,7 +37,10 @@ static void	handle_single_quote(char **buffer, size_t *i, t_shell *shell)
 	if (shell->lexer_state.quote_state == QUOTE_SINGLE)
 		shell->lexer_state.quote_state = QUOTE_NONE;
 	else if (shell->lexer_state.quote_state == QUOTE_NONE)
+	{
 		shell->lexer_state.quote_state = QUOTE_SINGLE;
+		shell->lexer_state.current_token_quoted = 1;
+	}
 	(*i)++;
 }
 
@@ -56,7 +59,10 @@ static void	handle_double_quote(char **buffer, size_t *i, t_shell *shell)
 	if (shell->lexer_state.quote_state == QUOTE_DOUBLE)
 		shell->lexer_state.quote_state = QUOTE_NONE;
 	else if (shell->lexer_state.quote_state == QUOTE_NONE)
+	{
 		shell->lexer_state.quote_state = QUOTE_DOUBLE;
+		shell->lexer_state.current_token_quoted = 1;
+	}
 	(*i)++;
 }
 

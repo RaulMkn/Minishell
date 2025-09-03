@@ -17,6 +17,7 @@ static void	init_lexer_state(t_shell *shell)
 	shell->lexer_state.quote_state = QUOTE_NONE;
 	shell->lexer_state.error = ERROR_NONE;
 	shell->lexer_state.error_msg = NULL;
+	shell->lexer_state.current_token_quoted = 0;
 }
 
 static int	is_operator_char(char c, t_shell *shell)
@@ -33,7 +34,7 @@ static void	process_character(t_tokenizer_ctx *ctx, t_shell *shell)
 		|| ctx->input[*ctx->i] == 32)
 	{
 		if (shell->lexer_state.quote_state == QUOTE_NONE)
-			handle_whitespace(ctx->tokens, ctx->buffer, ctx->i, ctx->input);
+			handle_whitespace(ctx);
 		else
 		{
 			*ctx->buffer = ft_strjoin_char(*ctx->buffer, ctx->input[*ctx->i]);
@@ -42,7 +43,7 @@ static void	process_character(t_tokenizer_ctx *ctx, t_shell *shell)
 		}
 	}
 	else if (is_operator_char(ctx->input[*ctx->i], shell))
-		handle_operator(ctx->tokens, ctx->buffer, ctx->i, ctx->input);
+		handle_operator(ctx);
 	else
 		handle_regular_char(ctx->buffer, ctx->input[*ctx->i], ctx->i, shell);
 }
@@ -66,15 +67,20 @@ static t_token	*process_input_loop(t_tokenizer_ctx *ctx, t_shell *shell,
 
 t_token	*tokenize_input(char *input, t_shell *shell)
 {
-	t_token			*tokens;
-	size_t			i;
-	char			*buffer;
-	t_tokenizer_ctx	ctx;
+	t_token				*tokens;
+	size_t				i;
+	char				*buffer;
+	t_tokenizer_ctx		ctx;
+	t_tokenizer_init	init;
 
 	if (!input || !shell)
 		return (NULL);
 	init_lexer_state(shell);
-	init_tokenizer_context(&ctx, &tokens, &buffer, &i);
+	init.tokens = &tokens;
+	init.buffer = &buffer;
+	init.i = &i;
+	init.shell = shell;
+	init_tokenizer_context(&ctx, &init);
 	set_tokenizer_input(&ctx, input);
 	return (process_input_loop(&ctx, shell, &buffer, &tokens));
 }

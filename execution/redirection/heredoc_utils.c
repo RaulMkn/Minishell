@@ -23,26 +23,29 @@ char	*read_heredoc_line(void)
 	return (line);
 }
 
-int	process_heredoc_input_line(int fd, char *line, char *delimiter,
-		t_shell *shell)
+int	process_heredoc_input_line(t_heredoc_ctx *ctx)
 {
 	char	*expanded_line;
 
-	if (ft_strlen(line) > 0 && line[ft_strlen(line) - 1] == '\n')
-		line[ft_strlen(line) - 1] = '\0';
-	if (ft_strcmp(line, delimiter) == 0)
+	if (ft_strlen(ctx->line) > 0 && ctx->line[ft_strlen(ctx->line) - 1] == '\n')
+		ctx->line[ft_strlen(ctx->line) - 1] = '\0';
+	if (ft_strcmp(ctx->line, ctx->delimiter) == 0)
 	{
-		free(line);
+		free(ctx->line);
 		set_heredoc_state(0);
 		return (0);
 	}
-	expanded_line = expand_variables(line, shell->envp, shell->last_status, 0);
+	if (ctx->no_expand)
+		expanded_line = ft_strdup(ctx->line);
+	else
+		expanded_line = expand_variables(ctx->line, ctx->shell->envp,
+				ctx->shell->last_status, 0);
 	if (!expanded_line)
 		expanded_line = ft_strdup("");
-	write(fd, expanded_line, ft_strlen(expanded_line));
-	write(fd, "\n", 1);
+	write(ctx->fd, expanded_line, ft_strlen(expanded_line));
+	write(ctx->fd, "\n", 1);
 	free(expanded_line);
-	free(line);
+	free(ctx->line);
 	return (1);
 }
 
@@ -75,4 +78,29 @@ int	handle_eof_or_signal(char *line, t_shell *shell)
 		return (1);
 	}
 	return (0);
+}
+
+int	process_single_line(int fd, char *delimiter, t_shell *shell,
+		int no_expand)
+{
+	char			*line;
+	int				eof_status;
+	t_heredoc_ctx	ctx;
+
+	if (check_signal_interrupt(NULL, shell) == -1)
+		return (-1);
+	line = read_heredoc_line();
+	if (check_signal_interrupt(line, shell) == -1)
+		return (-1);
+	eof_status = handle_eof_or_signal(line, shell);
+	if (eof_status == -1)
+		return (-1);
+	if (eof_status == 1)
+		return (1);
+	ctx.fd = fd;
+	ctx.line = line;
+	ctx.delimiter = delimiter;
+	ctx.shell = shell;
+	ctx.no_expand = no_expand;
+	return (process_heredoc_input_line(&ctx));
 }

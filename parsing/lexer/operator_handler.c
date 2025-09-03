@@ -58,31 +58,33 @@ static int	check_adjacent_operators(char *s, size_t i)
 	return (1);
 }
 
-static void	handle_op_error(t_token **tokens, char **buffer, size_t *i,
-		int skip)
+static void	handle_op_error(t_tokenizer_ctx *ctx, int skip)
 {
-	set_error(&((t_shell *)(tokens))->lexer_state, ERROR_SYNTAX,
+	set_error(&ctx->shell->lexer_state, ERROR_SYNTAX,
 		"syntax error near unexpected token `newline'");
-	handle_operator_error(tokens, buffer);
-	*i += skip;
+	handle_operator_error(ctx->tokens, ctx->buffer);
+	*ctx->i += skip;
 }
 
-void	handle_operator(t_token **tokens, char **buffer, size_t *i, char *input)
+void	handle_operator(t_tokenizer_ctx *ctx)
 {
-	if (input[*i] == '<' && input[*i + 1] == '>')
-		return (handle_op_error(tokens, buffer, i, 2));
-	if (!check_adjacent_operators(input, *i))
-		return (handle_op_error(tokens, buffer, i, 1));
-	handle_buffer_token(tokens, buffer);
-	if ((input[*i] == '>' || input[*i] == '<') && input[*i + 1] == input[*i]
-		&& input[*i + 1] != ' ')
+	if (ctx->input[*ctx->i] == '<' && ctx->input[*ctx->i + 1] == '>')
+		return (handle_op_error(ctx, 2));
+	if (!check_adjacent_operators(ctx->input, *ctx->i))
+		return (handle_op_error(ctx, 1));
+	handle_buffer_token(ctx->tokens, ctx->buffer, ctx->shell);
+	if ((ctx->input[*ctx->i] == '>' || ctx->input[*ctx->i] == '<')
+		&& ctx->input[*ctx->i + 1] == ctx->input[*ctx->i]
+		&& ctx->input[*ctx->i + 1] != ' ')
 	{
-		token_add_back(tokens, create_operator_token(input[*i], 2));
-		*i += 2;
+		token_add_back(ctx->tokens, create_operator_token(ctx->input[*ctx->i],
+				2));
+		*ctx->i += 2;
 	}
 	else
 	{
-		token_add_back(tokens, create_operator_token(input[*i], 1));
-		(*i)++;
+		token_add_back(ctx->tokens, create_operator_token(ctx->input[*ctx->i],
+				1));
+		(*ctx->i)++;
 	}
 }

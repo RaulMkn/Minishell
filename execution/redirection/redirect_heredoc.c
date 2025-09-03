@@ -31,28 +31,20 @@ static int	create_temp_file(char **filename, t_shell *shell)
 	}
 	return (fd);
 }
-static int	read_heredoc_input(int fd, char *delimiter, t_shell *shell)
+
+static int	read_heredoc_input(int fd, char *delimiter, t_shell *shell,
+		int no_expand)
 {
-	char	*line;
-	int		eof_status;
-	int		process_result;
+	int	result;
 
 	set_heredoc_state(1);
 	while (1)
 	{
-		if (check_signal_interrupt(NULL, shell) == -1)
+		result = process_single_line(fd, delimiter, shell, no_expand);
+		if (result == -1)
 			return (-1);
-		line = read_heredoc_line();
-		if (check_signal_interrupt(line, shell) == -1)
-			return (-1);
-		eof_status = handle_eof_or_signal(line, shell);
-		if (eof_status == -1)
-			return (-1);
-		if (eof_status == 1)
+		if (result == 0 || result == 1)
 			break ;
-		process_result = process_heredoc_input_line(fd, line, delimiter, shell);
-		if (process_result == 0)
-			return (0);
 	}
 	set_heredoc_state(0);
 	return (0);
@@ -81,30 +73,25 @@ static int	open_temp_for_reading(char *filename, int original_stdin)
 }
 
 static int	write_heredoc_to_temp(char *delimiter, t_shell *shell,
-		int original_stdin, char **filename)
+		char **filename, int no_expand)
 {
 	int	temp_fd;
 
 	temp_fd = create_temp_file(filename, shell);
 	if (temp_fd == -1)
-	{
-		close(original_stdin);
 		return (-1);
-	}
-	if (read_heredoc_input(temp_fd, delimiter, shell) == -1)
+	if (read_heredoc_input(temp_fd, delimiter, shell, no_expand) == -1)
 	{
 		close(temp_fd);
 		unlink(*filename);
 		free(*filename);
-		dup2(original_stdin, STDIN_FILENO);
-		close(original_stdin);
 		return (-1);
 	}
 	close(temp_fd);
 	return (0);
 }
 
-int	handle_heredoc(char *delimiter, t_shell *shell)
+int	handle_heredoc(char *delimiter, t_shell *shell, int no_expand)
 {
 	int		original_stdin;
 	char	*temp_filename;
@@ -119,8 +106,8 @@ int	handle_heredoc(char *delimiter, t_shell *shell)
 	}
 	set_signal_received(0);
 	temp_filename = NULL;
-	if (write_heredoc_to_temp(delimiter, shell, original_stdin,
-			&temp_filename) == -1)
+	if (write_heredoc_to_temp(delimiter, shell, &temp_filename,
+			no_expand) == -1)
 	{
 		close(original_stdin);
 		set_signal_received(0);

@@ -35,6 +35,10 @@ static t_redir	*create_redirection(t_token *token)
 	if (!new_redir)
 		return (NULL);
 	new_redir->type = get_redir_type(token->type);
+	if (token->type == TOKEN_HEREDOC)
+		new_redir->no_expand = token->next->was_quoted;
+	else
+		new_redir->no_expand = 0;
 	new_redir->file = remove_quotes(token->next->value);
 	if (!new_redir->file)
 	{

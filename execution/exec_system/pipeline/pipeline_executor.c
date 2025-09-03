@@ -41,7 +41,8 @@ static t_redir	*process_heredoc_loop(t_redir *redirs, t_shell *shell,
 			last_heredoc = current;
 			if (current->next && has_more_heredocs(current->next))
 			{
-				if (read_and_discard_heredoc(current->file, shell) == -1)
+				if (read_and_discard_heredoc(current->file, shell,
+						current->no_expand) == -1)
 				{
 					restore_stdin(original_stdin);
 					return (NULL);
@@ -68,7 +69,8 @@ int	process_all_heredocs(t_redir *redirs, t_shell *shell)
 	close(original_stdin);
 	if (last_heredoc)
 	{
-		if (handle_heredoc(last_heredoc->file, shell) == -1)
+		if (handle_heredoc(last_heredoc->file, shell,
+				last_heredoc->no_expand) == -1)
 			return (-1);
 	}
 	return (0);

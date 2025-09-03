@@ -12,11 +12,11 @@
 
 #include "../../minishell.h"
 
-void	handle_buffer_token(t_token **tokens, char **buffer)
+void	handle_buffer_token(t_token **tokens, char **buffer, t_shell *shell)
 {
 	if (*buffer && (*buffer)[0] != '\0')
 	{
-		create_word_token(tokens, buffer);
+		create_word_token(tokens, buffer, shell);
 	}
 }
 
@@ -30,6 +30,8 @@ static void	handle_word(t_token **tokens, char *word, t_shell *shell)
 		shell->lexer_state.error = ERROR_MEMORY;
 		return ;
 	}
+	token->was_quoted = shell->lexer_state.current_token_quoted;
+	shell->lexer_state.current_token_quoted = 0;
 	token_add_back(tokens, token);
 }
 
