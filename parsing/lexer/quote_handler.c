@@ -37,6 +37,53 @@ static int	has_matching_quotes(const char *str, int len)
 			|| (str[0] == '\'' && str[len - 1] == '\'')));
 }
 
+static void	process_consecutive_quotes(const char *str, char *res)
+{
+	int		i;
+	int		j;
+	int		in_quotes;
+	char	quote_char;
+
+	i = 0;
+	j = 0;
+	in_quotes = 0;
+	quote_char = 0;
+	while (str[i])
+	{
+		if (!in_quotes && (str[i] == '"' || str[i] == '\''))
+		{
+			in_quotes = 1;
+			quote_char = str[i];
+		}
+		else if (in_quotes && str[i] == quote_char)
+		{
+			in_quotes = 0;
+			quote_char = 0;
+		}
+		else
+		{
+			res[j++] = str[i];
+		}
+		i++;
+	}
+	res[j] = '\0';
+}
+
+static int	has_consecutive_quotes(const char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if ((str[i] == '"' || str[i] == '\'') && str[i + 1] 
+			&& (str[i + 1] == '"' || str[i + 1] == '\''))
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
 void	remove_quotes_copy(const char *str, char *res)
 {
 	int	len;
@@ -52,7 +99,9 @@ void	remove_quotes_copy(const char *str, char *res)
 			return ;
 		}
 	}
-	if (len >= 2 && str[0] == '"' && str[len - 1] == '"')
+	if (has_consecutive_quotes(str))
+		process_consecutive_quotes(str, res);
+	else if (len >= 2 && str[0] == '"' && str[len - 1] == '"')
 		ft_strlcpy(res, str + 1, len - 1);
 	else if (len >= 2 && str[0] == '\'' && str[len - 1] == '\'')
 		ft_strlcpy(res, str + 1, len - 1);
