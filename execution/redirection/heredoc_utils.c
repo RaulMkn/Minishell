@@ -12,15 +12,39 @@
 
 #include "../../minishell.h"
 
+static char	*read_heredoc_with_signals(void)
+{
+	fd_set		readfds;
+	struct timeval	timeout;
+	char		*line;
+	int		ready;
+
+	write(STDOUT_FILENO, "> ", 2);
+	while (1)
+	{
+		if (get_signal_received() == SIGINT)
+			return (NULL);
+		FD_ZERO(&readfds);
+		FD_SET(STDIN_FILENO, &readfds);
+		timeout.tv_sec = 0;
+		timeout.tv_usec = 100000;
+		ready = select(STDIN_FILENO + 1, &readfds, NULL, NULL, &timeout);
+		if (ready > 0 && FD_ISSET(STDIN_FILENO, &readfds))
+		{
+			line = get_next_line(STDIN_FILENO);
+			return (line);
+		}
+		if (ready == -1 && errno != EINTR)
+			return (NULL);
+	}
+}
+
 char	*read_heredoc_line(void)
 {
-	char	*line;
-
 	if (isatty(STDIN_FILENO))
-		line = readline("> ");
+		return (read_heredoc_with_signals());
 	else
-		line = get_next_line(STDIN_FILENO);
-	return (line);
+		return (get_next_line(STDIN_FILENO));
 }
 
 int	process_heredoc_input_line(t_heredoc_ctx *ctx)
