@@ -18,9 +18,21 @@ void	reset_signal_state(void)
 	get_signal_state()->in_heredoc = 0;
 }
 
-static void	sigquit_handler_interactive(int sig)
+int	handle_eof_or_signal(char *line, t_shell *shell)
 {
-	(void)sig;
+	if (!line)
+	{
+		if (get_signal_received() == SIGINT)
+		{
+			set_heredoc_state(0);
+			set_signal_received(0);
+			shell->last_status = 130;
+			return (-1);
+		}
+		ft_putstr_fd("minishell: warning: document by end-of-file\n", 2);
+		return (1);
+	}
+	return (0);
 }
 
 static void	sigint_handler_interactive(int sig)
@@ -46,7 +58,7 @@ void	setup_interactive_signals(void)
 	struct sigaction	sa_int;
 	struct sigaction	sa_quit;
 
-	sa_quit.sa_handler = sigquit_handler_interactive;
+	sa_quit.sa_handler = SIG_IGN;
 	sigemptyset(&sa_quit.sa_mask);
 	sa_quit.sa_flags = SA_RESTART;
 	sigaction(SIGQUIT, &sa_quit, NULL);

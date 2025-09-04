@@ -14,10 +14,10 @@
 
 static char	*read_heredoc_with_signals(void)
 {
-	fd_set		readfds;
+	fd_set			readfds;
 	struct timeval	timeout;
-	char		*line;
-	int		ready;
+	char			*line;
+	int				ready;
 
 	write(STDOUT_FILENO, "> ", 2);
 	while (1)
@@ -83,23 +83,6 @@ int	check_signal_interrupt(char *line, t_shell *shell)
 		set_signal_received(0);
 		shell->last_status = 130;
 		return (-1);
-	}
-	return (0);
-}
-
-int	handle_eof_or_signal(char *line, t_shell *shell)
-{
-	if (!line)
-	{
-		if (get_signal_received() == SIGINT)
-		{
-			set_heredoc_state(0);
-			set_signal_received(0);
-			shell->last_status = 130;
-			return (-1);
-		}
-		ft_putstr_fd("minishell: warning: document by end-of-file\n", 2);
-		return (1);
 	}
 	return (0);
 }
