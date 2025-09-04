@@ -56,14 +56,9 @@ static void	process_consecutive_quotes(const char *str, char *res)
 			quote_char = str[i];
 		}
 		else if (in_quotes && str[i] == quote_char)
-		{
 			in_quotes = 0;
-			quote_char = 0;
-		}
 		else
-		{
 			res[j++] = str[i];
-		}
 		i++;
 	}
 	res[j] = '\0';
@@ -76,7 +71,7 @@ static int	has_consecutive_quotes(const char *str)
 	i = 0;
 	while (str[i])
 	{
-		if ((str[i] == '"' || str[i] == '\'') && str[i + 1] 
+		if ((str[i] == '"' || str[i] == '\'') && str[i + 1]
 			&& (str[i + 1] == '"' || str[i + 1] == '\''))
 			return (1);
 		i++;
