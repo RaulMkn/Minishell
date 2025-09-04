@@ -96,7 +96,7 @@ int	process_single_line(int fd, char *delimiter, t_shell *shell,
 	if (eof_status == -1)
 		return (-1);
 	if (eof_status == 1)
-		return (1);
+		return (0);
 	ctx.fd = fd;
 	ctx.line = line;
 	ctx.delimiter = delimiter;

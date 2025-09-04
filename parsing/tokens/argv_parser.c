@@ -12,6 +12,31 @@
 
 #include "../../minishell.h"
 
+static void	clean_empty_args_at_start(char **argv)
+{
+	int	i;
+	int	j;
+
+	if (!argv)
+		return ;
+	i = 0;
+	while (argv[i] && ft_strlen(argv[i]) == 0)
+	{
+		free(argv[i]);
+		i++;
+	}
+	if (i == 0)
+		return ;
+	j = 0;
+	while (argv[i])
+	{
+		argv[j] = argv[i];
+		j++;
+		i++;
+	}
+	argv[j] = NULL;
+}
+
 static int	add_cleaned_arg(char **argv, t_token *token, int argc)
 {
 	char	*cleaned;
@@ -76,5 +101,6 @@ char	**pars_argv_redirections(t_token **tokens)
 	}
 	argv[argc] = NULL;
 	*tokens = token;
+	clean_empty_args_at_start(argv);
 	return (argv);
 }

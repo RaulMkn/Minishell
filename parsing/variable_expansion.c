@@ -100,12 +100,13 @@ void	expand_and_filter_tokens(t_token **tokens, t_shell *shell)
 			expanded_value = expand_variables(current->value, shell->envp,
 					shell->last_status, 0);
 			if (!expanded_value)
+				expanded_value = ft_strdup("");
+			if (!expanded_value)
 			{
 				current = remove_empty_token(tokens, prev, current);
 				continue ;
 			}
-			else
-				update_token_value(current, expanded_value);
+			update_token_value(current, expanded_value);
 		}
 		prev = current;
 		current = current->next;
