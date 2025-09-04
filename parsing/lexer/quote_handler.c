@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   quote_handler.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:40:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/08/17 13:51:01 by ruortiz-         ###   ########.fr       */
+/*   Updated: 2025/09/04 21:51:23 by rmakende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-static int should_preserve_quotes(const char *str, int len)
+static int	should_preserve_quotes(const char *str, int len)
 {
 	int	i;
 	int	quote_count;
@@ -36,27 +36,25 @@ static int should_preserve_quotes(const char *str, int len)
 	i = 1;
 	while (i < len - 2)
 	{
-		if (str[i] >= '0' && str[i] <= '9'
-			&& (str[i + 1] == '"' || str[i + 1] == '\''))
+		if (str[i] >= '0' && str[i] <= '9' && (str[i + 1] == '"' || str[i
+					+ 1] == '\''))
 			return (0);
 		i++;
 	}
 	if (ft_strnstr(str, "./", len) || ft_strnstr(str, "/", len)
-		ft_strnstr(str, "outfile", len)
-		(ft_strchr(str, '.') && ft_strchr(str, '.') > str + 1))
+		|| ft_strnstr(str, "outfile", len) || (ft_strchr(str, '.')
+			&& ft_strchr(str, '.') > str + 1))
 		return (0);
 	if (len >= 3 && str[1] == '$')
 		return (1);
 	i = 1;
 	while (i < len - 1)
 	{
-		if (!((str[i] >= 'a' && str[i] <= 'z')
-			  		|| (str[i] >= 'A' && str[i] <= 'Z')
-			  		|| (str[i] >= '0' && str[i] <= '9')
-			  		|| str[i] == '$' || str[i] == '_'
-			  		|| str[i] == '-' || str[i] == ' '
-			  		|| str[i] == ':' || str[i] == '@'
-			  		|| str[i] == '\'' || str[i] == '"'))
+		if (!((str[i] >= 'a' && str[i] <= 'z') || (str[i] >= 'A'
+					&& str[i] <= 'Z') || (str[i] >= '0' && str[i] <= '9')
+				|| str[i] == '$' || str[i] == '_' || str[i] == '-'
+				|| str[i] == ' ' || str[i] == ':' || str[i] == '@'
+				|| str[i] == '\'' || str[i] == '"'))
 		{
 			return (0);
 		}
