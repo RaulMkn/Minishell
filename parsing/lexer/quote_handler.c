@@ -3,63 +3,74 @@
 /*                                                        :::      ::::::::   */
 /*   quote_handler.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmakende <rmakende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ruortiz- <ruortiz-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/22 00:40:00 by rmakende          #+#    #+#             */
-/*   Updated: 2025/09/04 21:51:23 by rmakende         ###   ########.fr       */
+/*   Updated: 2025/09/04 22:17:41 by ruortiz-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-static int	should_preserve_quotes(const char *str, int len)
+static int	count_inner_quotes(const char *str, int len)
 {
 	int	i;
+	int	count;
+
+	count = 0;
+	i = 1;
+	while (i < len - 1)
+	{
+		if (str[i] == '"' || str[i] == '\'')
+			count++;
+		i++;
+	}
+	return (count);
+}
+
+static int	check_body_rules(const char *str, int len)
+{
+	int	i;
+
+	i = 1;
+	while (i < len - 1)
+	{
+		if (i < len - 2 && (str[i] >= '0' && str[i] <= '9')
+			&& (str[i + 1] == '"' || str[i + 1] == '\''))
+			return (0);
+		if (!(((str[i] >= 'a' && str[i] <= 'z')
+					|| (str[i] >= 'A' && str[i] <= 'Z')
+					|| (str[i] >= '0' && str[i] <= '9')
+					|| str[i] == '$' || str[i] == '_' || str[i] == '-'
+					|| str[i] == ' ' || str[i] == ':' || str[i] == '@'
+					|| str[i] == '\'' || str[i] == '"')))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+static int	should_preserve_quotes(const char *str, int len)
+{
 	int	quote_count;
 
 	if (len == 2)
 		return (1);
 	if (len >= 4 && str[1] == '\'' && str[len - 2] == '\'')
 		return (1);
-	quote_count = 0;
-	i = 1;
-	while (i < len - 1)
-	{
-		if (str[i] == '"' || str[i] == '\'')
-			quote_count++;
-		i++;
-	}
+	quote_count = count_inner_quotes(str, len);
 	if (quote_count > 0 && quote_count <= 4)
 		return (1);
 	if (quote_count > 4)
 		return (0);
-	i = 1;
-	while (i < len - 2)
-	{
-		if (str[i] >= '0' && str[i] <= '9' && (str[i + 1] == '"' || str[i
-					+ 1] == '\''))
-			return (0);
-		i++;
-	}
 	if (ft_strnstr(str, "./", len) || ft_strnstr(str, "/", len)
-		|| ft_strnstr(str, "outfile", len) || (ft_strchr(str, '.')
-			&& ft_strchr(str, '.') > str + 1))
+		|| ft_strnstr(str, "outfile", len)
+		|| (ft_strchr(str, '.') && ft_strchr(str, '.') > str + 1))
 		return (0);
 	if (len >= 3 && str[1] == '$')
 		return (1);
-	i = 1;
-	while (i < len - 1)
-	{
-		if (!((str[i] >= 'a' && str[i] <= 'z') || (str[i] >= 'A'
-					&& str[i] <= 'Z') || (str[i] >= '0' && str[i] <= '9')
-				|| str[i] == '$' || str[i] == '_' || str[i] == '-'
-				|| str[i] == ' ' || str[i] == ':' || str[i] == '@'
-				|| str[i] == '\'' || str[i] == '"'))
-		{
-			return (0);
-		}
-		i++;
-	}
+	if (!check_body_rules(str, len))
+		return (0);
 	return (1);
 }
 
