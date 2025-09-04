@@ -12,69 +12,50 @@
 
 #include "../../minishell.h"
 
-static int	has_matching_quote(const char *s, int start, char q)
+static int	check_all_same_quotes(const char *str, int len)
 {
-	int	k;
+	int	i;
+	int	all_same_quotes;
 
-	k = start;
-	while (s[k])
+	all_same_quotes = 1;
+	i = 1;
+	while (i < len - 1)
 	{
-		if (s[k] == q)
-			return (1);
-		k++;
-	}
-	return (0);
-}
-
-static int	copy_single_quote(const char *str, char *res, int i, int *j)
-{
-	i++;
-	while (str[i] && str[i] != '\'')
-		res[(*j)++] = str[i++];
-	if (str[i] == '\'')
+		if (str[i] != str[0])
+		{
+			all_same_quotes = 0;
+			break ;
+		}
 		i++;
-	return (i);
-}
-
-static int	copy_double_quote(const char *str, char *res, int i, int *j)
-{
-	i++;
-	while (str[i] && str[i] != '\"')
-		res[(*j)++] = str[i++];
-	if (str[i] == '\"')
-		i++;
-	return (i);
-}
-
-static int	handle_quote(const char *str, char *res, int i, int *j)
-{
-	char	q;
-
-	q = str[i];
-	if (!has_matching_quote(str, i + 1, q))
-	{
-		res[(*j)++] = str[i++];
-		return (i);
 	}
-	if (q == '\'')
-		return (copy_single_quote(str, res, i, j));
-	else
-		return (copy_double_quote(str, res, i, j));
+	return (all_same_quotes);
+}
+
+static int	has_matching_quotes(const char *str, int len)
+{
+	return (len >= 2 && ((str[0] == '"' && str[len - 1] == '"')
+			|| (str[0] == '\'' && str[len - 1] == '\'')));
 }
 
 void	remove_quotes_copy(const char *str, char *res)
 {
-	int	i;
-	int	j;
+	int	len;
+	int	all_same_quotes;
 
-	i = 0;
-	j = 0;
-	while (str[i])
+	len = ft_strlen(str);
+	if (has_matching_quotes(str, len))
 	{
-		if (str[i] == '"' || str[i] == '\'')
-			i = handle_quote(str, res, i, &j);
-		else
-			res[j++] = str[i++];
+		all_same_quotes = check_all_same_quotes(str, len);
+		if (all_same_quotes)
+		{
+			ft_strlcpy(res, str, len + 1);
+			return ;
+		}
 	}
-	res[j] = '\0';
+	if (len >= 2 && str[0] == '"' && str[len - 1] == '"')
+		ft_strlcpy(res, str + 1, len - 1);
+	else if (len >= 2 && str[0] == '\'' && str[len - 1] == '\'')
+		ft_strlcpy(res, str + 1, len - 1);
+	else
+		ft_strlcpy(res, str, len + 1);
 }

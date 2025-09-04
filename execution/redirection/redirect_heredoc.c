@@ -43,7 +43,7 @@ static int	read_heredoc_input(int fd, char *delimiter, t_shell *shell,
 		result = process_single_line(fd, delimiter, shell, no_expand);
 		if (result == -1)
 			return (-1);
-		if (result == 0 || result == 1)
+		if (result == 0)
 			break ;
 	}
 	set_heredoc_state(0);
