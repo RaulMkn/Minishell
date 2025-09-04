@@ -4,5 +4,7 @@
 minishell
 *.md
 *.supp
-minishell_tester
+minishell_tester/*
 *.sh
+.*
+*.pdf
