@@ -125,23 +125,32 @@ char	**ft_split(char const *s, char c)
 
 void	free_array(char **array)
 {
+	int	i;
+
 	if (!array)
 		return ;
-	for (int i = 0; array[i]; i++)
+	i = 0;
+	while (array[i])
+	{
 		free(array[i]);
+		i++;
+	}
 	free(array);
 }
 
 int	main(void)
 {
 	char	**result = ft_split("this is a test '''string hola'''", ' ');
+	int		i;
 
 	if (!result)
 		return (1);
-	for (int i = 0; result[i]; i++)
+	i = 0;
+	while (result[i])
 	{
 		result[i] = ft_cleaner(result[i], '\'');
 		printf("result[%d]: %s\n", i, result[i]);
+		i++;
 	}
 
 	free_array(result);
